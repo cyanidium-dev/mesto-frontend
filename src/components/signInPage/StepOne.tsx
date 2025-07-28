@@ -2,18 +2,24 @@
 
 import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction } from "react";
+import { FormikProps } from "formik";
 import Image from "next/image";
 import ArrowIcon from "../shared/icons/ArrowIcon";
 import BackButton from "../shared/buttons/NavigationButton";
 import MainButton from "../shared/buttons/MainButton";
 import SectionTitle from "../shared/titles/SectionTitle";
+import CustomizedInput from "../shared/formComponents/CustomizedInput";
+import { ValuesSignInFormType } from "./SignInForm";
 
 interface StepOneProps {
   setCurrentStep: Dispatch<SetStateAction<number>>;
+  formProps: FormikProps<ValuesSignInFormType>;
 }
 
-export default function StepOne({ setCurrentStep }: StepOneProps) {
+export default function StepOne({ setCurrentStep, formProps }: StepOneProps) {
   const router = useRouter();
+
+  const { errors, touched } = formProps;
 
   const onClickBack = () => {
     router.back();
@@ -27,6 +33,16 @@ export default function StepOne({ setCurrentStep }: StepOneProps) {
           Назад
         </BackButton>
         <SectionTitle className="mb-6">Вход в аккаунт</SectionTitle>
+        <CustomizedInput
+          fieldName="email"
+          inputType="email"
+          placeholder={"Введите почту"}
+          label={"Ваша почта"}
+          isRequired
+          errors={errors}
+          touched={touched}
+          labelClassName="mb-6"
+        />
         <div className="flex flex-col gap-2">
           <p className="text-[12px] font-normal leading-[120%] text-center">
             Или войти через:

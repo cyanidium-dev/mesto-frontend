@@ -6,9 +6,13 @@ import { useRouter } from "next/navigation";
 import StepOne from "./StepOne";
 import StepTwo from "./StepTwo";
 
+export interface ValuesSignInFormType {
+  email: string;
+  code: string;
+}
+
 export default function SignInForm() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
@@ -33,19 +37,9 @@ export default function SignInForm() {
         {(props) => (
           <Form className="">
             {currentStep === 1 ? (
-              <StepOne
-                // formProps={props}
-                setCurrentStep={setCurrentStep}
-                // setCustomValue={setCustomValue}
-                // customValue={customValue}
-              />
+              <StepOne formProps={props} setCurrentStep={setCurrentStep} />
             ) : (
-              <StepTwo
-                // formProps={props}
-                setCurrentStep={setCurrentStep}
-                // setCustomValue={setCustomValue}
-                // customValue={customValue}
-              />
+              <StepTwo formProps={props} setCurrentStep={setCurrentStep} />
             )}
           </Form>
         )}
