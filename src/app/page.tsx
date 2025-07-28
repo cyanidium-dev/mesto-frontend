@@ -1,3 +1,4 @@
+import BackButton from "@/components/shared/buttons/BackButton";
 import MainButton from "@/components/shared/buttons/MainButton";
 
 export default function Home() {
@@ -6,6 +7,7 @@ export default function Home() {
       <MainButton variant="red" className="h-12">
         Подтвердить
       </MainButton>
+      <BackButton />
     </>
   );
 }
