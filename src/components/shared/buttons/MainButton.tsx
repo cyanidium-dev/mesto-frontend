@@ -36,7 +36,7 @@ export default function MainButton({
           ? "bg-red text-white"
           : "text-primary bg-transparent"
       } 
-        text-[16px] font-normal leading-[100%] enabled:focus-visible:brightness-125 enabled:active:brightness-125
+        text-[16px] font-normal leading-[120%] enabled:focus-visible:brightness-125 enabled:active:brightness-125
         transition duration-300 ease-in-out ${className}`}
     >
       {children}

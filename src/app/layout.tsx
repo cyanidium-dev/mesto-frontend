@@ -41,9 +41,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body className={`${inter.variable} antialiased relative z-[1]`}>
+      <body
+        className={`${inter.variable} antialiased relative z-[1] text-[14px] font-normal leading-[120%]`}
+      >
         <Providers>
-          <main className="flex min-h-screen flex-col">{children}</main>
+          <main>{children}</main>
         </Providers>
       </body>
     </html>
