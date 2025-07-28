@@ -8,7 +8,9 @@
   --color-white: #ffffff;
   --color-dark: #171717;
   --color-gray: #e5e5e5;
-  --color-blue: #006fee33;
+  --color-blue: #006fee;
+  --color-blue-light: #006fee33;
+  --color-red: #fb2c36;
   --font-inter: var(--font-inter);
 }
 

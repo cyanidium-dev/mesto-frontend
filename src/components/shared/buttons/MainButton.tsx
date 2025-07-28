@@ -3,7 +3,7 @@ import LoaderIcon from "../icons/LoaderIcon";
 
 interface MainButtonProps {
   children: string | ReactNode;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "bordered" | "red";
   className?: string;
   type?: "submit" | "button";
   disabled?: boolean;
@@ -25,8 +25,14 @@ export default function MainButton({
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className={`relative enabled:cursor-pointer flex items-center justify-center w-full py-4 px-2 rounded-full ${
-        variant === "primary" ? "bg-primary text-white" : "bg-blue text-primary"
+      className={`relative enabled:cursor-pointer flex items-center justify-center w-full px-2 rounded-full ${
+        variant === "primary"
+          ? "bg-primary text-white"
+          : variant === "secondary"
+          ? "bg-blue-light text-primary"
+          : variant === "bordered"
+          ? "border-2 border-blue text-blue"
+          : "bg-red text-white"
       } 
         text-[16px] font-normal leading-[100%] enabled:focus-visible:brightness-125 enabled:active:brightness-125
         transition duration-300 ease-in-out ${className}`}
