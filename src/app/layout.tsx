@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Providers from "./providers";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -10,7 +12,6 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Mesto",
   description: "PWA enabled Next.js app",
-  themeColor: "#1673FF",
   manifest: "/manifest.json",
   applicationName: "Mesto",
   icons: [
@@ -29,6 +30,10 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport = {
+  themeColor: "#1673FF",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -36,7 +41,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ru">
-      <body className={`${inter.variable} antialiased`}>{children}</body>
+      <body
+        className={`${inter.variable} antialiased relative z-[1] flex min-h-screen flex-col`}
+      >
+        <Providers>
+          <main>{children}</main>
+        </Providers>
+      </body>
     </html>
   );
 }
