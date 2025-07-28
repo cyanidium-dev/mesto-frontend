@@ -7,5 +7,5 @@ interface ProvidersProps {
 }
 
 export default function Providers({ children }: ProvidersProps) {
-  return <HeroUIProvider className="flex-1">{children}</HeroUIProvider>;
+  return <HeroUIProvider>{children}</HeroUIProvider>;
 }
