@@ -8,7 +8,7 @@ export default function PageTitle({
   className = "",
 }: PageTitleProps) {
   return (
-    <h1 className={`text-[16px] font-bold leading-[100%] ${className}`}>
+    <h1 className={`text-[16px] font-bold leading-[120%] ${className}`}>
       {children}
     </h1>
   );

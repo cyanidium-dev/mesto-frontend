@@ -10,9 +10,7 @@ export default function Container({
   className = "",
 }: ContainerProps) {
   return (
-    <section
-      className={`w-full px-4 pt-2 pb-14 max-w-[440px] mx-auto ${className}`}
-    >
+    <section className={`w-full px-4 max-w-[440px] mx-auto ${className}`}>
       {children}
     </section>
   );
