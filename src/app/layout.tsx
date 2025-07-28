@@ -10,7 +10,6 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Mesto",
   description: "PWA enabled Next.js app",
-  themeColor: "#1673FF",
   manifest: "/manifest.json",
   applicationName: "Mesto",
   icons: [
@@ -27,6 +26,10 @@ export const metadata: Metadata = {
     capable: true,
     title: "Mesto",
   },
+};
+
+export const viewport = {
+  themeColor: "#1673FF",
 };
 
 export default function RootLayout({

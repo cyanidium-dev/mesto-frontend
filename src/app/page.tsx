@@ -1,3 +1,9 @@
+import MainButton from "@/components/shared/buttons/MainButton";
+
 export default function Home() {
-  return <></>;
+  return (
+    <>
+      <MainButton variant="secondary">Подтвердить </MainButton>
+    </>
+  );
 }
