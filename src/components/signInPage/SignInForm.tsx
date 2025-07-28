@@ -41,7 +41,7 @@ export default function SignInForm({
         validationSchema={validationSchema}
       >
         {(props) => (
-          <Form className="">
+          <Form className="flex-1 flex flex-col h-full">
             {currentStep === 1 ? (
               <StepOne formProps={props} setCurrentStep={setCurrentStep} />
             ) : (

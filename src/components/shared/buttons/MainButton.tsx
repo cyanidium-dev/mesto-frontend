@@ -37,7 +37,7 @@ export default function MainButton({
           : "text-primary bg-transparent"
       } 
         text-[16px] font-normal leading-[120%] enabled:focus-visible:brightness-125 enabled:active:brightness-125
-        transition duration-300 ease-in-out ${className}`}
+        disabled:opacity-30 transition duration-300 ease-in-out ${className}`}
     >
       {children}
       {isLoading ? <LoaderIcon /> : null}

@@ -3,11 +3,11 @@ import { FormikProps } from "formik";
 import MainButton from "../shared/buttons/MainButton";
 import SectionTitle from "../shared/titles/SectionTitle";
 import CustomizedInput from "../shared/formComponents/CustomizedInput";
-import { ValuesSignInFormType } from "./SignInForm";
+import { ValuesSignUpFormType } from "./SignUpForm";
 
 interface StepTwoProps {
   setCurrentStep: Dispatch<SetStateAction<number>>;
-  formProps: FormikProps<ValuesSignInFormType>;
+  formProps: FormikProps<ValuesSignUpFormType>;
 }
 
 export default function StepTwo({ setCurrentStep, formProps }: StepTwoProps) {
@@ -38,7 +38,7 @@ export default function StepTwo({ setCurrentStep, formProps }: StepTwoProps) {
       <MainButton
         variant="primary"
         className="h-12"
-        type="submit"
+        onClick={() => setCurrentStep((prev) => prev + 1)}
         disabled={!values.code || !!errors.code}
       >
         Подтвердить

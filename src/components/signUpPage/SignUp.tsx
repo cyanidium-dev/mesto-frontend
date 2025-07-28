@@ -13,7 +13,7 @@ export default function SignUp() {
   const [currentStep, setCurrentStep] = useState(1);
 
   return (
-    <Container className="min-h-screen pt-2 pb-14">
+    <Container className="flex flex-col min-h-screen pt-2 pb-14">
       <div className="flex justify-between items-center mb-2">
         <NavigationButton
           onClick={
@@ -38,7 +38,7 @@ export default function SignUp() {
         </NavigationButton>
       </div>
       <ProgressBar stepsQty={10} currentStep={currentStep} className="mb-6" />
-      <SignUpForm />
+      <SignUpForm currentStep={currentStep} setCurrentStep={setCurrentStep} />
     </Container>
   );
 }

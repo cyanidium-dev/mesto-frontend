@@ -12,7 +12,7 @@ export default function SignIn() {
   const router = useRouter();
 
   return (
-    <Container className="flex flex-col min-h-screen">
+    <Container className="flex flex-col min-h-screen pt-2 pb-14">
       <NavigationButton
         onClick={
           currentStep === 1
