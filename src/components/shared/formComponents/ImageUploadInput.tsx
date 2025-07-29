@@ -10,11 +10,15 @@ interface ImageUploadInputProps {
   label?: string;
 }
 
+interface Values {
+  [fieldName: string]: string | string[];
+}
+
 export default function ImageUploadInput({
   fieldName,
   label,
 }: ImageUploadInputProps) {
-  const { setFieldValue, values } = useFormikContext<any>();
+  const { setFieldValue, values } = useFormikContext<Values>();
   const inputRef = useRef<HTMLInputElement>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
 
