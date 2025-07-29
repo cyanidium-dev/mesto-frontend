@@ -22,6 +22,10 @@ interface SignUpFormProps {
 export interface ValuesSignUpFormType {
   email: string;
   code: string;
+  name: string;
+  birthDay: string;
+  birthMonth: string;
+  birthYear: string;
 }
 
 export default function SignUpForm({
@@ -33,6 +37,10 @@ export default function SignUpForm({
   const initialValues = {
     email: "",
     code: "",
+    name: "",
+    birthDay: "",
+    birthMonth: "",
+    birthYear: "",
   };
 
   const validationSchema = SignUpValidation();
@@ -57,7 +65,7 @@ export default function SignUpForm({
             ) : currentStep === 3 ? (
               <StepThree formProps={props} setCurrentStep={setCurrentStep} />
             ) : currentStep === 4 ? (
-              <StepFour />
+              <StepFour formProps={props} setCurrentStep={setCurrentStep} />
             ) : currentStep === 5 ? (
               <StepFive />
             ) : currentStep === 6 ? (
