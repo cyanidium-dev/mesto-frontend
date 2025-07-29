@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import Navbar from "@/components/shared/navbar/Navbar";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -46,6 +47,7 @@ export default function RootLayout({
       >
         <Providers>
           <main>{children}</main>
+          <Navbar />
         </Providers>
       </body>
     </html>

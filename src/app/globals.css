@@ -13,6 +13,7 @@
   --color-gray: #e5e5e5;
   --color-gray-light: #d4d4d4;
   --color-gray-dark: #737373;
+  --color-accent: #1447e6;
   --color-blue: #006fee;
   --color-blue-light: #006fee33;
   --color-red: #fb2c36;
@@ -66,32 +67,4 @@
 }
 
 @layer utilities {
-  .custom-dash {
-    position: relative;
-    border-radius: 16px;
-    padding: 1rem; /* твій контент */
-    background: white;
-    mask-image: linear-gradient(black 0 0);
-    -webkit-mask-image: linear-gradient(black 0 0);
-  }
-
-  .custom-dash::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 16px;
-    padding: 1px; /* товщина бордера */
-    background: repeating-linear-gradient(
-      to right,
-      var(--color-gray-dark) 0,
-      var(--color-gray-dark) 12px,
-      transparent 12px,
-      transparent 20px
-    );
-    -webkit-mask: linear-gradient(black, black) content-box,
-      linear-gradient(black, black);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    pointer-events: none;
-  }
 }
