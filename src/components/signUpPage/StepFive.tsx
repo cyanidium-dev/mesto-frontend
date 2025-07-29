@@ -48,15 +48,12 @@ const selectOptions = [
   },
 ];
 
-interface StepThreeProps {
+interface StepFiveProps {
   setCurrentStep: Dispatch<SetStateAction<number>>;
   formProps: FormikProps<ValuesSignUpFormType>;
 }
 
-export default function StepThree({
-  setCurrentStep,
-  formProps,
-}: StepThreeProps) {
+export default function StepFive({ setCurrentStep, formProps }: StepFiveProps) {
   const { errors, values } = formProps;
 
   return (

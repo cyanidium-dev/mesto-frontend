@@ -38,6 +38,11 @@ export const SignUpValidation = () => {
         .max(maxYear, `Вам должно быть не менее 18 лет`),
 
       city: yup.string(),
+
+      interests: yup
+        .array()
+        .of(yup.string())
+        .max(4, "Можно выбрать не более 4 интересов"),
     })
     .test(
       "is-valid-date",

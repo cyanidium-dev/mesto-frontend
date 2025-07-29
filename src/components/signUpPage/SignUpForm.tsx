@@ -12,7 +12,6 @@ import StepSix from "./StepSix";
 import StepSeven from "./StepSeven";
 import StepEight from "./StepEight";
 import StepNine from "./StepNine";
-import StepTen from "./StepTen";
 
 interface SignUpFormProps {
   currentStep: number;
@@ -27,6 +26,7 @@ export interface ValuesSignUpFormType {
   birthMonth: string;
   birthYear: string;
   city: string;
+  sex: string;
 }
 
 export default function SignUpForm({
@@ -43,6 +43,7 @@ export default function SignUpForm({
     birthMonth: "",
     birthYear: "",
     city: "",
+    sex: "",
   };
 
   const validationSchema = SignUpValidation();
@@ -71,15 +72,13 @@ export default function SignUpForm({
             ) : currentStep === 5 ? (
               <StepFive formProps={props} setCurrentStep={setCurrentStep} />
             ) : currentStep === 6 ? (
-              <StepSix />
+              <StepSix formProps={props} setCurrentStep={setCurrentStep} />
             ) : currentStep === 7 ? (
-              <StepSeven />
+              <StepSeven formProps={props} setCurrentStep={setCurrentStep} />
             ) : currentStep === 8 ? (
-              <StepEight />
-            ) : currentStep === 9 ? (
-              <StepNine />
+              <StepEight formProps={props} setCurrentStep={setCurrentStep} />
             ) : (
-              <StepTen />
+              <StepNine setCurrentStep={setCurrentStep} />
             )}
           </Form>
         )}

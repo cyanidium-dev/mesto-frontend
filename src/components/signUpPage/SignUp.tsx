@@ -28,7 +28,7 @@ export default function SignUp() {
         <NavigationButton
           onClick={() => setCurrentStep((prev) => prev + 1)}
           className={`${
-            currentStep === 1 || currentStep === 2 || currentStep === 10
+            currentStep === 1 || currentStep === 2 || currentStep === 9
               ? "hidden"
               : ""
           }`}
@@ -37,7 +37,7 @@ export default function SignUp() {
           <ArrowIcon className="rotate-180" />
         </NavigationButton>
       </div>
-      <ProgressBar stepsQty={10} currentStep={currentStep} className="mb-6" />
+      <ProgressBar stepsQty={9} currentStep={currentStep} className="mb-6" />
       <SignUpForm currentStep={currentStep} setCurrentStep={setCurrentStep} />
     </Container>
   );
