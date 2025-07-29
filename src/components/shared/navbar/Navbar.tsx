@@ -30,43 +30,41 @@ export default function Navbar() {
   };
 
   return (
-    <Container
-      className={`${
-        pathname === "/main" ||
-        pathname === "/profile" ||
-        pathname === "/notifications"
-          ? ""
-          : "hidden"
-      } fixed bottom-0 left-0 z-50`}
-    >
-      {" "}
-      <Tabs
-        onSelectionChange={(key) => handleTabChange(key as string)}
-        aria-label="navigation"
-        classNames={{
-          base: "bg-transparent w-full",
-          tabList: "bg-primary h-[60px] rounded-full w-full",
-          cursor: "block bg-accent rounded-full py-[13px]",
-          tab: "h-[50px]",
-        }}
-      >
-        {navigationList.map(({ value, icon }, idx) => (
-          <Tab
-            aria-label="navigation tab"
-            key={value}
-            title={
-              <div className="flex flex-col items-center gap-1">
-                <Image src={icon} alt={value} width={24} height={24} />
-                {value === "create" ? (
-                  <span className="text-[10px] font-semibold leading-[120%] text-white text-center">
-                    Создать
-                  </span>
-                ) : null}
-              </div>
-            }
-          />
-        ))}
-      </Tabs>
-    </Container>
+    <>
+      {pathname === "/main" ||
+      pathname === "/profile" ||
+      pathname === "/notifications" ? (
+        <Container className={`fixed bottom-0 left-0 z-50`}>
+          {" "}
+          <Tabs
+            onSelectionChange={(key) => handleTabChange(key as string)}
+            aria-label="navigation"
+            classNames={{
+              base: "bg-transparent w-full",
+              tabList: "bg-primary h-[60px] rounded-full w-full",
+              cursor: "block bg-accent rounded-full py-[13px]",
+              tab: "h-[50px]",
+            }}
+          >
+            {navigationList.map(({ value, icon }, idx) => (
+              <Tab
+                aria-label="navigation tab"
+                key={value}
+                title={
+                  <div className="flex flex-col items-center gap-1">
+                    <Image src={icon} alt={value} width={24} height={24} />
+                    {value === "create" ? (
+                      <span className="text-[10px] font-semibold leading-[120%] text-white text-center">
+                        Создать
+                      </span>
+                    ) : null}
+                  </div>
+                }
+              />
+            ))}
+          </Tabs>
+        </Container>
+      ) : null}
+    </>
   );
 }
