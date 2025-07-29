@@ -64,7 +64,7 @@ export default function StepFive({ setCurrentStep, formProps }: StepFiveProps) {
           Эта информация будет отображаться у вас в профиле
         </p>
         <SelectInput
-          fieldName="region"
+          fieldName="city"
           options={selectOptions}
           required={false}
           placeholder={"Введите ваш город"}

@@ -28,6 +28,7 @@ export interface ValuesSignUpFormType {
   city: string;
   gender: string;
   interests: string[];
+  photo: string;
 }
 
 export default function SignUpForm({
@@ -46,6 +47,7 @@ export default function SignUpForm({
     city: "",
     gender: "male",
     interests: [],
+    photo: "",
   };
 
   const validationSchema = SignUpValidation();

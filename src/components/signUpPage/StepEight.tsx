@@ -3,50 +3,7 @@ import { FormikProps } from "formik";
 import MainButton from "../shared/buttons/MainButton";
 import SectionTitle from "../shared/titles/SectionTitle";
 import { ValuesSignUpFormType } from "./SignUpForm";
-import SelectInput from "../shared/formComponents/SelectInput";
-
-const selectOptions = [
-  {
-    value: "Мадрид",
-    label: "Мадрид",
-  },
-  {
-    value: "Барселона",
-    label: "Барселона",
-  },
-  {
-    value: "Валенсия",
-    label: "Валенсия",
-  },
-  {
-    value: "Севилья",
-    label: "Севилья",
-  },
-  {
-    value: "Сарагоса",
-    label: "Сарагоса",
-  },
-  {
-    value: "Малага",
-    label: "Малага",
-  },
-  {
-    value: "Мурсия",
-    label: "Мурсия",
-  },
-  {
-    value: "Пальма",
-    label: "Пальма",
-  },
-  {
-    value: "Бильбао",
-    label: "Бильбао",
-  },
-  {
-    value: "Аликанте",
-    label: "Аликанте",
-  },
-];
+import ImageUploadInput from "../shared/formComponents/ImageUploadInput";
 
 interface StepEightProps {
   setCurrentStep: Dispatch<SetStateAction<number>>;
@@ -67,19 +24,14 @@ export default function StepEight({
           Фото будет отображаться в вашем профиле и у людей будет больше доверия
           к вашему профилю
         </p>
-        <SelectInput
-          fieldName="region"
-          options={selectOptions}
-          required={false}
-          placeholder={"Введите ваш город"}
-        />
+        <ImageUploadInput fieldName="photo" />
       </div>
 
       <MainButton
         variant="primary"
         className="h-12"
         onClick={() => setCurrentStep((prev) => prev + 1)}
-        disabled={!values.city || !!errors.city}
+        disabled={!values.photo || !!errors.photo}
       >
         Подтвердить
       </MainButton>

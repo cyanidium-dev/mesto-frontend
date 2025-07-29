@@ -33,24 +33,7 @@ export const SignUpValidation = () => {
       .number()
       .typeError("Введите год рождения")
       .min(minYear, `Год должен быть не ранее ${minYear}`)
-      .max(maxYear, `Вам должно быть не менее 18 лет`)
-      .test(
-        "is-valid-date",
-        "Введите корректную дату рождения",
-        function (value) {
-          const { birthDay, birthMonth } = this.parent;
-
-          if (!birthDay || !birthMonth || !value) return false;
-
-          const date = new Date(value, birthMonth - 1, birthDay);
-          const isValid =
-            date.getFullYear() === value &&
-            date.getMonth() === birthMonth - 1 &&
-            date.getDate() === birthDay;
-
-          return isValid;
-        }
-      ),
+      .max(maxYear, `Вам должно быть не менее 18 лет`),
 
     city: yup.string(),
 
@@ -60,8 +43,9 @@ export const SignUpValidation = () => {
       .max(4, "Можно выбрать не более 4 интересов"),
 
     gender: yup.string(),
+
+    photo: yup.string(),
   });
 
   return signUpValidationSchema;
 };
-
