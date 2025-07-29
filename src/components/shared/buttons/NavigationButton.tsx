@@ -14,7 +14,7 @@ export default function NavigationButton({
   return (
     <button
       onClick={onClick}
-      className={`cursor-pointer flex items-center text-[16px] font-normal leading-[120%] text-primary active:brightness-125 
+      className={`cursor-pointer flex items-center text-[16px] font-normal leading-[130%] text-primary active:brightness-125 
     focus-visible:brightness-125 transition duration-300 ease-in-out ${className}`}
     >
       {children}

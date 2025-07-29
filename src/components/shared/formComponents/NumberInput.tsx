@@ -9,16 +9,17 @@ import {
 } from "formik";
 
 import { useId } from "react";
+import { ValuesSignUpFormType } from "@/components/signUpPage/SignUpForm";
 
 interface Values {
-  [fieldName: string]: string;
+  [fieldName: string]: string | string[];
 }
 
 interface NumberInputProps {
   fieldName: string;
   placeholder: string;
-  errors: FormikErrors<Values>;
-  touched: FormikTouched<Values>;
+  errors: FormikErrors<Values | ValuesSignUpFormType>;
+  touched: FormikTouched<Values | ValuesSignUpFormType>;
   label?: string;
   isRequired?: boolean;
   as?: string;

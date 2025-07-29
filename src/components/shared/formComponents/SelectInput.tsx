@@ -9,7 +9,7 @@ interface Option {
 }
 
 interface Values {
-  [fieldName: string]: string;
+  [fieldName: string]: string | string[];
 }
 
 interface SelectProps {

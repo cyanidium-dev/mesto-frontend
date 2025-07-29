@@ -6,7 +6,7 @@ import clsx from "clsx";
 import Image from "next/image";
 
 interface Values {
-  [fieldName: string]: string;
+  [fieldName: string]: string | string[];
 }
 
 interface EmojiRadioOption {

@@ -3,7 +3,6 @@ import { useRouter } from "next/navigation";
 import { FormikProps } from "formik";
 import MainButton from "../shared/buttons/MainButton";
 import SectionTitle from "../shared/titles/SectionTitle";
-import { ValuesSignUpFormType } from "./SignUpForm";
 import AnimatedCheckmark from "../shared/icons/AnimatedCheckmark";
 
 interface StepNineProps {

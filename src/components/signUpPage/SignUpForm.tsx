@@ -27,6 +27,7 @@ export interface ValuesSignUpFormType {
   birthYear: string;
   city: string;
   gender: string;
+  interests: string[];
 }
 
 export default function SignUpForm({
@@ -35,7 +36,7 @@ export default function SignUpForm({
 }: SignUpFormProps) {
   const router = useRouter();
 
-  const initialValues = {
+  const initialValues: ValuesSignUpFormType = {
     email: "",
     code: "",
     name: "",
@@ -44,6 +45,7 @@ export default function SignUpForm({
     birthYear: "",
     city: "",
     gender: "male",
+    interests: [],
   };
 
   const validationSchema = SignUpValidation();

@@ -7,61 +7,61 @@ export const SignUpValidation = () => {
   const minYear = 1900;
   const maxYear = currentYear - 18;
 
-  const signUpValidationSchema = yup
-    .object()
-    .shape({
-      email: yup
-        .string()
-        .matches(emailRegex, "Введите валидный email")
-        .required("Это поле обязательно для заполнения."),
+  const signUpValidationSchema = yup.object().shape({
+    email: yup
+      .string()
+      .matches(emailRegex, "Введите валидный email")
+      .required("Это поле обязательно для заполнения."),
 
-      code: yup.string().required("Это поле обязательно для заполнения."),
+    code: yup.string().required("Это поле обязательно для заполнения."),
 
-      name: yup.string(),
+    name: yup.string(),
 
-      birthDay: yup
-        .number()
-        .typeError("Введите день рождения")
-        .min(1, "День должен быть от 1 до 31")
-        .max(31, "День должен быть от 1 до 31"),
+    birthDay: yup
+      .number()
+      .typeError("Введите день рождения")
+      .min(1, "День должен быть от 1 до 31")
+      .max(31, "День должен быть от 1 до 31"),
 
-      birthMonth: yup
-        .number()
-        .typeError("Введите месяц рождения")
-        .min(1, "Месяц должен быть от 1 до 12")
-        .max(12, "Месяц должен быть от 1 до 12"),
+    birthMonth: yup
+      .number()
+      .typeError("Введите месяц рождения")
+      .min(1, "Месяц должен быть от 1 до 12")
+      .max(12, "Месяц должен быть от 1 до 12"),
 
-      birthYear: yup
-        .number()
-        .typeError("Введите год рождения")
-        .min(minYear, `Год должен быть не ранее ${minYear}`)
-        .max(maxYear, `Вам должно быть не менее 18 лет`),
+    birthYear: yup
+      .number()
+      .typeError("Введите год рождения")
+      .min(minYear, `Год должен быть не ранее ${minYear}`)
+      .max(maxYear, `Вам должно быть не менее 18 лет`)
+      .test(
+        "is-valid-date",
+        "Введите корректную дату рождения",
+        function (value) {
+          const { birthDay, birthMonth } = this.parent;
 
-      city: yup.string(),
+          if (!birthDay || !birthMonth || !value) return false;
 
-      interests: yup
-        .array()
-        .of(yup.string())
-        .max(4, "Можно выбрать не более 4 интересов"),
+          const date = new Date(value, birthMonth - 1, birthDay);
+          const isValid =
+            date.getFullYear() === value &&
+            date.getMonth() === birthMonth - 1 &&
+            date.getDate() === birthDay;
 
-      gender: yup.string(),
-    })
+          return isValid;
+        }
+      ),
 
-    .test(
-      "is-valid-date",
-      "Введите корректную дату рождения",
-      function (values) {
-        const { birthDay, birthMonth, birthYear } = values as any;
+    city: yup.string(),
 
-        const isValidDate =
-          birthDay &&
-          birthMonth &&
-          birthYear &&
-          !isNaN(Date.parse(`${birthYear}-${birthMonth}-${birthDay}`));
+    interests: yup
+      .array()
+      .of(yup.string())
+      .max(4, "Можно выбрать не более 4 интересов"),
 
-        return isValidDate;
-      }
-    );
+    gender: yup.string(),
+  });
 
   return signUpValidationSchema;
 };
+

@@ -14,8 +14,6 @@ interface StepOneProps {
 export default function StepOne({ setCurrentStep, formProps }: StepOneProps) {
   const { errors, touched, values } = formProps;
 
-  console.log(errors, touched, values);
-
   return (
     <div className="flex flex-col flex-1 justify-between h-full">
       <div>

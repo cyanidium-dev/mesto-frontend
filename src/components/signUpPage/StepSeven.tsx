@@ -1,52 +1,9 @@
 import { Dispatch, SetStateAction } from "react";
-import { FormikProps } from "formik";
+import { FieldArray, FormikProps } from "formik";
 import MainButton from "../shared/buttons/MainButton";
 import SectionTitle from "../shared/titles/SectionTitle";
 import { ValuesSignUpFormType } from "./SignUpForm";
-import SelectInput from "../shared/formComponents/SelectInput";
-
-const selectOptions = [
-  {
-    value: "Мадрид",
-    label: "Мадрид",
-  },
-  {
-    value: "Барселона",
-    label: "Барселона",
-  },
-  {
-    value: "Валенсия",
-    label: "Валенсия",
-  },
-  {
-    value: "Севилья",
-    label: "Севилья",
-  },
-  {
-    value: "Сарагоса",
-    label: "Сарагоса",
-  },
-  {
-    value: "Малага",
-    label: "Малага",
-  },
-  {
-    value: "Мурсия",
-    label: "Мурсия",
-  },
-  {
-    value: "Пальма",
-    label: "Пальма",
-  },
-  {
-    value: "Бильбао",
-    label: "Бильбао",
-  },
-  {
-    value: "Аликанте",
-    label: "Аликанте",
-  },
-];
+import ChipCheckboxInput from "../shared/formComponents/ChipCheckboxInput";
 
 interface StepSevenProps {
   setCurrentStep: Dispatch<SetStateAction<number>>;
@@ -57,7 +14,41 @@ export default function StepSeven({
   setCurrentStep,
   formProps,
 }: StepSevenProps) {
-  const { errors, values } = formProps;
+  const { values } = formProps;
+
+  const MAX_SELECTION = 4;
+
+  const options = [
+    "СТО",
+    "Тренера",
+    "Красота",
+    "Успех",
+    "Сила",
+    "Мудрость",
+    "Дисциплина",
+    "Сострадание",
+    "Уверенность",
+    "Творчество",
+    "Стратегия",
+    "Потенциал",
+    "Надежда",
+    "Смелость",
+    "Решительность",
+    "Инновации",
+    "Вдохновение",
+    "Согласие",
+    "Доброта",
+    "Устойчивость",
+    "Энергия",
+    "Целеустремленность",
+    "Честность",
+    "Справедливость",
+    "Гармония",
+  ];
+
+  const selectedInterests = Array.isArray(values.interests)
+    ? values.interests
+    : [];
 
   return (
     <div className="flex-1 flex flex-col justify-between">
@@ -66,19 +57,46 @@ export default function StepSeven({
         <p className="mb-6">
           В каком направлении вы бы хотели найти людей? Выберите до 4 категорий
         </p>
-        <SelectInput
-          fieldName="region"
-          options={selectOptions}
-          required={false}
-          placeholder={"Введите ваш город"}
-        />
+
+        <FieldArray name="interests">
+          {({ push, remove }) => (
+            <div className="flex flex-wrap gap-2">
+              {options.map((option) => {
+                const isSelected = selectedInterests.includes(option);
+
+                const handleClick = () => {
+                  if (isSelected) {
+                    const indexToRemove = selectedInterests.indexOf(option);
+                    remove(indexToRemove);
+                  } else if (selectedInterests.length < MAX_SELECTION) {
+                    push(option);
+                  }
+                };
+
+                return (
+                  <div
+                    key={option}
+                    onClick={handleClick}
+                    className="select-none"
+                  >
+                    <ChipCheckboxInput
+                      fieldName="interests"
+                      label={option}
+                      value={option}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </FieldArray>
       </div>
 
       <MainButton
         variant="primary"
         className="h-12"
         onClick={() => setCurrentStep((prev) => prev + 1)}
-        disabled={!values.city || !!errors.city}
+        disabled={selectedInterests.length === 0}
       >
         Подтвердить
       </MainButton>

@@ -10,16 +10,17 @@ import {
 
 import { useId } from "react";
 import LoaderIcon from "../icons/LoaderIcon";
+import { ValuesSignUpFormType } from "@/components/signUpPage/SignUpForm";
 
 interface Values {
-  [fieldName: string]: string;
+  [fieldName: string]: string | string[];
 }
 
 interface CustomizedInputProps {
   fieldName: string;
   placeholder: string;
-  errors: FormikErrors<Values>;
-  touched: FormikTouched<Values>;
+  errors: FormikErrors<Values | ValuesSignUpFormType>;
+  touched: FormikTouched<Values | ValuesSignUpFormType>;
   label?: string;
   isRequired?: boolean;
   as?: string;
