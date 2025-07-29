@@ -43,7 +43,10 @@ export const SignUpValidation = () => {
         .array()
         .of(yup.string())
         .max(4, "Можно выбрать не более 4 интересов"),
+
+      gender: yup.string(),
     })
+
     .test(
       "is-valid-date",
       "Введите корректную дату рождения",

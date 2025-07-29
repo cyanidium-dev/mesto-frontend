@@ -62,8 +62,11 @@ export default function StepEight({
   return (
     <div className="flex-1 flex flex-col justify-between">
       <div>
-        <SectionTitle className="mb-6">Какого вы пола?</SectionTitle>
-        <p className="mb-6">Ваш пол будет отображаться у вас в профиле</p>
+        <SectionTitle className="mb-6">Добавьте фото</SectionTitle>
+        <p className="mb-6">
+          Фото будет отображаться в вашем профиле и у людей будет больше доверия
+          к вашему профилю
+        </p>
         <SelectInput
           fieldName="region"
           options={selectOptions}

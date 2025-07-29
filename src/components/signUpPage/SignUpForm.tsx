@@ -26,7 +26,7 @@ export interface ValuesSignUpFormType {
   birthMonth: string;
   birthYear: string;
   city: string;
-  sex: string;
+  gender: string;
 }
 
 export default function SignUpForm({
@@ -43,7 +43,7 @@ export default function SignUpForm({
     birthMonth: "",
     birthYear: "",
     city: "",
-    sex: "",
+    gender: "male",
   };
 
   const validationSchema = SignUpValidation();

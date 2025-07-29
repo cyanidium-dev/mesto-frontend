@@ -25,7 +25,7 @@ interface SelectProps {
 
 const labelStyles = "relative flex flex-col gap-y-1 w-full";
 const fieldStyles =
-  "relative w-full h-full px-3 py-[14px] placeholder-dark border rounded-full outline-none transition duration-300 ease-out cursor-pointer";
+  "relative w-full h-full px-3 py-[14px] text-[16px] placeholder-dark border rounded-full outline-none transition duration-300 ease-out cursor-pointer";
 const fieldWrapperStyles =
   "relative before:content-[''] before:absolute before:top-0 before:left-0 before:rounded-full before:w-full before:h-full before:blur-[3px] before:transition before:duration-300 before:ease-out before:will-change-transform";
 const errorStyles = "absolute bottom-[-11px] right-0 text-[9px] text-red";
@@ -86,7 +86,7 @@ export default function SelectInput({
         <ul
           className={`${
             isDropDownOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          } absolute top-full left-0 w-full max-h-[420px] bg-white border border-gray-light rounded-[12px] z-20 mt-0.5 overflow-y-auto shadow-select
+          } absolute top-full left-0 w-full max-h-[420px] text-[16px] bg-white border border-gray-light rounded-[12px] z-20 mt-0.5 overflow-y-auto shadow-select
           transition duration-300 ease-out`}
         >
           {options.map((option) => (

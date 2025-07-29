@@ -62,8 +62,10 @@ export default function StepSeven({
   return (
     <div className="flex-1 flex flex-col justify-between">
       <div>
-        <SectionTitle className="mb-6">Какого вы пола?</SectionTitle>
-        <p className="mb-6">Ваш пол будет отображаться у вас в профиле</p>
+        <SectionTitle className="mb-6">Интересы</SectionTitle>
+        <p className="mb-6">
+          В каком направлении вы бы хотели найти людей? Выберите до 4 категорий
+        </p>
         <SelectInput
           fieldName="region"
           options={selectOptions}
