@@ -50,7 +50,14 @@ export default function StepFour({ setCurrentStep, formProps }: StepFourProps) {
         variant="primary"
         className="h-12"
         onClick={() => setCurrentStep((prev) => prev + 1)}
-        disabled={!values.code || !!errors.code}
+        disabled={
+          !values.birthDay ||
+          !!errors.birthDay ||
+          !values.birthMonth ||
+          !!errors.birthMonth ||
+          !values.birthYear ||
+          !!errors.birthYear
+        }
       >
         Подтвердить
       </MainButton>

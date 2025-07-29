@@ -36,6 +36,8 @@ export const SignUpValidation = () => {
         .typeError("Введите год рождения")
         .min(minYear, `Год должен быть не ранее ${minYear}`)
         .max(maxYear, `Вам должно быть не менее 18 лет`),
+
+      city: yup.string(),
     })
     .test(
       "is-valid-date",

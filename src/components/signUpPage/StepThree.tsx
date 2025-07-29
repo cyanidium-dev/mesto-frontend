@@ -34,7 +34,7 @@ export default function StepThree({
         variant="primary"
         className="h-12"
         onClick={() => setCurrentStep((prev) => prev + 1)}
-        disabled={!values.code || !!errors.code}
+        disabled={!values.name || !!errors.name}
       >
         Подтвердить
       </MainButton>

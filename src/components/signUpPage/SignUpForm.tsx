@@ -26,6 +26,7 @@ export interface ValuesSignUpFormType {
   birthDay: string;
   birthMonth: string;
   birthYear: string;
+  city: string;
 }
 
 export default function SignUpForm({
@@ -41,6 +42,7 @@ export default function SignUpForm({
     birthDay: "",
     birthMonth: "",
     birthYear: "",
+    city: "",
   };
 
   const validationSchema = SignUpValidation();
@@ -67,7 +69,7 @@ export default function SignUpForm({
             ) : currentStep === 4 ? (
               <StepFour formProps={props} setCurrentStep={setCurrentStep} />
             ) : currentStep === 5 ? (
-              <StepFive />
+              <StepFive formProps={props} setCurrentStep={setCurrentStep} />
             ) : currentStep === 6 ? (
               <StepSix />
             ) : currentStep === 7 ? (
