@@ -1,25 +1,23 @@
-"use client";
-
 import { Dispatch, SetStateAction } from "react";
 import { FormikProps } from "formik";
 import Image from "next/image";
-import MainButton from "../shared/buttons/MainButton";
+import { ValuesSignUpFormType } from "./SignUpForm";
 import SectionTitle from "../shared/titles/SectionTitle";
 import CustomizedInput from "../shared/formComponents/CustomizedInput";
-import { ValuesSignInFormType } from "./SignInForm";
+import MainButton from "../shared/buttons/MainButton";
 
 interface StepOneProps {
   setCurrentStep: Dispatch<SetStateAction<number>>;
-  formProps: FormikProps<ValuesSignInFormType>;
+  formProps: FormikProps<ValuesSignUpFormType>;
 }
 
 export default function StepOne({ setCurrentStep, formProps }: StepOneProps) {
   const { errors, touched, values } = formProps;
 
   return (
-    <div className="flex-1 flex flex-col justify-between">
+    <div className="flex flex-col flex-1 justify-between h-full">
       <div>
-        <SectionTitle className="mb-6">Вход в аккаунт</SectionTitle>
+        <SectionTitle className="mb-6">Регистрация</SectionTitle>
         <CustomizedInput
           fieldName="email"
           inputType="email"
@@ -32,7 +30,7 @@ export default function StepOne({ setCurrentStep, formProps }: StepOneProps) {
         />
         <div className="flex flex-col gap-2">
           <p className="text-[12px] font-normal leading-[120%] text-center">
-            Или войти через:
+            Или зарегистрироваться с помощью:
           </p>
           <MainButton variant="bordered" className="h-10">
             <Image

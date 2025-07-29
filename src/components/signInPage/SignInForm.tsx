@@ -1,19 +1,25 @@
 "use client";
-import { Form, Formik, FormikHelpers } from "formik";
-import { useState } from "react";
-import { SignInValidation } from "@/schemas/signInValidation";
+import { Dispatch, SetStateAction } from "react";
 import { useRouter } from "next/navigation";
+import { Form, Formik } from "formik";
+import { SignInValidation } from "@/schemas/signInValidation";
 import StepOne from "./StepOne";
 import StepTwo from "./StepTwo";
+
+interface SignInFormProps {
+  currentStep: number;
+  setCurrentStep: Dispatch<SetStateAction<number>>;
+}
 
 export interface ValuesSignInFormType {
   email: string;
   code: string;
 }
 
-export default function SignInForm() {
-  const [currentStep, setCurrentStep] = useState(1);
-
+export default function SignInForm({
+  currentStep,
+  setCurrentStep,
+}: SignInFormProps) {
   const router = useRouter();
 
   const initialValues = {
@@ -35,7 +41,7 @@ export default function SignInForm() {
         validationSchema={validationSchema}
       >
         {(props) => (
-          <Form className="">
+          <Form className="flex-1 flex flex-col h-full">
             {currentStep === 1 ? (
               <StepOne formProps={props} setCurrentStep={setCurrentStep} />
             ) : (
