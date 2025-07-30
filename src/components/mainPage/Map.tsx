@@ -48,7 +48,6 @@ function MapEventsHandler({
 
       // Оновлюємо центр, тільки якщо зміна більше 10 метрів
       if (distance > 10) {
-        console.log("moveend", newCenter);
         prevCenterRef.current = [newCenter.lat, newCenter.lng];
         onCenterChange([newCenter.lat, newCenter.lng]);
       }
@@ -74,7 +73,7 @@ export default function Map({ center, onCenterChange }: MapProps) {
           console.error("Geolocation error:", error);
           alert("Не вдалося визначити вашу позицію.");
         },
-        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
       );
     }
   };
