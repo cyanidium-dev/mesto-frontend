@@ -43,9 +43,9 @@ export default function Main() {
           // Можна додати UI повідомлення користувачу, якщо потрібно
         },
         {
-          enableHighAccuracy: false, // зменшуємо точність для швидшого визначення
-          timeout: 15000, // збільшуємо таймаут до 15 секунд
-          maximumAge: 60000, // дозволяємо використовувати кешовану позицію до 1 хвилини
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 10000,
         }
       );
     }
