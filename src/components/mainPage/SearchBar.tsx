@@ -31,7 +31,7 @@ export default function SearchBar({ viewMode, setViewMode }: SearchBarProps) {
   const [distanceValue, setDistanceValue] = useState<Selection>(new Set([]));
 
   return (
-    <div className="fixed top-2 left-0 w-full max-w-[440px]">
+    <div className="fixed z-50 top-2 left-0 w-full max-w-[440px]">
       <div className="w-full px-4">
         {" "}
         <div className="flex gap-3 justify-between items-center mb-2">

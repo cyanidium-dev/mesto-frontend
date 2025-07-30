@@ -15,13 +15,14 @@ export default function TabMenu({ viewMode, setViewMode }: TabMenuProps) {
 
   return (
     <Tabs
+      selectedKey={viewMode}
       onSelectionChange={(key) => handleTabChange(key as "map" | "list")}
       classNames={{
         base: "bg-transparent",
         tabList: `${
           viewMode === "map" ? "bg-white" : "bg-gray-ultra-light"
         } h-9 rounded-full w-full transition duration-300 ease-in-out`,
-        cursor: "block bg-accent rounded-full",
+        cursor: "block bg-primary rounded-full",
         tab: "w-7 h-7",
       }}
     >
