@@ -29,6 +29,8 @@ export default function Main() {
           ];
           setUserLocation(coords);
 
+          alert(`User location ${coords}`);
+
           setMapCenter((currentCenter) => {
             const defaultCenter = [41.5463, 2.1086];
             const isDefaultCenter =
