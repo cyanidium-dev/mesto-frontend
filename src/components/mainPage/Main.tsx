@@ -30,7 +30,7 @@ export default function Main() {
           setUserLocation(coords);
 
           setMapCenter((currentCenter) => {
-            const defaultCenter = [41.5463, 2.1086];
+            const defaultCenter = [50.0755, 14.4378];
             const isDefaultCenter =
               currentCenter[0] === defaultCenter[0] &&
               currentCenter[1] === defaultCenter[1];
