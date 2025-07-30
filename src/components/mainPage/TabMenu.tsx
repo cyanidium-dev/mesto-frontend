@@ -18,7 +18,9 @@ export default function TabMenu({ viewMode, setViewMode }: TabMenuProps) {
       onSelectionChange={(key) => handleTabChange(key as "map" | "list")}
       classNames={{
         base: "bg-transparent",
-        tabList: "bg-white h-9 rounded-full w-full",
+        tabList: `${
+          viewMode === "map" ? "bg-white" : "bg-gray-ultra-light"
+        } h-9 rounded-full w-full transition duration-300 ease-in-out`,
         cursor: "block bg-accent rounded-full",
         tab: "w-7 h-7",
       }}
@@ -28,7 +30,9 @@ export default function TabMenu({ viewMode, setViewMode }: TabMenuProps) {
         key="list"
         title={
           <BurgerIcon
-            className={viewMode === "list" ? "text-white" : "text-dark"}
+            className={`${
+              viewMode === "list" ? "text-white" : "text-dark"
+            } transition duration-300 ease-in-out`}
           />
         }
       />
