@@ -1,25 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SearchBar from "./SearchBar";
 import dynamic from "next/dynamic";
 import List from "./List";
+import { useLocationStore } from "@/store/locationStore";
 
-const Map = dynamic(() => import("./Map"), {
-  ssr: false, // виключає серверний рендеринг для цього компонента
-});
+const Map = dynamic(() => import("./Map"), { ssr: false });
 
 export default function Main() {
   const [viewMode, setViewMode] = useState<"map" | "list">("map");
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(
-    null
-  );
-  const [mapCenter, setMapCenter] = useState<[number, number]>([
-    50.0755, 14.4378,
-  ]);
 
-  // Отримати геолокацію при першому завантаженні, встановити userLocation і лише якщо mapCenter дефолтний — оновити його
+  const userLocation = useLocationStore((s) => s.userLocation);
+  const setUserLocation = useLocationStore((s) => s.setUserLocation);
+  const mapCenter = useLocationStore((s) => s.mapCenter);
+  const setMapCenter = useLocationStore((s) => s.setMapCenter);
+
+  const initialized = useRef(false);
+
   useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+
+    // Якщо userLocation вже є в сторі (persisted), то просто встановлюємо центр карти
+    if (userLocation) {
+      // Встановлюємо центр карти лише, якщо він ще дефолтний
+      const defaultCenter: [number, number] = [50.0755, 14.4378];
+      const isDefaultCenter =
+        mapCenter[0] === defaultCenter[0] && mapCenter[1] === defaultCenter[1];
+
+      if (isDefaultCenter) {
+        setMapCenter(userLocation);
+      }
+      return; // немає потреби заново запитувати геолокацію
+    }
+
+    // Якщо userLocation відсутній, запитуємо геолокацію
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -29,18 +45,17 @@ export default function Main() {
           ];
           setUserLocation(coords);
 
-          setMapCenter((currentCenter) => {
-            const defaultCenter = [50.0755, 14.4378];
-            const isDefaultCenter =
-              currentCenter[0] === defaultCenter[0] &&
-              currentCenter[1] === defaultCenter[1];
+          const defaultCenter: [number, number] = [50.0755, 14.4378];
+          const isDefaultCenter =
+            mapCenter[0] === defaultCenter[0] &&
+            mapCenter[1] === defaultCenter[1];
 
-            return isDefaultCenter ? coords : currentCenter;
-          });
+          if (isDefaultCenter) {
+            setMapCenter(coords);
+          }
         },
         (error) => {
           console.error("Geolocation error:", error);
-          // Можна додати UI повідомлення користувачу, якщо потрібно
         },
         {
           enableHighAccuracy: true,
@@ -49,7 +64,7 @@ export default function Main() {
         }
       );
     }
-  }, []);
+  }, [userLocation, mapCenter, setMapCenter, setUserLocation]);
 
   return (
     <>
