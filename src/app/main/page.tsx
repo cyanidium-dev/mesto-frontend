@@ -1,10 +1,9 @@
-import Container from "@/components/shared/container/Container";
-import Navbar from "@/components/shared/navbar/Navbar";
+import Main from "@/components/mainPage/Main";
 
 export default function MainPage() {
   return (
-    <div>
-        Main page
-    </div>
+    <>
+      <Main />
+    </>
   );
 }
