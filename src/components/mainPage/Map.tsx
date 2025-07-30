@@ -18,7 +18,7 @@ function UpdateMapCenter({ center }: { center: [number, number] }) {
 
   useEffect(() => {
     if (center) {
-      map.flyTo(center, map.getZoom(), { animate: true, duration: 0.5 });
+      map.flyTo(center, map.getZoom(), { animate: true, duration: 1 });
     }
   }, [center, map]);
 
