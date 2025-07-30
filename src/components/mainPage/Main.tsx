@@ -21,24 +21,33 @@ export default function Main() {
   // Отримати геолокацію при першому завантаженні, встановити userLocation і лише якщо mapCenter дефолтний — оновити його
   useEffect(() => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((pos) => {
-        const coords: [number, number] = [
-          pos.coords.latitude,
-          pos.coords.longitude,
-        ];
-        setUserLocation(coords);
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const coords: [number, number] = [
+            pos.coords.latitude,
+            pos.coords.longitude,
+          ];
+          setUserLocation(coords);
 
-        setMapCenter((currentCenter) => {
-          // Якщо центр карти ще дефолтний, оновлюємо на userLocation
-          // Інакше залишаємо як є (щоб не скидати, якщо користувач уже змінив центр)
-          const defaultCenter = [41.5463, 2.1086];
-          const isDefaultCenter =
-            currentCenter[0] === defaultCenter[0] &&
-            currentCenter[1] === defaultCenter[1];
+          setMapCenter((currentCenter) => {
+            const defaultCenter = [41.5463, 2.1086];
+            const isDefaultCenter =
+              currentCenter[0] === defaultCenter[0] &&
+              currentCenter[1] === defaultCenter[1];
 
-          return isDefaultCenter ? coords : currentCenter;
-        });
-      });
+            return isDefaultCenter ? coords : currentCenter;
+          });
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          // Можна додати UI повідомлення користувачу, якщо потрібно
+        },
+        {
+          enableHighAccuracy: false, // зменшуємо точність для швидшого визначення
+          timeout: 15000, // збільшуємо таймаут до 15 секунд
+          maximumAge: 60000, // дозволяємо використовувати кешовану позицію до 1 хвилини
+        }
+      );
     }
   }, []);
 
