@@ -7,7 +7,7 @@ export default function Main() {
   const [viewMode, setViewMode] = useState<"map" | "list">("map");
 
   return (
-    <Container className="mt-2">
+    <Container className="mt-2 min-h-screen">
       <SearchBar viewMode={viewMode} setViewMode={setViewMode} />
     </Container>
   );
