@@ -21,50 +21,43 @@ export default function Main() {
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
-
-    // Якщо userLocation вже є в сторі (persisted), то просто встановлюємо центр карти
-    if (userLocation) {
-      // Встановлюємо центр карти лише, якщо він ще дефолтний
-      const defaultCenter: [number, number] = [50.0755, 14.4378];
-      const isDefaultCenter =
-        mapCenter[0] === defaultCenter[0] && mapCenter[1] === defaultCenter[1];
-
-      if (isDefaultCenter) {
-        setMapCenter(userLocation);
-      }
-      return; // немає потреби заново запитувати геолокацію
+    console.log(mapCenter);
+    console.log(userLocation);
+    // Якщо вже маємо userLocation — ставимо його як центр
+    if (mapCenter[0] === 50.0755 && mapCenter[1] === 14.4378 && userLocation) {
+      setMapCenter(userLocation);
     }
 
-    // Якщо userLocation відсутній, запитуємо геолокацію
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const coords: [number, number] = [
-            pos.coords.latitude,
-            pos.coords.longitude,
-          ];
-          setUserLocation(coords);
-
-          const defaultCenter: [number, number] = [50.0755, 14.4378];
-          const isDefaultCenter =
-            mapCenter[0] === defaultCenter[0] &&
-            mapCenter[1] === defaultCenter[1];
-
-          if (isDefaultCenter) {
+    if (mapCenter[0] === 50.0755 && mapCenter[1] === 14.4378 && !userLocation) {
+      // Отримуємо геолокацію
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const coords: [number, number] = [
+              pos.coords.latitude,
+              pos.coords.longitude,
+            ];
+            setUserLocation(coords);
             setMapCenter(coords);
+          },
+          (error) => {
+            // Якщо не вдалося — ставимо Прагу
+            setMapCenter([50.0755, 14.4378]);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 10000,
           }
-        },
-        (error) => {
-          console.error("Geolocation error:", error);
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 10000,
-        }
-      );
+        );
+      } else {
+        // Якщо браузер не підтримує геолокацію — теж ставимо Прагу
+        setMapCenter([50.0755, 14.4378]);
+      }
     }
-  }, [userLocation, mapCenter, setMapCenter, setUserLocation]);
+  }, [userLocation]);
+
+  console.log(userLocation);
 
   return (
     <>

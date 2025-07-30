@@ -50,6 +50,7 @@ function MapEventsHandler({
       if (distance > 10) {
         prevCenterRef.current = [newCenter.lat, newCenter.lng];
         onCenterChange([newCenter.lat, newCenter.lng]);
+        console.log(center);
       }
     },
   });
