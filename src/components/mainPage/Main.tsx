@@ -15,7 +15,7 @@ export default function Main() {
     null
   );
   const [mapCenter, setMapCenter] = useState<[number, number]>([
-    41.5463, 2.1086,
+    50.0755, 14.4378,
   ]);
 
   // Отримати геолокацію при першому завантаженні, встановити userLocation і лише якщо mapCenter дефолтний — оновити його
