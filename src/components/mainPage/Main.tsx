@@ -1,55 +1,63 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SearchBar from "./SearchBar";
 import dynamic from "next/dynamic";
 import List from "./List";
+import { useLocationStore } from "@/store/locationStore";
 
-const Map = dynamic(() => import("./Map"), {
-  ssr: false, // виключає серверний рендеринг для цього компонента
-});
+const Map = dynamic(() => import("./Map"), { ssr: false });
 
 export default function Main() {
   const [viewMode, setViewMode] = useState<"map" | "list">("map");
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(
-    null
-  );
-  const [mapCenter, setMapCenter] = useState<[number, number]>([
-    41.5463, 2.1086,
-  ]);
 
-  // Отримати геолокацію при першому завантаженні, встановити userLocation і лише якщо mapCenter дефолтний — оновити його
+  const userLocation = useLocationStore((s) => s.userLocation);
+  const setUserLocation = useLocationStore((s) => s.setUserLocation);
+  const mapCenter = useLocationStore((s) => s.mapCenter);
+  const setMapCenter = useLocationStore((s) => s.setMapCenter);
+
+  const initialized = useRef(false);
+
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const coords: [number, number] = [
-            pos.coords.latitude,
-            pos.coords.longitude,
-          ];
-          setUserLocation(coords);
-
-          setMapCenter((currentCenter) => {
-            const defaultCenter = [41.5463, 2.1086];
-            const isDefaultCenter =
-              currentCenter[0] === defaultCenter[0] &&
-              currentCenter[1] === defaultCenter[1];
-
-            return isDefaultCenter ? coords : currentCenter;
-          });
-        },
-        (error) => {
-          console.error("Geolocation error:", error);
-          // Можна додати UI повідомлення користувачу, якщо потрібно
-        },
-        {
-          enableHighAccuracy: false, // зменшуємо точність для швидшого визначення
-          timeout: 15000, // збільшуємо таймаут до 15 секунд
-          maximumAge: 60000, // дозволяємо використовувати кешовану позицію до 1 хвилини
-        }
-      );
+    if (initialized.current) return;
+    initialized.current = true;
+    console.log(mapCenter);
+    console.log(userLocation);
+    // Якщо вже маємо userLocation — ставимо його як центр
+    if (mapCenter[0] === 50.0755 && mapCenter[1] === 14.4378 && userLocation) {
+      setMapCenter(userLocation);
     }
-  }, []);
+
+    if (mapCenter[0] === 50.0755 && mapCenter[1] === 14.4378 && !userLocation) {
+      // Отримуємо геолокацію
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const coords: [number, number] = [
+              pos.coords.latitude,
+              pos.coords.longitude,
+            ];
+            setUserLocation(coords);
+            setMapCenter(coords);
+          },
+          (error) => {
+            // Якщо не вдалося — ставимо Прагу
+            setMapCenter([50.0755, 14.4378]);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 10000,
+          }
+        );
+      } else {
+        // Якщо браузер не підтримує геолокацію — теж ставимо Прагу
+        setMapCenter([50.0755, 14.4378]);
+      }
+    }
+  }, [userLocation]);
+
+  console.log(userLocation);
 
   return (
     <>

@@ -48,9 +48,9 @@ function MapEventsHandler({
 
       // Оновлюємо центр, тільки якщо зміна більше 10 метрів
       if (distance > 10) {
-        console.log("moveend", newCenter);
         prevCenterRef.current = [newCenter.lat, newCenter.lng];
         onCenterChange([newCenter.lat, newCenter.lng]);
+        console.log(center);
       }
     },
   });
@@ -74,7 +74,7 @@ export default function Map({ center, onCenterChange }: MapProps) {
           console.error("Geolocation error:", error);
           alert("Не вдалося визначити вашу позицію.");
         },
-        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
       );
     }
   };
@@ -94,7 +94,7 @@ export default function Map({ center, onCenterChange }: MapProps) {
         <MapEventsHandler onCenterChange={onCenterChange} center={center} />
       </MapContainer>
 
-      <div className="pointer-events-none absolute inset-0 bg-[rgba(173,216,230,0.5)] mix-blend-multiply z-[1]" />
+      <div className="pointer-events-none absolute inset-0 bg-[rgba(173,216,230,0.3)] mix-blend-multiply z-[1]" />
 
       <button
         onClick={handleGeolocate}
