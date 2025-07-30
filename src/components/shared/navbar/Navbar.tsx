@@ -35,7 +35,6 @@ export default function Navbar() {
       pathname === "/profile" ||
       pathname === "/notifications" ? (
         <Container className={`fixed bottom-0 left-0 z-50`}>
-          {" "}
           <Tabs
             onSelectionChange={(key) => handleTabChange(key as string)}
             aria-label="navigation"
