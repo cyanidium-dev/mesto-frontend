@@ -74,7 +74,7 @@ export default function Map({ center, onCenterChange }: MapProps) {
           console.error("Geolocation error:", error);
           alert("Не вдалося визначити вашу позицію.");
         },
-        { enableHighAccuracy: true, timeout: 7000, maximumAge: 0 }
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
       );
     }
   };
