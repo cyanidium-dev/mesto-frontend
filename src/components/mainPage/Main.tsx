@@ -58,7 +58,6 @@ export default function Main() {
       }
     }
   }, [userLocation]);
-  
 
   return (
     <>
@@ -67,7 +66,6 @@ export default function Main() {
         <Map
           center={mapCenter}
           onCenterChange={setMapCenter}
-          userLocation={userLocation}
           markers={businesses}
         />
       ) : (
