@@ -5,6 +5,7 @@ import SearchBar from "./SearchBar";
 import dynamic from "next/dynamic";
 import List from "./List";
 import { useLocationStore } from "@/store/locationStore";
+import { useNearbyBusinesses } from "@/hooks/useNearbyBusinesses";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
@@ -18,11 +19,12 @@ export default function Main() {
 
   const initialized = useRef(false);
 
+  const businesses = useNearbyBusinesses();
+
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
-    console.log(mapCenter);
-    console.log(userLocation);
+
     // Якщо вже маємо userLocation — ставимо його як центр
     if (mapCenter[0] === 50.0755 && mapCenter[1] === 14.4378 && userLocation) {
       setMapCenter(userLocation);
@@ -57,8 +59,6 @@ export default function Main() {
     }
   }, [userLocation]);
 
-  console.log(userLocation);
-
   return (
     <>
       <SearchBar viewMode={viewMode} setViewMode={setViewMode} />
@@ -66,7 +66,7 @@ export default function Main() {
         <Map
           center={mapCenter}
           onCenterChange={setMapCenter}
-          userLocation={userLocation}
+          markers={businesses}
         />
       ) : (
         <List />
