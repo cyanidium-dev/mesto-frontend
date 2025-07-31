@@ -69,7 +69,7 @@ export default function Main() {
           markers={businesses}
         />
       ) : (
-        <List />
+        <List businesses={businesses} />
       )}
     </>
   );

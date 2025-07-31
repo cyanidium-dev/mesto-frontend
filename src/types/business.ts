@@ -6,4 +6,5 @@ export interface Business {
   description: string;
   imageUrl: string;
   position: LatLngExpression;
+  category?: string;
 }
