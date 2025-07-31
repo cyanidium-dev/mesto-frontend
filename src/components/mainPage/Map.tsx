@@ -5,11 +5,13 @@ import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import LocateIcon from "../shared/icons/LocateIcon";
+import { Business } from "@/types/business";
 
 interface MapProps {
   center: [number, number];
   onCenterChange: (center: [number, number]) => void;
   userLocation: [number, number] | null;
+  markers: Business[];
 }
 
 // Компонент, що плавно оновлює центр карти через API leaflet
@@ -50,7 +52,6 @@ function MapEventsHandler({
       if (distance > 10) {
         prevCenterRef.current = [newCenter.lat, newCenter.lng];
         onCenterChange([newCenter.lat, newCenter.lng]);
-        console.log(center);
       }
     },
   });
@@ -58,7 +59,7 @@ function MapEventsHandler({
   return null;
 }
 
-export default function Map({ center, onCenterChange }: MapProps) {
+export default function Map({ center, onCenterChange, markers }: MapProps) {
   // Кнопка "геолокація"
   const handleGeolocate = () => {
     if (navigator.geolocation) {
