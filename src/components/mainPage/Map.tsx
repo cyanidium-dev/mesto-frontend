@@ -104,7 +104,7 @@ export default function Map({
     <div className="relative max-w-[440px]">
       <MapContainer
         center={center}
-        zoom={15}
+        zoom={17}
         className="h-[100dvh] w-full z-0"
         style={{
           filter: "brightness(1.05) saturate(1.4) contrast(0.9)",
@@ -143,8 +143,8 @@ export default function Map({
             <Marker key={business.id} position={business.position} icon={icon}>
               <Popup>
                 <div className="text-sm">
-                  <strong>{business.title}</strong>
-                  <p>{business.description}</p>
+                  <h3 className="font-semibold">{business.title}</h3>
+                  <p className="mb-0! mt-2!">{business.description}</p>
                 </div>
               </Popup>
             </Marker>
