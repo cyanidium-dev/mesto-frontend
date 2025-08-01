@@ -174,7 +174,9 @@ export default function Map({ center, onCenterChange, markers }: MapProps) {
                 <Popup>
                   <div className="text-sm">
                     <h3 className="font-semibold">{business.title}</h3>
-                    <p className="mb-0! mt-2!">{business.description}</p>
+                    <p className="mb-0! mt-2! line-clamp-3">
+                      {business.description}
+                    </p>
                   </div>
                 </Popup>
               </Marker>
