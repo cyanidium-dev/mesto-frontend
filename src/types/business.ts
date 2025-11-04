@@ -5,15 +5,15 @@ export interface Business {
     userType: "business" | "individual";
     title?: string;
     description: string;
-    imageUrls: string[];
-    position: LatLngExpression;
+    imageUrls?: string[];
+    location: LatLngExpression;
     category: string;
     languages: string[];
     tags: string[];
-    workingHours: {
+    workingHours?: ({
         start: string;
         end: string;
-    }[];
+    } | null)[];
     socialMediaUrls?: string[];
     creatorId: string;
     services?: string[];

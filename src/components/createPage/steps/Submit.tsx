@@ -5,19 +5,22 @@ import { useRouter } from "next/navigation";
 import MainButton from "../../shared/buttons/MainButton";
 import SectionTitle from "../../shared/titles/SectionTitle";
 import { useEventsStore } from "@/store/eventsStore";
+import { useBusinessStore } from "@/store/businessStore";
 import { useUserStore } from "@/store/userStore";
 import { EventFormValues, BusinessFormValues } from "@/types/formValues";
 import { Event } from "@/types/event";
+import { Business } from "@/types/business";
 
 interface SubmitProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;
     formProps: FormikProps<EventFormValues | BusinessFormValues>;
 }
 
-export const Submit = ({ setCurrentStep, formProps }: SubmitProps) => {
+export const Submit = ({ formProps }: SubmitProps) => {
     const { values, handleSubmit, isSubmitting } = formProps;
     const router = useRouter();
     const addEvent = useEventsStore(s => s.addEvent);
+    const addBusiness = useBusinessStore(s => s.addBusiness);
     const currentUser = useUserStore(s => s.currentUser);
 
     const isEventForm = (
@@ -27,37 +30,60 @@ export const Submit = ({ setCurrentStep, formProps }: SubmitProps) => {
     };
 
     const handleSave = () => {
-        if (!currentUser) {
-            console.error("User not logged in");
-            return;
-        }
-
         if (isEventForm(values)) {
+            const eventValues: EventFormValues = values;
+            console.log("📸 Saving Event with imageUrls:", eventValues.imageUrls);
+            console.log("📸 ImageUrls length:", eventValues.imageUrls?.length);
+            console.log("📸 First imageUrl:", eventValues.imageUrls?.[0]?.substring(0, 50) + "...");
             const newEvent: Event = {
                 id: `event-${Date.now()}`,
-                category: values.category,
-                languages: values.languages,
-                tags: values.tags,
-                title: values.title,
-                description: values.description,
-                imageUrls: values.imageUrls,
-                socialMediaUrls: values.socialLinks,
-                position: values.position!,
-                startDate: new Date(values.startDate),
-                startTime: values.startTime,
+                category: eventValues.category,
+                languages: eventValues.languages,
+                tags: eventValues.tags,
+                title: eventValues.title,
+                description: eventValues.description,
+                imageUrls: eventValues.imageUrls,
+                socialMediaUrls: eventValues.socialMediaUrls,
+                location: eventValues.position!,
+                startDate: new Date(eventValues.startDate),
+                startTime: eventValues.startTime,
                 endDate:
-                    values.hasEndDate && values.endDate
-                        ? new Date(values.endDate)
+                    eventValues.hasEndDate && eventValues.endDate
+                        ? new Date(eventValues.endDate)
                         : undefined,
-                endTime: values.endTime,
-                creatorId: currentUser.id,
+                endTime:
+                    eventValues.hasEndTime && eventValues.endTime
+                        ? eventValues.endTime
+                        : undefined,
+                creatorId: currentUser?.id || "anonymous",
                 attendees: [],
+                siteLink: eventValues.siteLink,
             };
+            console.log("✅ Event saved:", newEvent);
             addEvent(newEvent);
         } else {
-            // Handle business form submission
-            // TODO: Implement business form submission
-            console.log("Business form submission not yet implemented", values);
+            const businessValues: BusinessFormValues = values;
+            console.log("📸 Saving Business with imageUrls:", businessValues.imageUrls);
+            console.log("📸 ImageUrls length:", businessValues.imageUrls?.length);
+            console.log("📸 First imageUrl:", businessValues.imageUrls?.[0]?.substring(0, 50) + "...");
+            const newBusiness: Business = {
+                id: `business-${Date.now()}`,
+                userType: businessValues.userType,
+                category: businessValues.category,
+                languages: businessValues.languages,
+                tags: businessValues.tags,
+                title: businessValues.title,
+                description: businessValues.description,
+                imageUrls: businessValues.imageUrls,
+                socialMediaUrls: businessValues.socialMediaUrls,
+                location: businessValues.position!,
+                workingHours: businessValues.workingHours,
+                services: businessValues.services,
+                creatorId: currentUser?.id || "anonymous",
+                siteLink: businessValues.siteLink,
+            };
+            console.log("✅ Business saved:", newBusiness);
+            addBusiness(newBusiness);
         }
         handleSubmit();
     };
@@ -71,7 +97,9 @@ export const Submit = ({ setCurrentStep, formProps }: SubmitProps) => {
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
             <div>
-                <SectionTitle className="mb-6">Событие создано!</SectionTitle>
+                <SectionTitle className="mb-6">
+                    {isEventForm(values) ? "Событие создано!" : "Бизнес создан!"}
+                </SectionTitle>
                 <div className="space-y-4">
                     <div>
                         <p className="text-[12px] text-gray-placeholder mb-1">

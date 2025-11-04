@@ -4,7 +4,7 @@ import { StepZero } from "./steps/StepZero";
 import { LangCategory } from "./steps/LangCategory";
 import { Interests } from "./steps/Interests";
 import { Title } from "./steps/Title";
-import { EvetDateTime } from "./steps/EvetDateTime";
+import { EventDateTime } from "./steps/EventDateTime";
 import { Location } from "./steps/Location";
 import { DescriptionSocials } from "./steps/DescriptionSocials";
 import { ImagesUpload } from "./steps/ImagesUpload";
@@ -24,16 +24,23 @@ import { FormikProps } from "formik";
 interface CreateFormProps {
     currentStep: number;
     setCurrentStep: Dispatch<SetStateAction<number>>;
+    onCreateTypeChange?: (type: "event" | "business" | null) => void;
 }
 
 export const CreateForm = ({
     currentStep,
     setCurrentStep,
+    onCreateTypeChange,
 }: CreateFormProps) => {
     const router = useRouter();
     const [createType, setCreateType] = useState<"event" | "business" | null>(
         null
     );
+
+    const handleCreateTypeChange = (type: "event" | "business" | null) => {
+        setCreateType(type);
+        onCreateTypeChange?.(type);
+    };
 
     const submitForm = () => {
         router.push("/main");
@@ -49,17 +56,18 @@ export const CreateForm = ({
         startTime: "",
         hasEndDate: false,
         endDate: "",
+        hasEndTime: false,
         endTime: "",
         position: null,
         description: "",
-        socialLinks: [],
+        socialMediaUrls: [],
         siteLink: "",
         imageUrls: [],
     };
 
     const businessInitialValues: BusinessFormValues = {
         type: "",
-        userType: "company",
+        userType: "business",
         category: "",
         languages: [],
         tags: [],
@@ -67,7 +75,7 @@ export const CreateForm = ({
         workingHours: [],
         position: null,
         description: "",
-        socialLinks: [],
+        socialMediaUrls: [],
         siteLink: "",
         imageUrls: [],
         services: [],
@@ -77,7 +85,7 @@ export const CreateForm = ({
         return (
             <StepZero
                 setCreateType={(type: "event" | "business") => {
-                    setCreateType(type);
+                    handleCreateTypeChange(type);
                     setCurrentStep(1);
                 }}
             />
@@ -118,7 +126,7 @@ export const CreateForm = ({
                                 setCurrentStep={setCurrentStep}
                             />
                         ) : currentStep === 4 ? (
-                            <EvetDateTime
+                            <EventDateTime
                                 formProps={props}
                                 setCurrentStep={setCurrentStep}
                             />
@@ -168,76 +176,151 @@ export const CreateForm = ({
             onSubmit={submitForm}
             enableReinitialize
         >
-            {props => (
-                <>
-                    {currentStep === 1 ? (
-                        <BussinessType
-                            formProps={props}
-                            setCurrentStep={setCurrentStep}
-                        />
-                    ) : currentStep === 2 ? (
-                        <LangCategory
-                            formProps={
-                                props as unknown as FormikProps<BaseFormValues>
-                            }
-                            setCurrentStep={setCurrentStep}
-                        />
-                    ) : currentStep === 3 ? (
-                        <Interests
-                            formProps={
-                                props as unknown as FormikProps<
-                                    BaseFormValues & { tagPreset?: string }
-                                >
-                            }
-                            setCurrentStep={setCurrentStep}
-                        />
-                    ) : currentStep === 4 ? (
-                        <Title
-                            formProps={
-                                props as unknown as FormikProps<BaseFormValues>
-                            }
-                            setCurrentStep={setCurrentStep}
-                        />
-                    ) : currentStep === 5 ? (
-                        <WorkingHours
-                            formProps={props}
-                            setCurrentStep={setCurrentStep}
-                        />
-                    ) : currentStep === 6 ? (
-                        <Location
-                            formProps={
-                                props as unknown as FormikProps<
-                                    EventFormValues | BusinessFormValues
-                                >
-                            }
-                            setCurrentStep={setCurrentStep}
-                        />
-                    ) : currentStep === 7 ? (
-                        <DescriptionSocials
-                            formProps={
-                                props as unknown as FormikProps<BaseFormValues>
-                            }
-                            setCurrentStep={setCurrentStep}
-                        />
-                    ) : currentStep === 8 ? (
-                        <ImagesUpload
-                            formProps={
-                                props as unknown as FormikProps<BaseFormValues>
-                            }
-                            setCurrentStep={setCurrentStep}
-                        />
-                    ) : (
-                        <Submit
-                            formProps={
-                                props as unknown as FormikProps<
-                                    EventFormValues | BusinessFormValues
-                                >
-                            }
-                            setCurrentStep={setCurrentStep}
-                        />
-                    )}
-                </>
-            )}
+            {props => {
+                const isIndividual = props.values.userType === "individual";
+                // Skip Title step (step 4) for individual users
+                const getBusinessStep = () => {
+                    if (currentStep === 1) {
+                        return <BussinessType formProps={props} setCurrentStep={setCurrentStep} />;
+                    } else if (currentStep === 2) {
+                        return (
+                            <LangCategory
+                                formProps={
+                                    props as unknown as FormikProps<BaseFormValues>
+                                }
+                                setCurrentStep={setCurrentStep}
+                            />
+                        );
+                    } else if (currentStep === 3) {
+                        return (
+                            <Interests
+                                formProps={
+                                    props as unknown as FormikProps<
+                                        BaseFormValues & { tagPreset?: string }
+                                    >
+                                }
+                                setCurrentStep={setCurrentStep}
+                            />
+                        );
+                    } else if (currentStep === 4) {
+                        // Skip Title step for individual, go to WorkingHours
+                        if (isIndividual) {
+                            return (
+                                <WorkingHours
+                                    formProps={props}
+                                    setCurrentStep={setCurrentStep}
+                                />
+                            );
+                        }
+                        return (
+                            <Title
+                                formProps={
+                                    props as unknown as FormikProps<BaseFormValues>
+                                }
+                                setCurrentStep={setCurrentStep}
+                            />
+                        );
+                    } else if (currentStep === 5) {
+                        // For individual: Location, for business: WorkingHours
+                        if (isIndividual) {
+                            return (
+                                <Location
+                                    formProps={
+                                        props as unknown as FormikProps<
+                                            EventFormValues | BusinessFormValues
+                                        >
+                                    }
+                                    setCurrentStep={setCurrentStep}
+                                />
+                            );
+                        }
+                        return (
+                            <WorkingHours
+                                formProps={props}
+                                setCurrentStep={setCurrentStep}
+                            />
+                        );
+                    } else if (currentStep === 6) {
+                        // For individual: DescriptionSocials, for business: Location
+                        if (isIndividual) {
+                            return (
+                                <DescriptionSocials
+                                    formProps={
+                                        props as unknown as FormikProps<BaseFormValues>
+                                    }
+                                    setCurrentStep={setCurrentStep}
+                                />
+                            );
+                        }
+                        return (
+                            <Location
+                                formProps={
+                                    props as unknown as FormikProps<
+                                        EventFormValues | BusinessFormValues
+                                    >
+                                }
+                                setCurrentStep={setCurrentStep}
+                            />
+                        );
+                    } else if (currentStep === 7) {
+                        // For individual: ImagesUpload, for business: DescriptionSocials
+                        if (isIndividual) {
+                            return (
+                                <ImagesUpload
+                                    formProps={
+                                        props as unknown as FormikProps<BaseFormValues>
+                                    }
+                                    setCurrentStep={setCurrentStep}
+                                />
+                            );
+                        }
+                        return (
+                            <DescriptionSocials
+                                formProps={
+                                    props as unknown as FormikProps<BaseFormValues>
+                                }
+                                setCurrentStep={setCurrentStep}
+                            />
+                        );
+                    } else if (currentStep === 8) {
+                        // For individual: Submit, for business: ImagesUpload
+                        if (isIndividual) {
+                            return (
+                                <Submit
+                                    formProps={
+                                        props as unknown as FormikProps<
+                                            EventFormValues | BusinessFormValues
+                                        >
+                                    }
+                                    setCurrentStep={setCurrentStep}
+                                />
+                            );
+                        }
+                        return (
+                            <ImagesUpload
+                                formProps={
+                                    props as unknown as FormikProps<BaseFormValues>
+                                }
+                                setCurrentStep={setCurrentStep}
+                            />
+                        );
+                    } else {
+                        // Step 9: Submit (only for business)
+                        return (
+                            <Submit
+                                formProps={
+                                    props as unknown as FormikProps<
+                                        EventFormValues | BusinessFormValues
+                                    >
+                                }
+                                setCurrentStep={setCurrentStep}
+                            />
+                        );
+                    }
+                };
+
+                return <>{getBusinessStep()}</>;
+            }}
         </ReusableForm>
     );
 };

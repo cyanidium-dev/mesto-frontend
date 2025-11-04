@@ -1,8 +1,9 @@
 "use client";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { FormikProps, useFormikContext } from "formik";
 import MainButton from "../../shared/buttons/MainButton";
 import SectionTitle from "../../shared/titles/SectionTitle";
+import SelectInput from "../../shared/formComponents/SelectInput";
 import { BaseFormValues } from "@/types/formValues";
 
 interface InterestsProps {
@@ -14,30 +15,51 @@ const tagPresets = [
     {
         value: "professional-services",
         label: "Профессиональные услуги",
-        tags: ["professional", "services", "quality"],
+        tags: ["СТО", "Тренера", "Красота"],
     },
     {
         value: "local-business",
         label: "Местный бизнес",
-        tags: ["local", "community", "friendly"],
+        tags: ["Успех", "Сила", "Мудрость"],
     },
     {
         value: "artisan",
         label: "Ремесленник",
-        tags: ["handmade", "artisan", "unique"],
+        tags: ["Творчество", "Инновации", "Вдохновение"],
     },
 ];
 
+const presetOptions = tagPresets.map(preset => ({
+    value: preset.value,
+    label: preset.label,
+}));
+
 const allTags = [
-    { value: "professional", label: "Профессионально" },
-    { value: "services", label: "Услуги" },
-    { value: "quality", label: "Качественно" },
-    { value: "local", label: "Местное" },
-    { value: "community", label: "Для сообщества" },
-    { value: "friendly", label: "Дружелюбно" },
-    { value: "handmade", label: "Ручная работа" },
-    { value: "artisan", label: "Ремесленник" },
-    { value: "unique", label: "Уникально" },
+    { value: "СТО", label: "СТО" },
+    { value: "Тренера", label: "Тренера" },
+    { value: "Красота", label: "Красота" },
+    { value: "Успех", label: "Успех" },
+    { value: "Сила", label: "Сила" },
+    { value: "Мудрость", label: "Мудрость" },
+    { value: "Дисциплина", label: "Дисциплина" },
+    { value: "Сострадание", label: "Сострадание" },
+    { value: "Уверенность", label: "Уверенность" },
+    { value: "Творчество", label: "Творчество" },
+    { value: "Стратегия", label: "Стратегия" },
+    { value: "Потенциал", label: "Потенциал" },
+    { value: "Надежда", label: "Надежда" },
+    { value: "Смелость", label: "Смелость" },
+    { value: "Решительность", label: "Решительность" },
+    { value: "Инновации", label: "Инновации" },
+    { value: "Вдохновение", label: "Вдохновение" },
+    { value: "Согласие", label: "Согласие" },
+    { value: "Доброта", label: "Доброта" },
+    { value: "Устойчивость", label: "Устойчивость" },
+    { value: "Энергия", label: "Энергия" },
+    { value: "Целеустремленность", label: "Целеустремленность" },
+    { value: "Честность", label: "Честность" },
+    { value: "Справедливость", label: "Справедливость" },
+    { value: "Гармония", label: "Гармония" },
 ];
 
 const TagSelector = () => {
@@ -45,7 +67,17 @@ const TagSelector = () => {
         BaseFormValues & { tagPreset?: string }
     >();
     const currentTags = values.tags || [];
-    const [usePreset, setUsePreset] = useState(!!values.tagPreset);
+    const selectedPreset = values.tagPreset || "";
+
+    // Update tags when preset changes
+    useEffect(() => {
+        if (selectedPreset) {
+            const preset = tagPresets.find(p => p.value === selectedPreset);
+            if (preset) {
+                setFieldValue("tags", preset.tags);
+            }
+        }
+    }, [selectedPreset, setFieldValue]);
 
     const handleTagClick = (tagValue: string) => {
         if (currentTags.includes(tagValue)) {
@@ -58,55 +90,24 @@ const TagSelector = () => {
                 setFieldValue("tags", [...currentTags, tagValue]);
             }
         }
+        // Clear preset when manually selecting tags
+        if (selectedPreset) {
+            setFieldValue("tagPreset", "");
+        }
     };
-
-    const handlePresetClick = (preset: (typeof tagPresets)[0]) => {
-        setUsePreset(true);
-        setFieldValue("tagPreset", preset.value);
-        setFieldValue("tags", preset.tags);
-    };
-
-    if (usePreset && values.tagPreset) {
-        return (
-            <div>
-                <p className="mb-2 text-[12px] text-gray-placeholder">
-                    Выбранный пресет:{" "}
-                    {tagPresets.find(p => p.value === values.tagPreset)?.label}
-                </p>
-                <button
-                    type="button"
-                    onClick={() => {
-                        setUsePreset(false);
-                        setFieldValue("tagPreset", undefined);
-                        setFieldValue("tags", []);
-                    }}
-                    className="text-[12px] text-primary underline mb-3"
-                >
-                    Выбрать теги вручную
-                </button>
-            </div>
-        );
-    }
 
     return (
         <div>
-            <p className="mb-3 text-[14px]">Выберите пресет или теги (1-4)</p>
-            <div className="mb-4">
-                <p className="mb-2 text-[12px] text-gray-placeholder">
-                    Пресеты тегов:
-                </p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                    {tagPresets.map(preset => (
-                        <div
-                            key={preset.value}
-                            onClick={() => handlePresetClick(preset)}
-                            className="inline-flex items-center justify-center px-2.5 py-1 rounded-full border text-[12px] cursor-pointer transition duration-300 ease-in-out bg-transparent text-gray-dark border-gray-light hover:border-primary"
-                        >
-                            {preset.label}
-                        </div>
-                    ))}
-                </div>
+            <div className="mb-6">
+                <SelectInput
+                    fieldName="tagPreset"
+                    label="Или найдите свое:"
+                    placeholder="Выбрать"
+                    options={presetOptions}
+                    labelClassName="mb-3"
+                />
             </div>
+            <p className="mb-3 text-[14px]">Или выберите теги вручную (1-4):</p>
             <div className="flex flex-wrap gap-2">
                 {allTags.map(tag => (
                     <div
@@ -132,7 +133,8 @@ export const Interests = ({ setCurrentStep, formProps }: InterestsProps) => {
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
             <div>
-                <SectionTitle className="mb-6">Теги</SectionTitle>
+                <SectionTitle className="mb-6">Интересы</SectionTitle>
+                <p>Выберите до 4 тегов интересов, которые более релеванты вашему событию</p>
                 <TagSelector />
             </div>
             <MainButton

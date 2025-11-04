@@ -5,6 +5,7 @@ import MainButton from "../../shared/buttons/MainButton";
 import SectionTitle from "../../shared/titles/SectionTitle";
 import SelectInput from "../../shared/formComponents/SelectInput";
 import { BaseFormValues } from "@/types/formValues";
+import Select, { MultiValue, StylesConfig } from "react-select";
 
 interface LangCategoryProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;
@@ -31,38 +32,118 @@ const languages = [
 ];
 
 const LanguageSelector = () => {
-    const { values, setFieldValue } = useFormikContext<BaseFormValues>();
-    const currentLanguages = values.languages || [];
+    const { values, setFieldValue, errors, touched } = useFormikContext<BaseFormValues>();
+    const selectedLanguages = values.languages || [];
+    const isError = errors.languages && touched.languages;
 
-    const handleLanguageClick = (langValue: string) => {
-        if (currentLanguages.includes(langValue)) {
-            setFieldValue(
-                "languages",
-                currentLanguages.filter(l => l !== langValue)
-            );
-        } else {
-            if (currentLanguages.length < 3) {
-                setFieldValue("languages", [...currentLanguages, langValue]);
-            }
-        }
+    // Convert string array to react-select format
+    const selectedOptions = languages.filter(lang =>
+        selectedLanguages.includes(lang.value)
+    );
+
+    const handleChange = (
+        selectedOptions: MultiValue<{ value: string; label: string }>
+    ) => {
+        // Convert react-select format to string array
+        const values = selectedOptions
+            ? selectedOptions.map(option => option.value)
+            : [];
+        setFieldValue("languages", values);
+    };
+
+    type OptionType = { value: string; label: string };
+    const customStyles: StylesConfig<OptionType, true> = {
+        control: (provided) => ({
+            ...provided,
+            minHeight: '37px',
+            height: '37px',
+            borderRadius: '9999px',
+            border: `1px solid ${isError ? '#ef4444' : '#E5E7EB'}`,
+            boxShadow: 'none',
+            '&:hover': {
+                border: `1px solid ${isError ? '#ef4444' : '#155DFC'}`,
+            },
+            paddingLeft: '0',
+            paddingRight: '0',
+            fontSize: '16px',
+            cursor: 'pointer',
+        }),
+        valueContainer: (provided) => ({
+            ...provided,
+            height: '37px',
+            padding: '0 16px',
+        }),
+        input: (provided) => ({
+            ...provided,
+            margin: '0px',
+            fontSize: '16px',
+        }),
+        indicatorsContainer: (provided) => ({
+            ...provided,
+            height: '37px',
+        }),
+        placeholder: (provided) => ({
+            ...provided,
+            color: '#9CA3AF',
+            fontSize: '16px',
+        }),
+        multiValue: (provided) => ({
+            ...provided,
+            backgroundColor: '#E5E7EB',
+            borderRadius: '9999px',
+            fontSize: '14px',
+        }),
+        multiValueLabel: (provided) => ({
+            ...provided,
+            color: '#1F2937',
+            padding: '2px 8px',
+        }),
+        multiValueRemove: (provided) => ({
+            ...provided,
+            color: '#6B7280',
+            borderRadius: '9999px',
+            '&:hover': {
+                backgroundColor: '#EF4444',
+                color: 'white',
+            },
+        }),
+        menu: (provided) => ({
+            ...provided,
+            borderRadius: '16px',
+            border: '1px solid #E5E7EB',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            zIndex: 9999,
+        }),
+        option: (provided, state) => ({
+            ...provided,
+            backgroundColor: state.isSelected
+                ? '#155DFC'
+                : state.isFocused
+                ? '#EFF6FF'
+                : 'white',
+            color: state.isSelected ? 'white' : '#1F2937',
+            cursor: 'pointer',
+            '&:active': {
+                backgroundColor: '#155DFC',
+                color: 'white',
+            },
+        }),
     };
 
     return (
-        <div className="flex flex-wrap gap-2">
-            {languages.map(lang => (
-                <div
-                    key={lang.value}
-                    onClick={() => handleLanguageClick(lang.value)}
-                    className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full border text-[12px] cursor-pointer transition duration-300 ease-in-out ${
-                        currentLanguages.includes(lang.value)
-                            ? "bg-primary text-white border-primary"
-                            : "bg-transparent text-gray-dark border-gray-light"
-                    }`}
-                >
-                    {lang.label}
-                </div>
-            ))}
-        </div>
+        <Select
+            isMulti
+            name="languages"
+            options={languages}
+            value={selectedOptions}
+            onChange={handleChange}
+            placeholder="Выберите языки"
+            maxMenuHeight={200}
+            isOptionDisabled={() => selectedOptions.length >= 3}
+            styles={customStyles}
+            className="react-select-container"
+            classNamePrefix="react-select"
+        />
     );
 };
 
@@ -75,17 +156,19 @@ export const LangCategory = ({
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
             <div>
-                <SectionTitle className="mb-6">Категория и языки</SectionTitle>
+                <SectionTitle className="mb-6">Категория и язык</SectionTitle>
                 <SelectInput
                     fieldName="category"
-                    label="Категория"
+                    label="Выберите к какой категории относиться ваше событие:"
                     required
-                    placeholder="Выберите категорию"
+                    placeholder="Выбрать категорию"
                     options={categories}
                     labelClassName="mb-6"
                 />
                 <div>
-                    <p className="mb-3 text-[14px]">Языки (выберите 1-3)</p>
+                    <p className="mb-3 text-[14px]">
+                        Выбирите до 3 языков вашего события:
+                    </p>
                     <LanguageSelector />
                 </div>
             </div>

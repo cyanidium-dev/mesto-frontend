@@ -4,14 +4,14 @@ export interface Event {
     id: string;
     category: string;
     languages: string[];
-    tags: string[];
+    tags?: string[];
     title: string;
     description?: string;
     imageUrls?: string[];
     socialMediaUrls?: string[];
-    position: LatLngExpression;
+    location: LatLngExpression;
     startDate: Date;
-    startTime?: string;
+    startTime: string;
     endDate?: Date;
     endTime?: string;
     creatorId: string;

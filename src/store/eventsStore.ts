@@ -1,5 +1,6 @@
 import { Event } from "@/types/event";
 import { create } from "zustand";
+import { mockEvents } from "@/data/mockEvents";
 
 interface EventsStore {
     events: Event[];
@@ -7,6 +8,8 @@ interface EventsStore {
     getEvent: (id: string) => Event | null;
     getAllEvents: () => Event[];
     getEventsByFilters: (filters: EventsFilters) => Event[];
+    initialized: boolean;
+    initializeMockData: () => void;
 }
 
 interface EventsFilters {
@@ -21,6 +24,11 @@ interface EventsFilters {
 
 export const useEventsStore = create<EventsStore>((set, get) => ({
     events: [],
+    initialized: false,
+    initializeMockData: () => {
+        if (get().initialized) return;
+        set({ events: mockEvents, initialized: true });
+    },
     addEvent: event => set(state => ({ events: [...state.events, event] })),
     getEvent: id => {
         const events = get().events;

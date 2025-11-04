@@ -16,11 +16,11 @@ export const Title = ({ setCurrentStep, formProps }: TitleProps) => {
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
             <div>
-                <SectionTitle className="mb-6">Название события</SectionTitle>
+                <SectionTitle className="mb-6">Название</SectionTitle>
                 <CustomizedInput
                     fieldName="title"
                     inputType="text"
-                    placeholder="Введите название события"
+                    placeholder="Придумайте название для вашего события"
                     label="Название события"
                     isRequired
                     errors={errors}

@@ -5,11 +5,30 @@ import NavigationButton from "@/components/shared/buttons/NavigationButton";
 import ArrowIcon from "@/components/shared/icons/ArrowIcon";
 import { useState } from "react";
 import ProgressBar from "@/components/shared/progress/ProgressBar";
-import { CreateForm } from "@/components/createPage/CreateForm";
+import { CreateForm } from "@/components/CreatePage/CreateForm";
 
 export default function CreatePage() {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState(0);
+    const [createType, setCreateType] = useState<"event" | "business" | null>(null);
+
+    // Determine which steps have required fields (skip button should be hidden)
+    const getStepsWithRequiredFields = (type: "event" | "business" | null): number[] => {
+        if (type === "event") {
+            // Event: step 1 (LangCategory), step 3 (Title), step 4 (EventDateTime), step 5 (Location)
+            return [1, 3, 4, 5];
+        } else if (type === "business") {
+            // Business: step 1 (BussinessType), step 2 (LangCategory), step 6 (Location)
+            return [1, 2, 6];
+        }
+        return [];
+    };
+
+    const stepsWithRequiredFields = getStepsWithRequiredFields(createType);
+    const shouldHideSkip = stepsWithRequiredFields.includes(currentStep) || 
+                           currentStep === 8 || // Submit step (events)
+                           currentStep === 9;    // Submit step (business)
+
     return (
         <Container className="flex flex-col min-h-screen pt-2 pb-14">
             {currentStep > 0 && (
@@ -27,13 +46,7 @@ export default function CreatePage() {
                         </NavigationButton>
                         <NavigationButton
                             onClick={() => setCurrentStep(prev => prev + 1)}
-                            className={`${
-                                currentStep === 1 ||
-                                currentStep === 8 ||
-                                currentStep === 9
-                                    ? "hidden"
-                                    : ""
-                            }`}
+                            className={shouldHideSkip ? "hidden" : ""}
                         >
                             Пропустить
                             <ArrowIcon className="rotate-180" />
@@ -49,6 +62,7 @@ export default function CreatePage() {
             <CreateForm
                 currentStep={currentStep}
                 setCurrentStep={setCurrentStep}
+                onCreateTypeChange={setCreateType}
             />
         </Container>
     );

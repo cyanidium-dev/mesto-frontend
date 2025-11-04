@@ -1,8 +1,8 @@
-import { Formik, Form, FormikProps } from "formik";
+import { Formik, Form, FormikProps, FormikValues } from "formik";
 import { ReactNode } from "react";
 import * as yup from "yup";
 
-interface ReusableFormProps<T extends Record<string, unknown>> {
+interface ReusableFormProps<T extends FormikValues> {
     initialValues: T;
     validationSchema: yup.ObjectSchema<T>;
     onSubmit: (values: T) => void | Promise<void>;
@@ -11,7 +11,7 @@ interface ReusableFormProps<T extends Record<string, unknown>> {
     className?: string;
 }
 
-export function ReusableForm<T extends Record<string, unknown>>({
+export function ReusableForm<T extends FormikValues>({
     initialValues,
     validationSchema,
     onSubmit,

@@ -14,7 +14,7 @@ interface BussinessTypeProps {
 const userTypes = [
     {
         label: "Компания",
-        value: "company",
+        value: "business",
         emoji: "/images/icons/man.png",
     },
     {

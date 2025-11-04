@@ -18,11 +18,13 @@ import MarkerClusterGroup from "react-leaflet-markercluster";
 
 import LocateIcon from "../shared/icons/LocateIcon";
 import { Business } from "@/types/business";
+import { Event } from "@/types/event";
 
 interface MapProps {
   center: [number, number];
   onCenterChange: (center: [number, number]) => void;
   markers: Business[];
+  events?: Event[];
 }
 
 function UpdateMapCenter({ center }: { center: [number, number] }) {
@@ -77,7 +79,7 @@ function MapEventsHandler({
   return null;
 }
 
-export default function Map({ center, onCenterChange, markers }: MapProps) {
+export default function Map({ center, onCenterChange, markers, events = [] }: MapProps) {
   const handleGeolocate = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -143,40 +145,136 @@ export default function Map({ center, onCenterChange, markers }: MapProps) {
           }}
         >
           {markers.map((business) => {
+            // Get first available image from array (user can upload to any of 8 slots)
+            const businessImageUrl = business.imageUrls?.find(url => 
+              url && (url.startsWith("http") || url.startsWith("data:") || url.startsWith("/"))
+            );
+            const hasValidImage = businessImageUrl && 
+              (businessImageUrl.startsWith("http") || 
+               businessImageUrl.startsWith("data:") || 
+               businessImageUrl.startsWith("/"));
+            const imageUrl = hasValidImage ? businessImageUrl : "/images/mockedData/girl.jpg";
+            
+            // Debug logging
+            if (business.id.startsWith("business-")) {
+              console.log(`🗺️ Business ${business.id}:`, {
+                imageUrls: business.imageUrls,
+                foundUrl: businessImageUrl?.substring(0, 50) + "...",
+                usingUrl: imageUrl.substring(0, 50) + "...",
+                isDataUrl: imageUrl.startsWith("data:")
+              });
+            }
+            
+            // Escape image URL for use in HTML/SVG
+            const escapedImageUrl = imageUrl.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            const patternId = `pattern-business-${business.id}`;
+            
             const icon = L.divIcon({
               className: "",
               html: `
-                <div class="relative">
-                  <svg width="46" height="53" viewBox="0 0 46 53" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                <div style="position: relative; width: 46px; height: 53px;">
+                  <svg width="46" height="53" viewBox="0 0 46 53" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M18.6699 42.5L27.3301 42.5L23 50.001L18.6699 42.5Z" fill="#155DFC" stroke="#155DFC" stroke-width="3"/>
                     <rect x="1.5" y="1.5" width="43" height="43" rx="21.5" stroke="#155DFC" stroke-width="3"/>
-                    <rect x="3" y="3" width="40" height="40" rx="20" fill="url(#pattern0_410_17547)"/>
+                    <rect x="3" y="3" width="40" height="40" rx="20" fill="url(#${patternId})"/>
                     <defs>
-                      <img src="${business.imageUrl}" alt="business" class="absolute top-[3px] left-[3px] object-cover w-10 h-10 rounded-full" />
-                      <pattern id="pattern0_410_17547" patternContentUnits="objectBoundingBox" width="1" height="1">
-                        <use xlink:href="#image0_410_17547" transform="scale(0.00333333)"/>
+                      <pattern id="${patternId}" patternContentUnits="objectBoundingBox" width="1" height="1">
+                        <image href="${escapedImageUrl}" x="0" y="0" width="1" height="1" preserveAspectRatio="xMidYMid slice" onerror="this.href='/images/mockedData/girl.jpg'"/>
                       </pattern>
                     </defs>
                   </svg>
                 </div>
               `,
-              iconSize: [40, 40],
-              iconAnchor: [20, 40],
-              popupAnchor: [0, -40],
+              iconSize: [46, 53],
+              iconAnchor: [23, 53],
+              popupAnchor: [0, -53],
             });
 
             return (
               <Marker
                 key={business.id}
-                position={business.position}
+                position={business.location as [number, number]}
                 icon={icon}
               >
                 <Popup>
                   <div className="text-sm">
-                    <h3 className="font-semibold">{business.title}</h3>
+                    <h3 className="font-semibold">{business.title || "Бизнес"}</h3>
                     <p className="mb-0! mt-2! line-clamp-3">
                       {business.description}
                     </p>
+                  </div>
+                </Popup>
+              </Marker>
+            );
+          })}
+          {events.map((event) => {
+            // Get first available image from array (user can upload to any of 8 slots)
+            const eventImageUrl = event.imageUrls?.find(url => 
+              url && (url.startsWith("http") || url.startsWith("data:") || url.startsWith("/"))
+            );
+            const hasValidImage = eventImageUrl && 
+              (eventImageUrl.startsWith("http") || 
+               eventImageUrl.startsWith("data:") || 
+               eventImageUrl.startsWith("/"));
+            const imageUrl = hasValidImage ? eventImageUrl : "/images/mockedData/girl.jpg";
+            
+            // Debug logging
+            console.log(`🗺️ Event ${event.id}:`, {
+              imageUrls: event.imageUrls,
+              foundUrl: eventImageUrl?.substring(0, 50) + "...",
+              usingUrl: imageUrl.substring(0, 50) + "...",
+              isDataUrl: imageUrl.startsWith("data:")
+            });
+            
+            // Escape image URL for use in HTML/SVG
+            const escapedImageUrl = imageUrl.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            const patternId = `pattern-event-${event.id}`;
+            
+            const icon = L.divIcon({
+              className: "",
+              html: `
+                <div style="position: relative; width: 46px; height: 53px;">
+                  <svg width="46" height="53" viewBox="0 0 46 53" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.6699 42.5L27.3301 42.5L23 50.001L18.6699 42.5Z" fill="#FF6B35" stroke="#FF6B35" stroke-width="3"/>
+                    <rect x="1.5" y="1.5" width="43" height="43" rx="21.5" stroke="#FF6B35" stroke-width="3"/>
+                    <rect x="3" y="3" width="40" height="40" rx="20" fill="url(#${patternId})"/>
+                    <defs>
+                      <pattern id="${patternId}" patternContentUnits="objectBoundingBox" width="1" height="1">
+                        <image href="${escapedImageUrl}" x="0" y="0" width="1" height="1" preserveAspectRatio="xMidYMid slice" onerror="this.href='/images/mockedData/girl.jpg'"/>
+                      </pattern>
+                    </defs>
+                  </svg>
+                </div>
+              `,
+              iconSize: [46, 53],
+              iconAnchor: [23, 53],
+              popupAnchor: [0, -53],
+            });
+
+            const eventDate = event.startDate
+              ? new Date(event.startDate).toLocaleDateString("ru-RU")
+              : "";
+            const eventTime = event.startTime || "";
+
+            return (
+              <Marker
+                key={event.id}
+                position={event.location as [number, number]}
+                icon={icon}
+              >
+                <Popup>
+                  <div className="text-sm">
+                    <h3 className="font-semibold">{event.title}</h3>
+                    {eventDate && (
+                      <p className="text-xs text-gray-600 mt-1">
+                        {eventDate} {eventTime && `в ${eventTime}`}
+                      </p>
+                    )}
+                    {event.description && (
+                      <p className="mb-0! mt-2! line-clamp-3">
+                        {event.description}
+                      </p>
+                    )}
                   </div>
                 </Popup>
               </Marker>

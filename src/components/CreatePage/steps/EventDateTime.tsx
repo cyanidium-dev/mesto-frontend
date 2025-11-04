@@ -5,15 +5,15 @@ import SectionTitle from "../../shared/titles/SectionTitle";
 import CustomizedInput from "../../shared/formComponents/CustomizedInput";
 import { EventFormValues } from "@/types/formValues";
 
-interface EvetDateTimeProps {
+interface EventDateTimeProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;
     formProps: FormikProps<EventFormValues>;
 }
 
-export const EvetDateTime = ({
+export const EventDateTime = ({
     setCurrentStep,
     formProps,
-}: EvetDateTimeProps) => {
+}: EventDateTimeProps) => {
     const { errors, touched, values, setFieldValue } = formProps;
 
     return (
@@ -30,6 +30,32 @@ export const EvetDateTime = ({
                     touched={touched}
                     labelClassName="mb-6"
                 />
+                <div className="mb-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                            type="checkbox"
+                            checked={(values.hasEndDate as boolean) || false}
+                            onChange={e =>
+                                setFieldValue("hasEndDate", e.target.checked)
+                            }
+                            className="w-4 h-4"
+                        />
+                        <span className="text-[14px]">
+                            Указать дату окончания
+                        </span>
+                    </label>
+                </div>
+                {(values.hasEndDate as boolean) && (
+                    <CustomizedInput
+                        fieldName="endDate"
+                        inputType="date"
+                        placeholder="Дата окончания"
+                        label="Дата окончания"
+                        errors={errors}
+                        touched={touched}
+                        labelClassName="mb-6"
+                    />
+                )}
                 <CustomizedInput
                     fieldName="startTime"
                     inputType="time"
@@ -43,37 +69,26 @@ export const EvetDateTime = ({
                     <label className="flex items-center gap-2 cursor-pointer">
                         <input
                             type="checkbox"
-                            checked={(values.hasEndDate as boolean) || false}
+                            checked={(values.hasEndTime as boolean) || false}
                             onChange={e =>
-                                setFieldValue("hasEndDate", e.target.checked)
+                                setFieldValue("hasEndTime", e.target.checked)
                             }
                             className="w-4 h-4"
                         />
                         <span className="text-[14px]">
-                            Указать дату и время окончания
+                            Указать время окончания
                         </span>
                     </label>
                 </div>
-                {(values.hasEndDate as boolean) && (
-                    <>
-                        <CustomizedInput
-                            fieldName="endDate"
-                            inputType="date"
-                            placeholder="Дата окончания"
-                            label="Дата окончания"
-                            errors={errors}
-                            touched={touched}
-                            labelClassName="mb-6"
-                        />
-                        <CustomizedInput
-                            fieldName="endTime"
-                            inputType="time"
-                            placeholder="Время окончания"
-                            label="Время окончания"
-                            errors={errors}
-                            touched={touched}
-                        />
-                    </>
+                {(values.hasEndTime as boolean) && (
+                    <CustomizedInput
+                        fieldName="endTime"
+                        inputType="time"
+                        placeholder="Время окончания"
+                        label="Время окончания"
+                        errors={errors}
+                        touched={touched}
+                    />
                 )}
             </div>
             <MainButton
@@ -84,7 +99,9 @@ export const EvetDateTime = ({
                     !values.startDate ||
                     !!errors.startDate ||
                     ((values.hasEndDate as boolean) &&
-                        (!values.endDate || !!errors.endDate))
+                        (!values.endDate || !!errors.endDate)) ||
+                    ((values.hasEndTime as boolean) &&
+                        (!values.endTime || !!errors.endTime))
                 }
             >
                 Продолжить

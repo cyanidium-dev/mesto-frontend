@@ -7,7 +7,7 @@ export const createBusinessValidationSchema =
             type: yup.string(),
             userType: yup
                 .string<BusinessFormValues["userType"]>()
-                .oneOf(["company", "individual"])
+                .oneOf(["business", "individual"])
                 .required("Это поле обязательно для заполнения."),
             category: yup
                 .string()
@@ -18,10 +18,12 @@ export const createBusinessValidationSchema =
                 .min(1, "Выберите хотя бы один язык")
                 .max(3, "Можно выбрать не более 3 языков")
                 .required("Это поле обязательно для заполнения."),
-            tags: yup.array().of(yup.string()),
-            title: yup
-                .string()
+            tags: yup
+                .array()
+                .of(yup.string())
+                .min(1, "Выберите хотя бы один тег")
                 .required("Это поле обязательно для заполнения."),
+            title: yup.string(),
             workingHours: yup.array().of(
                 yup.object().shape({
                     start: yup.string(),
@@ -38,8 +40,10 @@ export const createBusinessValidationSchema =
                         return value !== null && value !== undefined;
                     }
                 ),
-            description: yup.string(),
-            socialLinks: yup.array().of(yup.string()),
+            description: yup
+                .string()
+                .required("Это поле обязательно для заполнения."),
+            socialMediaUrls: yup.array().of(yup.string()),
             siteLink: yup.string(),
             imageUrls: yup.array().of(yup.string()),
             services: yup.array().of(yup.string()),

@@ -16,12 +16,14 @@ export const createEventValidationSchema =
                 .required("Это поле обязательно для заполнения."),
             tags: yup.array().of(yup.string()),
             title: yup
-                .string()
+                .string().max(70, "Не более 70 символов")
                 .required("Это поле обязательно для заполнения."),
             startDate: yup
                 .string()
                 .required("Это поле обязательно для заполнения."),
-            startTime: yup.string(),
+            startTime: yup
+                .string()
+                .required("Это поле обязательно для заполнения."),
             hasEndDate: yup.boolean(),
             endDate: yup.string().when("hasEndDate", {
                 is: true,
@@ -29,7 +31,13 @@ export const createEventValidationSchema =
                     schema.required("Это поле обязательно для заполнения."),
                 otherwise: schema => schema.notRequired(),
             }),
-            endTime: yup.string(),
+            hasEndTime: yup.boolean(),
+            endTime: yup.string().when("hasEndTime", {
+                is: true,
+                then: schema =>
+                    schema.required("Это поле обязательно для заполнения."),
+                otherwise: schema => schema.notRequired(),
+            }),
             position: yup
                 .mixed()
                 .nullable()
@@ -40,8 +48,8 @@ export const createEventValidationSchema =
                         return value !== null && value !== undefined;
                     }
                 ),
-            description: yup.string(),
-            socialLinks: yup.array().of(yup.string()),
+            description: yup.string().max(1500, "Не более 1500 символов"),
+            socialMediaUrls: yup.array().of(yup.string()),
             siteLink: yup.string(),
             imageUrls: yup.array().of(yup.string()),
         }) as yup.ObjectSchema<EventFormValues>;

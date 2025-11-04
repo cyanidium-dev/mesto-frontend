@@ -19,8 +19,8 @@ interface Values {
 interface CustomizedInputProps {
   fieldName: string;
   placeholder: string;
-  errors: FormikErrors<Values | ValuesSignUpFormType>;
-  touched: FormikTouched<Values | ValuesSignUpFormType>;
+  errors: FormikErrors<unknown>;
+  touched: FormikTouched<unknown>;
   label?: string;
   isRequired?: boolean;
   as?: string;
