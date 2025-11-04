@@ -23,7 +23,7 @@ export const EventDateTime = ({
                 <CustomizedInput
                     fieldName="startDate"
                     inputType="date"
-                    placeholder="Дата начала"
+                    placeholder=""
                     label="Дата начала"
                     isRequired
                     errors={errors}
@@ -49,7 +49,7 @@ export const EventDateTime = ({
                     <CustomizedInput
                         fieldName="endDate"
                         inputType="date"
-                        placeholder="Дата окончания"
+                        placeholder=""
                         label="Дата окончания"
                         errors={errors}
                         touched={touched}
@@ -59,7 +59,7 @@ export const EventDateTime = ({
                 <CustomizedInput
                     fieldName="startTime"
                     inputType="time"
-                    placeholder="Время начала"
+                    placeholder=""
                     label="Время начала"
                     errors={errors}
                     touched={touched}
@@ -84,7 +84,7 @@ export const EventDateTime = ({
                     <CustomizedInput
                         fieldName="endTime"
                         inputType="time"
-                        placeholder="Время окончания"
+                        placeholder=""
                         label="Время окончания"
                         errors={errors}
                         touched={touched}
