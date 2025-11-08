@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, useEffect } from "react";
 import { FormikProps, useFormikContext } from "formik";
 import MainButton from "../../shared/buttons/MainButton";
 import SectionTitle from "../../shared/titles/SectionTitle";
-import ImageUploadInput from "../../shared/formComponents/ImageUploadInput";
+import { useRef } from "react";
 import Image from "next/image";
 import { BaseFormValues } from "@/types/formValues";
 
@@ -38,7 +38,10 @@ const MultiImageUpload = () => {
 
     useEffect(() => {
         const processTempImages = async () => {
-            const tempFields = Array.from({ length: 8 }, (_, i) => `tempImage${i}`);
+            const tempFields = Array.from(
+                { length: 8 },
+                (_, i) => `tempImage${i}`
+            );
             const updatedUrls = [...imageUrls];
             let hasChanges = false;
 
@@ -83,14 +86,46 @@ const MultiImageUpload = () => {
         );
     };
 
+    const handleFileSelect = (
+        index: number,
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setFieldValue(`tempImage${index}`, file);
+        }
+    };
+
+    const inputRef0 = useRef<HTMLInputElement>(null);
+    const inputRef1 = useRef<HTMLInputElement>(null);
+    const inputRef2 = useRef<HTMLInputElement>(null);
+    const inputRef3 = useRef<HTMLInputElement>(null);
+    const inputRef4 = useRef<HTMLInputElement>(null);
+    const inputRef5 = useRef<HTMLInputElement>(null);
+    const inputRef6 = useRef<HTMLInputElement>(null);
+    const inputRef7 = useRef<HTMLInputElement>(null);
+
+    const inputRefs = [
+        inputRef0,
+        inputRef1,
+        inputRef2,
+        inputRef3,
+        inputRef4,
+        inputRef5,
+        inputRef6,
+        inputRef7,
+    ];
+
     return (
         <div>
             <p className="mb-4 text-[14px] text-gray-text">
-                Загрузите до 8 изображений ({imageUrls.length}/8)
+                Чтобы другим людям было понятно куда они идут, добавьте фото
+                события или места где оно будет проводиться
             </p>
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-4 gap-4 mb-4">
                 {Array.from({ length: 8 }).map((_, index) => {
                     const imageUrl = imageUrls[index];
+                    const inputRef = inputRefs[index];
                     return (
                         <div key={index} className="relative aspect-square">
                             {imageUrl ? (
@@ -105,34 +140,54 @@ const MultiImageUpload = () => {
                                     <button
                                         type="button"
                                         onClick={() => handleImageRemove(index)}
-                                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                                        className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600 transition-colors text-lg font-bold"
                                     >
                                         ×
                                     </button>
                                 </>
                             ) : (
-                                <div className="w-full h-full border-2 border-dashed border-gray-light rounded-[16px] flex items-center justify-center">
-                                    <ImageUploadInput
-                                        fieldName={`tempImage${index}`}
-                                        label=""
+                                <div className="w-full h-full border-2 border-dashed border-gray-light rounded-[16px] flex items-center justify-center bg-gray-ultra-light relative group cursor-pointer">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        ref={inputRef}
+                                        className="hidden"
+                                        onChange={e =>
+                                            handleFileSelect(index, e)
+                                        }
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            inputRef.current?.click()
+                                        }
+                                        className="w-8 h-8 flex items-center justify-center bg-primary rounded-full hover:bg-primary-dark transition-colors"
+                                    >
+                                        <Image
+                                            src="/images/icons/camera.svg"
+                                            alt="camera"
+                                            width={20}
+                                            height={20}
+                                        />
+                                    </button>
                                 </div>
                             )}
                         </div>
                     );
                 })}
             </div>
+            <p className="text-[12px] text-gray-text">
+                Можно добавить до 8 фото
+            </p>
         </div>
     );
 };
 
-export const ImagesUpload = ({
-    setCurrentStep,
-}: ImagesUploadProps) => {
+export const ImagesUpload = ({ setCurrentStep }: ImagesUploadProps) => {
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
             <div>
-                <SectionTitle className="mb-6">Изображения</SectionTitle>
+                <SectionTitle className="mb-6">Добавьте фото</SectionTitle>
                 <MultiImageUpload />
             </div>
             <MainButton

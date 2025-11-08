@@ -32,9 +32,15 @@ export const Submit = ({ formProps }: SubmitProps) => {
     const handleSave = () => {
         if (isEventForm(values)) {
             const eventValues: EventFormValues = values;
-            console.log("📸 Saving Event with imageUrls:", eventValues.imageUrls);
+            console.log(
+                "📸 Saving Event with imageUrls:",
+                eventValues.imageUrls
+            );
             console.log("📸 ImageUrls length:", eventValues.imageUrls?.length);
-            console.log("📸 First imageUrl:", eventValues.imageUrls?.[0]?.substring(0, 50) + "...");
+            console.log(
+                "📸 First imageUrl:",
+                eventValues.imageUrls?.[0]?.substring(0, 50) + "..."
+            );
             const newEvent: Event = {
                 id: `event-${Date.now()}`,
                 category: eventValues.category,
@@ -63,9 +69,18 @@ export const Submit = ({ formProps }: SubmitProps) => {
             addEvent(newEvent);
         } else {
             const businessValues: BusinessFormValues = values;
-            console.log("📸 Saving Business with imageUrls:", businessValues.imageUrls);
-            console.log("📸 ImageUrls length:", businessValues.imageUrls?.length);
-            console.log("📸 First imageUrl:", businessValues.imageUrls?.[0]?.substring(0, 50) + "...");
+            console.log(
+                "📸 Saving Business with imageUrls:",
+                businessValues.imageUrls
+            );
+            console.log(
+                "📸 ImageUrls length:",
+                businessValues.imageUrls?.length
+            );
+            console.log(
+                "📸 First imageUrl:",
+                businessValues.imageUrls?.[0]?.substring(0, 50) + "..."
+            );
             const newBusiness: Business = {
                 id: `business-${Date.now()}`,
                 userType: businessValues.userType,
@@ -97,48 +112,20 @@ export const Submit = ({ formProps }: SubmitProps) => {
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
             <div>
-                <SectionTitle className="mb-6">
-                    {isEventForm(values) ? "Событие создано!" : "Бизнес создан!"}
-                </SectionTitle>
-                <div className="space-y-4">
-                    <div>
-                        <p className="text-[12px] text-gray-placeholder mb-1">
-                            Название
-                        </p>
-                        <p className="text-[16px] font-medium">
-                            {values.title}
-                        </p>
-                    </div>
-                    {values.description && (
-                        <div>
-                            <p className="text-[12px] text-gray-placeholder mb-1">
-                                Описание
-                            </p>
-                            <p className="text-[16px]">{values.description}</p>
-                        </div>
-                    )}
-                    <div>
-                        <p className="text-[12px] text-gray-placeholder mb-1">
-                            Категория
-                        </p>
-                        <p className="text-[16px] font-medium">
-                            {values.category}
-                        </p>
-                    </div>
-                    {isEventForm(values) && values.startDate && (
-                        <div>
-                            <p className="text-[12px] text-gray-placeholder mb-1">
-                                Дата начала
-                            </p>
-                            <p className="text-[16px]">
-                                {new Date(values.startDate).toLocaleDateString(
-                                    "ru-RU"
-                                )}
-                                {values.startTime && ` в ${values.startTime}`}
-                            </p>
-                        </div>
-                    )}
+                <div className="w-[72px] h-[72px] rounded-full flex items-center justify-center bg-primary">
+                    <svg>
+                        <use href="/images/icons/check-circle.svg" />
+                    </svg>
                 </div>
+                <SectionTitle className="mb-3">
+                    {isEventForm(values)
+                        ? "Супер, вы создали событие!"
+                        : "Бизнес создан!"}
+                </SectionTitle>
+                <p className="text-center">
+                    Теперь вы можете увидеть его на карте или изменить детали
+                    события зайдя через ваш профиль
+                </p>
             </div>
             <div className="flex flex-col gap-3">
                 <MainButton

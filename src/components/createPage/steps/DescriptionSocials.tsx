@@ -177,16 +177,26 @@ const SocialLinksInput = () => {
                                 <button
                                     type="button"
                                     onClick={() => handleDelete(platform)}
-                                    className="px-4 py-2 text-[12px] text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                                    className="flex items-center justify-center w-[101px] h-[32px] gap-2 px-3 bg-gray-light text-[12px] text-black hover:bg-red-50 rounded-full transition-colors"
                                 >
+                                    <div className="w-[20px] h-[20px]">
+                                        <svg className="w-[20px] h-[20px] fill-black">
+                                            <use href="/images/icons/broken-link.svg" />
+                                        </svg>
+                                    </div>
                                     Удалить
                                 </button>
                             ) : (
                                 <button
                                     type="button"
                                     onClick={() => handleAddClick(platform)}
-                                    className="px-4 py-2 text-[12px] text-primary hover:bg-primary/10 rounded-full transition-colors"
+                                    className="flex items-center justify-center w-[109px] h-[32px] gap-2 px-3 bg-blue text-[12px] text-white hover:bg-primary/10 rounded-full transition-colors"
                                 >
+                                    <div className="w-[20px] h-[20px]">
+                                        <svg className="w-[20px] h-[20px] fill-white">
+                                            <use href="/images/icons/link.svg" />
+                                        </svg>
+                                    </div>
                                     Добавить
                                 </button>
                             )}
@@ -216,8 +226,8 @@ export const DescriptionSocials = ({
                     as="textarea"
                     errors={errors}
                     touched={touched}
-                    labelClassName="mb-2"
-                    fieldClassName="h-[172px]"
+                    labelClassName="mb-2 rounded-[12px]"
+                    fieldClassName="h-[172px] !rounded-[12px] px-4 py-2"
                 />
                 <p className="text-[12px] text-gray-text mb-6">
                     Не более 1500 символов
