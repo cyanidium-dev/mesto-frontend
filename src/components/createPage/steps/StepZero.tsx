@@ -24,12 +24,12 @@ const createTypeOptions = [
     {
         label: "Событие",
         value: "event",
-        emoji: "/images/icons/classical-building.png", // Update this path to your event icon
+        emoji: "/images/icons/classical-building.png",
     },
     {
         label: "Бизнес",
         value: "business",
-        emoji: "/images/icons/admission-ticket.png", // Update this path to your business icon
+        emoji: "/images/icons/admission-ticket.png",
     },
 ];
 
@@ -65,17 +65,17 @@ export const StepZero = ({ setCreateType }: StepZeroProps) => {
                 <Form className="flex flex-col flex-1 justify-between h-full">
                     <div>
                         <SectionTitle className="mb-6">Создать</SectionTitle>
-                        <p className="mb-6 text-[14px] text-gray-text text-center">
+                        <p className="mb-6 text-[14px] text-gray-text">
                             Выберите что вы хотите выставить на карте:
                         </p>
-                        <div className="mb-8">
+                        <div className="mb-3">
                             <ImageRadioButtonInput
                                 fieldName="createType"
                                 options={createTypeOptions}
                             />
                         </div>
                         {formProps.values.createType && (
-                            <p className="text-[14px] text-gray-text text-center">
+                            <p className="text-[14px] text-gray-text">
                                 {getDescription(formProps.values.createType)}
                             </p>
                         )}

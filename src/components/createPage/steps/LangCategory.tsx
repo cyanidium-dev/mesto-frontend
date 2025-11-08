@@ -32,7 +32,8 @@ const languages = [
 ];
 
 const LanguageSelector = () => {
-    const { values, setFieldValue, errors, touched } = useFormikContext<BaseFormValues>();
+    const { values, setFieldValue, errors, touched } =
+        useFormikContext<BaseFormValues>();
     const selectedLanguages = values.languages || [];
     const isError = errors.languages && touched.languages;
 
@@ -53,79 +54,85 @@ const LanguageSelector = () => {
 
     type OptionType = { value: string; label: string };
     const customStyles: StylesConfig<OptionType, true> = {
-        control: (provided) => ({
+        control: provided => ({
             ...provided,
-            minHeight: '37px',
-            height: '37px',
-            borderRadius: '9999px',
-            border: `1px solid ${isError ? '#ef4444' : '#E5E7EB'}`,
-            boxShadow: 'none',
-            '&:hover': {
-                border: `1px solid ${isError ? '#ef4444' : '#155DFC'}`,
+            minHeight: "auto",
+            height: "auto",
+            borderRadius: "9999px",
+            border: `1px solid ${isError ? "#fb2c36" : "#d4d4d4"}`,
+            boxShadow: "none",
+            "&:hover": {
+                border: `1px solid ${isError ? "#fb2c36" : "#155dfc"}`,
             },
-            paddingLeft: '0',
-            paddingRight: '0',
-            fontSize: '16px',
-            cursor: 'pointer',
+            "&:focus-within": {
+                border: `1px solid ${isError ? "#fb2c36" : "#155dfc"}`,
+            },
+            paddingLeft: "0",
+            paddingRight: "0",
+            fontSize: "16px",
+            cursor: "pointer",
         }),
-        valueContainer: (provided) => ({
+        valueContainer: provided => ({
             ...provided,
-            height: '37px',
-            padding: '0 16px',
+            height: "auto",
+            padding: "14px 12px",
         }),
-        input: (provided) => ({
+        input: provided => ({
             ...provided,
-            margin: '0px',
-            fontSize: '16px',
+            margin: "0px",
+            fontSize: "16px",
         }),
-        indicatorsContainer: (provided) => ({
+        indicatorsContainer: provided => ({
             ...provided,
-            height: '37px',
+            height: "auto",
         }),
-        placeholder: (provided) => ({
+        placeholder: provided => ({
             ...provided,
-            color: '#9CA3AF',
-            fontSize: '16px',
+            color: "#9CA3AF",
+            fontSize: "16px",
         }),
-        multiValue: (provided) => ({
+        multiValue: provided => ({
             ...provided,
-            backgroundColor: '#E5E7EB',
-            borderRadius: '9999px',
-            fontSize: '14px',
+            backgroundColor: "#E5E7EB",
+            borderRadius: "9999px",
+            fontSize: "14px",
         }),
-        multiValueLabel: (provided) => ({
+        multiValueLabel: provided => ({
             ...provided,
-            color: '#1F2937',
-            padding: '2px 8px',
+            color: "#1F2937",
+            padding: "2px 8px",
         }),
-        multiValueRemove: (provided) => ({
+        multiValueRemove: provided => ({
             ...provided,
-            color: '#6B7280',
-            borderRadius: '9999px',
-            '&:hover': {
-                backgroundColor: '#EF4444',
-                color: 'white',
+            color: "#6B7280",
+            borderRadius: "9999px",
+            "&:hover": {
+                backgroundColor: "#EF4444",
+                color: "white",
             },
         }),
-        menu: (provided) => ({
+        menu: provided => ({
             ...provided,
-            borderRadius: '16px',
-            border: '1px solid #E5E7EB',
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-            zIndex: 9999,
+            borderRadius: "12px",
+            border: "1px solid #d4d4d4",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+            zIndex: 20,
+            marginTop: "2px",
         }),
         option: (provided, state) => ({
             ...provided,
             backgroundColor: state.isSelected
-                ? '#155DFC'
+                ? "#155dfc"
                 : state.isFocused
-                ? '#EFF6FF'
-                : 'white',
-            color: state.isSelected ? 'white' : '#1F2937',
-            cursor: 'pointer',
-            '&:active': {
-                backgroundColor: '#155DFC',
-                color: 'white',
+                ? "#EFF6FF"
+                : "white",
+            color: state.isSelected ? "white" : "#171717",
+            cursor: "pointer",
+            padding: "12px",
+            fontSize: "16px",
+            "&:active": {
+                backgroundColor: "#155dfc",
+                color: "white",
             },
         }),
     };
@@ -167,7 +174,7 @@ export const LangCategory = ({
                 />
                 <div>
                     <p className="mb-3 text-[14px]">
-                        Выбирите до 3 языков вашего события:
+                        Выберите до 3 языков вашего события:
                     </p>
                     <LanguageSelector />
                 </div>

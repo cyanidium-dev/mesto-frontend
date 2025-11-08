@@ -10,10 +10,14 @@ import { CreateForm } from "@/components/CreatePage/CreateForm";
 export default function CreatePage() {
     const router = useRouter();
     const [currentStep, setCurrentStep] = useState(0);
-    const [createType, setCreateType] = useState<"event" | "business" | null>(null);
+    const [createType, setCreateType] = useState<"event" | "business" | null>(
+        null
+    );
 
     // Determine which steps have required fields (skip button should be hidden)
-    const getStepsWithRequiredFields = (type: "event" | "business" | null): number[] => {
+    const getStepsWithRequiredFields = (
+        type: "event" | "business" | null
+    ): number[] => {
         if (type === "event") {
             // Event: step 1 (LangCategory), step 3 (Title), step 4 (EventDateTime), step 5 (Location)
             return [1, 3, 4, 5];
@@ -25,40 +29,45 @@ export default function CreatePage() {
     };
 
     const stepsWithRequiredFields = getStepsWithRequiredFields(createType);
-    const shouldHideSkip = stepsWithRequiredFields.includes(currentStep) || 
-                           currentStep === 8 || // Submit step (events)
-                           currentStep === 9;    // Submit step (business)
+    const shouldHideSkip =
+        stepsWithRequiredFields.includes(currentStep) ||
+        currentStep === 0 || // StepZero
+        currentStep === 8 || // Submit step (events)
+        currentStep === 9; // Submit step (business)
+
+    // Calculate total steps: step 0 + event steps (1-8) = 9, or step 0 + business steps (1-9) = 10
+    const getTotalSteps = () => {
+        if (createType === "event") return 9; // step 0 + 8 steps
+        if (createType === "business") return 10; // step 0 + 9 steps
+        return 9; // default to event steps when type is not yet selected
+    };
 
     return (
         <Container className="flex flex-col min-h-screen pt-2 pb-14">
-            {currentStep > 0 && (
-                <>
-                    <div className="flex justify-between items-center mb-2">
-                        <NavigationButton
-                            onClick={
-                                currentStep === 1
-                                    ? () => router.back()
-                                    : () => setCurrentStep(prev => prev - 1)
-                            }
-                        >
-                            <ArrowIcon />
-                            Назад
-                        </NavigationButton>
-                        <NavigationButton
-                            onClick={() => setCurrentStep(prev => prev + 1)}
-                            className={shouldHideSkip ? "hidden" : ""}
-                        >
-                            Пропустить
-                            <ArrowIcon className="rotate-180" />
-                        </NavigationButton>
-                    </div>
-                    <ProgressBar
-                        stepsQty={currentStep <= 8 ? 8 : 9}
-                        currentStep={currentStep}
-                        className="mb-6"
-                    />
-                </>
-            )}
+            <div className="flex justify-between items-center mb-2">
+                <NavigationButton
+                    onClick={
+                        currentStep === 0 || currentStep === 1
+                            ? () => router.back()
+                            : () => setCurrentStep(prev => prev - 1)
+                    }
+                >
+                    <ArrowIcon />
+                    Назад
+                </NavigationButton>
+                <NavigationButton
+                    onClick={() => setCurrentStep(prev => prev + 1)}
+                    className={shouldHideSkip ? "hidden" : ""}
+                >
+                    Пропустить
+                    <ArrowIcon className="rotate-180" />
+                </NavigationButton>
+            </div>
+            <ProgressBar
+                stepsQty={getTotalSteps()}
+                currentStep={currentStep + 1}
+                className="mb-6"
+            />
             <CreateForm
                 currentStep={currentStep}
                 setCurrentStep={setCurrentStep}

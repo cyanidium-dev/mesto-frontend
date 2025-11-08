@@ -1,10 +1,18 @@
-import { Dispatch, SetStateAction, useMemo } from "react";
-import { FormikProps } from "formik";
+import {
+    Dispatch,
+    SetStateAction,
+    useRef,
+    useEffect,
+    useMemo,
+    useCallback,
+} from "react";
+import { FormikProps, ErrorMessage } from "formik";
 import MainButton from "../../shared/buttons/MainButton";
 import SectionTitle from "../../shared/titles/SectionTitle";
-import CustomizedInput from "../../shared/formComponents/CustomizedInput";
 import { EventFormValues } from "@/types/formValues";
-import { WheelPicker } from "@/components/shared/formComponents/WheelPicker";
+import CalendarIcon from "../../shared/icons/CalendarIcon";
+import ClockIcon from "../../shared/icons/ClockIcon";
+import CustomizedInput from "../../shared/formComponents/CustomizedInput";
 
 interface EventDateTimeProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;
@@ -15,51 +23,520 @@ export const EventDateTime = ({
     setCurrentStep,
     formProps,
 }: EventDateTimeProps) => {
-    const { errors, touched, values, setFieldValue } = formProps;
+    const { errors, values, setFieldValue } = formProps;
+    const datePickerRef = useRef<HTMLInputElement>(null);
+    const endDatePickerRef = useRef<HTMLInputElement>(null);
+    const startTimePickerRef = useRef<HTMLInputElement>(null);
+    const endTimePickerRef = useRef<HTMLInputElement>(null);
 
-    // Convert 24h time to 12h format for display
-    const time12h = useMemo(() => {
-        const timeStr = values.startTime || "00:00";
-        const [hourStr, minuteStr] = timeStr.split(":");
-        const hour24 = Number(hourStr || 0);
-        const minute = Number(minuteStr || 0);
+    // Detect user's locale date format
+    const localeFormat = useMemo(() => {
+        const formatter = new Intl.DateTimeFormat(navigator.language, {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+        });
+        const parts = formatter.formatToParts(new Date(2024, 11, 25));
+        const separator = parts.find(p => p.type === "literal")?.value || "/";
 
-        let hour12 = hour24 % 12;
-        if (hour12 === 0) hour12 = 12;
-        const ampm: "AM" | "PM" = hour24 < 12 ? "AM" : "PM";
+        return { separator };
+    }, []);
 
-        return { hour12, minute, ampm };
+    const dateSeparator = localeFormat.separator; // e.g., "/" or "."
+
+    // Parse user's locale date format to YYYY-MM-DD
+    const parseDateFromLocale = useMemo(() => {
+        return (dateString: string) => {
+            if (!dateString) return "";
+            try {
+                // Try to parse the date string in the user's locale
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) {
+                    // If direct parsing fails, try to parse based on format
+                    const parts = dateString.split(/\D/);
+                    if (parts.length === 3) {
+                        let year = "";
+                        let month = "";
+                        let day = "";
+
+                        // Get format pattern from locale
+                        const formatter = new Intl.DateTimeFormat(
+                            navigator.language,
+                            {
+                                year: "numeric",
+                                month: "2-digit",
+                                day: "2-digit",
+                            }
+                        );
+                        const formatParts = formatter.formatToParts(
+                            new Date(2024, 11, 25)
+                        );
+                        const orderedParts = formatParts.filter(
+                            p => p.type !== "literal"
+                        );
+
+                        // Map parts based on order
+                        orderedParts.forEach((part, i) => {
+                            if (part.type === "month")
+                                month = parts[i].padStart(2, "0");
+                            if (part.type === "day")
+                                day = parts[i].padStart(2, "0");
+                            if (part.type === "year") year = parts[i];
+                        });
+
+                        if (year && month && day) {
+                            return `${year}-${month}-${day}`;
+                        }
+                    }
+                    return "";
+                }
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, "0");
+                const day = String(date.getDate()).padStart(2, "0");
+                return `${year}-${month}-${day}`;
+            } catch {
+                return "";
+            }
+        };
+    }, []);
+
+    // Sync picker values with text inputs
+    useEffect(() => {
+        if (datePickerRef.current && values.startDate) {
+            const dateValue =
+                typeof values.startDate === "string" &&
+                !values.startDate.includes("-")
+                    ? parseDateFromLocale(values.startDate)
+                    : values.startDate;
+            if (dateValue) {
+                datePickerRef.current.value = dateValue as string;
+            }
+        }
+    }, [values.startDate, parseDateFromLocale]);
+
+    useEffect(() => {
+        if (endDatePickerRef.current && values.endDate) {
+            const dateValue =
+                typeof values.endDate === "string" &&
+                !values.endDate.includes("-")
+                    ? parseDateFromLocale(values.endDate)
+                    : values.endDate;
+            if (dateValue) {
+                endDatePickerRef.current.value = dateValue as string;
+            }
+        }
+    }, [values.endDate, parseDateFromLocale]);
+
+    useEffect(() => {
+        if (startTimePickerRef.current && values.startTime) {
+            startTimePickerRef.current.value = values.startTime as string;
+        }
     }, [values.startTime]);
 
-    // Convert 12h time to 24h format for storage
-    const convertTo24h = (
-        hour12: number,
-        minute: number,
-        ampm: "AM" | "PM"
-    ) => {
-        let hour24 = hour12 % 12;
-        if (ampm === "PM") hour24 += 12;
-        return `${String(hour24).padStart(2, "0")}:${String(minute).padStart(
-            2,
-            "0"
-        )}`;
+    useEffect(() => {
+        if (endTimePickerRef.current && values.endTime) {
+            endTimePickerRef.current.value = values.endTime as string;
+        }
+    }, [values.endTime]);
+
+    // Get date format parts order
+    const getDateFormatParts = useMemo(() => {
+        const formatter = new Intl.DateTimeFormat(navigator.language, {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+        });
+        const parts = formatter.formatToParts(new Date(2024, 11, 25));
+        return parts.filter(p => p.type !== "literal");
+    }, []);
+
+    // Validate and snap date part values
+    const validateAndSnapDate = useCallback(
+        (dateString: string): string => {
+            if (!dateString) return "";
+
+            const parts = dateString.split(/\D/);
+            if (parts.length === 0) return "";
+
+            let year = "";
+            let month = "";
+            let day = "";
+
+            // Map parts based on order
+            getDateFormatParts.forEach((part, i) => {
+                if (i < parts.length) {
+                    if (part.type === "month") month = parts[i];
+                    if (part.type === "day") day = parts[i];
+                    if (part.type === "year") year = parts[i];
+                }
+            });
+
+            // Validate and snap month only if it's complete (2 digits)
+            if (month && month.length === 2) {
+                const monthNum = parseInt(month, 10);
+                if (!isNaN(monthNum)) {
+                    if (monthNum < 1) month = "01";
+                    else if (monthNum > 12) month = "12";
+                    else month = String(monthNum).padStart(2, "0");
+                }
+            }
+
+            // Validate and snap year only if it's complete (4 digits)
+            if (year && year.length === 4) {
+                const yearNum = parseInt(year, 10);
+                if (!isNaN(yearNum)) {
+                    if (yearNum < 1900) year = "1900";
+                    else if (yearNum > 2100) year = "2100";
+                    else year = String(yearNum);
+                }
+            }
+
+            // Validate and snap day only if it's complete (2 digits) and month is complete
+            if (day && day.length === 2 && month && month.length === 2) {
+                const dayNum = parseInt(day, 10);
+                if (!isNaN(dayNum)) {
+                    const monthNum = parseInt(month, 10) || 1;
+                    const yearNum =
+                        parseInt(year, 10) || new Date().getFullYear();
+                    const daysInMonth = new Date(
+                        yearNum,
+                        monthNum,
+                        0
+                    ).getDate();
+
+                    if (dayNum < 1) day = "01";
+                    else if (dayNum > daysInMonth)
+                        day = String(daysInMonth).padStart(2, "0");
+                    else day = String(dayNum).padStart(2, "0");
+                }
+            }
+
+            // Reconstruct date string with validated parts (keep incomplete parts as-is)
+            const validatedParts: string[] = [];
+            getDateFormatParts.forEach((part, i) => {
+                if (i < parts.length) {
+                    if (part.type === "month")
+                        validatedParts.push(month || parts[i]);
+                    else if (part.type === "day")
+                        validatedParts.push(day || parts[i]);
+                    else if (part.type === "year")
+                        validatedParts.push(year || parts[i]);
+                }
+            });
+
+            return validatedParts.join(dateSeparator);
+        },
+        [getDateFormatParts, dateSeparator]
+    );
+
+    // Validate and snap time part values (only for complete sections)
+    const validateAndSnapTime = (timeString: string): string => {
+        if (!timeString) return "";
+
+        const parts = timeString.split(":");
+        if (parts.length === 0) return "";
+
+        let hours = parts[0] || "";
+        let minutes = parts[1] || "";
+
+        // Validate and snap hours only if it's complete (2 digits)
+        if (hours && hours.length === 2) {
+            const hoursNum = parseInt(hours, 10);
+            if (!isNaN(hoursNum)) {
+                if (hoursNum < 0) hours = "00";
+                else if (hoursNum > 23) hours = "23";
+                else hours = String(hoursNum).padStart(2, "0");
+            }
+        }
+
+        // Validate and snap minutes only if it's complete (2 digits)
+        if (minutes && minutes.length === 2) {
+            const minutesNum = parseInt(minutes, 10);
+            if (!isNaN(minutesNum)) {
+                if (minutesNum < 0) minutes = "00";
+                else if (minutesNum > 59) minutes = "59";
+                else minutes = String(minutesNum).padStart(2, "0");
+            }
+        }
+
+        // Reconstruct time string
+        if (hours && minutes) return `${hours}:${minutes}`;
+        if (hours) return `${hours}:`;
+        return "";
+    };
+
+    // Format date from YYYY-MM-DD to user's locale format
+    const formatDateForDisplay = (dateString: string | undefined) => {
+        if (!dateString) return "";
+        try {
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return "";
+            const formatter = new Intl.DateTimeFormat(navigator.language, {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+            });
+            return formatter.format(date);
+        } catch {
+            return "";
+        }
+    };
+
+    // Apply date mask based on user's locale format with validation
+    const applyDateMask = useMemo(() => {
+        return (value: string) => {
+            const digits = value.replace(/\D/g, "");
+            if (digits.length === 0) return "";
+
+            let masked = "";
+            let digitIndex = 0;
+
+            // Apply mask based on the order of parts
+            for (
+                let i = 0;
+                i < getDateFormatParts.length && digitIndex < digits.length;
+                i++
+            ) {
+                const part = getDateFormatParts[i];
+
+                if (part.type === "month" || part.type === "day") {
+                    // Month or day: 2 digits
+                    if (digitIndex < digits.length) {
+                        masked += digits[digitIndex++];
+                        if (digitIndex < digits.length) {
+                            masked += digits[digitIndex++];
+                        }
+                    }
+                } else if (part.type === "year") {
+                    // Year: 4 digits
+                    for (let j = 0; j < 4 && digitIndex < digits.length; j++) {
+                        masked += digits[digitIndex++];
+                    }
+                }
+
+                // Add separator after each part except the last
+                if (
+                    i < getDateFormatParts.length - 1 &&
+                    digitIndex < digits.length
+                ) {
+                    masked += dateSeparator;
+                }
+            }
+
+            // Validate and snap values
+            return validateAndSnapDate(masked);
+        };
+    }, [dateSeparator, getDateFormatParts, validateAndSnapDate]);
+
+    // Apply time mask (HH:MM) with validation
+    const applyTimeMask = (value: string) => {
+        const digits = value.replace(/\D/g, "");
+        let masked = "";
+        for (let i = 0; i < digits.length && i < 4; i++) {
+            if (i === 2) {
+                masked += ":";
+            }
+            masked += digits[i];
+        }
+
+        // Validate and snap values
+        return validateAndSnapTime(masked);
     };
 
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
             <div>
                 <SectionTitle className="mb-6">Дата и время</SectionTitle>
-                <CustomizedInput
-                    fieldName="startDate"
-                    inputType="date"
-                    placeholder=""
-                    label="Дата начала"
-                    isRequired
-                    errors={errors}
-                    touched={touched}
-                    labelClassName="mb-6"
-                />
+                <p className="mb-6">Уточните когда будет ваше событие:</p>
+
+                {/* Date section */}
                 <div className="mb-4">
+                    <label className="text-[14px] font-medium">
+                        Установите дату
+                    </label>
+                </div>
+                <div className="mb-4">
+                    <div className="relative flex flex-col w-full">
+                        <div className="relative w-full">
+                            <div className="relative">
+                                <CustomizedInput
+                                    fieldName="startDate"
+                                    placeholder=""
+                                    errors={errors}
+                                    touched={formProps.touched}
+                                    inputType="text"
+                                    fieldClassName="pr-12 text-right"
+                                    onChange={e => {
+                                        const masked = applyDateMask(
+                                            e.target.value
+                                        );
+                                        e.target.value = masked;
+
+                                        // Always set the masked value (validation is done in applyDateMask)
+                                        setFieldValue("startDate", masked);
+
+                                        // Update picker if we have a complete valid date
+                                        if (masked) {
+                                            const isoDate =
+                                                parseDateFromLocale(masked);
+                                            if (
+                                                isoDate &&
+                                                datePickerRef.current
+                                            ) {
+                                                datePickerRef.current.value =
+                                                    isoDate;
+                                            }
+                                        }
+                                    }}
+                                />
+                                <input
+                                    ref={datePickerRef}
+                                    type="date"
+                                    className="absolute opacity-0 pointer-events-none w-0 h-0"
+                                    onChange={e => {
+                                        if (e.target.value) {
+                                            const formatted =
+                                                formatDateForDisplay(
+                                                    e.target.value
+                                                );
+                                            setFieldValue(
+                                                "startDate",
+                                                formatted
+                                            );
+                                        }
+                                    }}
+                                />
+                            </div>
+                            <div className="absolute inset-0 pointer-events-none flex items-center justify-between px-4">
+                                <span className="text-placeholder">
+                                    {(values.hasEndDate as boolean)
+                                        ? "Начало:"
+                                        : "Дата:"}
+                                </span>
+                                <div className="flex items-center gap-2 justify-end">
+                                    <button
+                                        type="button"
+                                        onClick={e => {
+                                            e.stopPropagation();
+                                            if (datePickerRef.current) {
+                                                if (
+                                                    typeof datePickerRef.current
+                                                        .showPicker ===
+                                                    "function"
+                                                ) {
+                                                    datePickerRef.current.showPicker();
+                                                } else {
+                                                    datePickerRef.current.focus();
+                                                    datePickerRef.current.click();
+                                                }
+                                            }
+                                        }}
+                                        className="flex items-center justify-center text-gray-dark hover:text-primary transition-colors pointer-events-auto"
+                                    >
+                                        <CalendarIcon className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <ErrorMessage
+                            name="startDate"
+                            component="p"
+                            className="absolute bottom-[-11px] left-2 text-[9px] font-normal leading-none text-red-500"
+                        />
+                    </div>
+                </div>
+                {(values.hasEndDate as boolean) && (
+                    <div className="mb-4">
+                        <div className="relative flex flex-col w-full">
+                            <div className="relative w-full">
+                                <div className="relative">
+                                    <CustomizedInput
+                                        fieldName="endDate"
+                                        placeholder=""
+                                        errors={errors}
+                                        touched={formProps.touched}
+                                        inputType="text"
+                                        fieldClassName="pr-12 text-right"
+                                        onChange={e => {
+                                            const masked = applyDateMask(
+                                                e.target.value
+                                            );
+                                            e.target.value = masked;
+
+                                            // Always set the masked value (validation is done in applyDateMask)
+                                            setFieldValue("endDate", masked);
+
+                                            // Update picker if we have a complete valid date
+                                            if (masked) {
+                                                const isoDate =
+                                                    parseDateFromLocale(masked);
+                                                if (
+                                                    isoDate &&
+                                                    endDatePickerRef.current
+                                                ) {
+                                                    endDatePickerRef.current.value =
+                                                        isoDate;
+                                                }
+                                            }
+                                        }}
+                                    />
+                                    <input
+                                        ref={endDatePickerRef}
+                                        type="date"
+                                        className="absolute opacity-0 pointer-events-none w-0 h-0"
+                                        onChange={e => {
+                                            if (e.target.value) {
+                                                const formatted =
+                                                    formatDateForDisplay(
+                                                        e.target.value
+                                                    );
+                                                setFieldValue(
+                                                    "endDate",
+                                                    formatted
+                                                );
+                                            }
+                                        }}
+                                    />
+                                </div>
+                                <div className="absolute inset-0 pointer-events-none flex items-center justify-between px-4">
+                                    <span className="text-placeholder">
+                                        Конец:
+                                    </span>
+                                    <div className="flex items-center gap-2 justify-end">
+                                        <button
+                                            type="button"
+                                            onClick={e => {
+                                                e.stopPropagation();
+                                                if (endDatePickerRef.current) {
+                                                    if (
+                                                        typeof endDatePickerRef
+                                                            .current
+                                                            .showPicker ===
+                                                        "function"
+                                                    ) {
+                                                        endDatePickerRef.current.showPicker();
+                                                    } else {
+                                                        endDatePickerRef.current.focus();
+                                                        endDatePickerRef.current.click();
+                                                    }
+                                                }
+                                            }}
+                                            className="flex items-center justify-center text-gray-dark hover:text-primary transition-colors pointer-events-auto"
+                                        >
+                                            <CalendarIcon className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <ErrorMessage
+                                name="endDate"
+                                component="p"
+                                className="absolute bottom-[-11px] left-2 text-[9px] font-normal leading-none text-red-500"
+                            />
+                        </div>
+                    </div>
+                )}
+                <div className="mb-6">
                     <label className="flex items-center gap-2 cursor-pointer">
                         <input
                             type="checkbox"
@@ -70,57 +547,187 @@ export const EventDateTime = ({
                             className="w-4 h-4"
                         />
                         <span className="text-[14px]">
-                            Указать дату окончания
+                            Добавить время завершения
                         </span>
                     </label>
                 </div>
-                {(values.hasEndDate as boolean) && (
-                    <CustomizedInput
-                        fieldName="endDate"
-                        inputType="date"
-                        placeholder=""
-                        label="Дата окончания"
-                        errors={errors}
-                        touched={touched}
-                        labelClassName="mb-6"
-                    />
-                )}
-                <CustomizedInput
-                    fieldName="startTime"
-                    inputType="time"
-                    placeholder=""
-                    label="Время начала"
-                    errors={errors}
-                    touched={touched}
-                    labelClassName="mb-6"
-                />
-                <WheelPicker
-                    hourValue={time12h.hour12}
-                    minuteValue={time12h.minute}
-                    ampmValue={time12h.ampm}
-                    onHourChange={hour =>
-                        setFieldValue(
-                            "startTime",
-                            convertTo24h(hour, time12h.minute, time12h.ampm)
-                        )
-                    }
-                    onMinuteChange={minute =>
-                        setFieldValue(
-                            "startTime",
-                            convertTo24h(time12h.hour12, minute, time12h.ampm)
-                        )
-                    }
-                    onAmpmChange={ampm =>
-                        setFieldValue(
-                            "startTime",
-                            convertTo24h(time12h.hour12, time12h.minute, ampm)
-                        )
-                    }
-                    timeFormat="12h"
-                    containerHeight={210}
-                    itemHeight={32}
-                />
+
+                {/* Time section */}
+
                 <div className="mb-4">
+                    <label className="text-[14px] font-medium">
+                        Установите время
+                    </label>
+                </div>
+
+                <div className="mb-4 relative">
+                    <div className="relative flex flex-col w-full">
+                        <div className="relative w-full">
+                            <div className="relative">
+                                <CustomizedInput
+                                    fieldName="startTime"
+                                    placeholder=""
+                                    errors={errors}
+                                    touched={formProps.touched}
+                                    inputType="text"
+                                    fieldClassName="pr-12 text-right"
+                                    onChange={e => {
+                                        const masked = applyTimeMask(
+                                            e.target.value
+                                        );
+                                        e.target.value = masked;
+
+                                        // Always set the masked value (validation is done in applyTimeMask)
+                                        setFieldValue("startTime", masked);
+
+                                        // Update picker if we have a complete valid time
+                                        if (
+                                            masked &&
+                                            masked.length === 5 &&
+                                            startTimePickerRef.current
+                                        ) {
+                                            startTimePickerRef.current.value =
+                                                masked;
+                                        }
+                                    }}
+                                />
+                                <input
+                                    ref={startTimePickerRef}
+                                    type="time"
+                                    className="absolute opacity-0 pointer-events-none w-0 h-0"
+                                    onChange={e => {
+                                        if (e.target.value) {
+                                            setFieldValue(
+                                                "startTime",
+                                                e.target.value
+                                            );
+                                        }
+                                    }}
+                                />
+                            </div>
+                            <div className="absolute inset-0 pointer-events-none flex items-center justify-between px-4">
+                                <span className="text-placeholder">
+                                    {(values.hasEndTime as boolean)
+                                        ? "Начало:"
+                                        : "Встреча в:"}
+                                </span>
+                                <div className="flex items-center gap-2 justify-end">
+                                    <button
+                                        type="button"
+                                        onClick={e => {
+                                            e.stopPropagation();
+                                            if (startTimePickerRef.current) {
+                                                if (
+                                                    typeof startTimePickerRef
+                                                        .current.showPicker ===
+                                                    "function"
+                                                ) {
+                                                    startTimePickerRef.current.showPicker();
+                                                } else {
+                                                    startTimePickerRef.current.focus();
+                                                    startTimePickerRef.current.click();
+                                                }
+                                            }
+                                        }}
+                                        className="flex items-center justify-center text-gray-dark hover:text-primary transition-colors pointer-events-auto"
+                                    >
+                                        <ClockIcon className="w-5 h-5" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <ErrorMessage
+                            name="startTime"
+                            component="p"
+                            className="absolute bottom-[-11px] left-2 text-[9px] font-normal leading-none text-red-500"
+                        />
+                    </div>
+                </div>
+                {(values.hasEndTime as boolean) && (
+                    <div className="mb-4 relative">
+                        <div className="relative flex flex-col w-full">
+                            <div className="relative w-full">
+                                <div className="relative">
+                                    <CustomizedInput
+                                        fieldName="endTime"
+                                        placeholder=""
+                                        errors={errors}
+                                        touched={formProps.touched}
+                                        inputType="text"
+                                        fieldClassName="pr-12 text-right"
+                                        onChange={e => {
+                                            const masked = applyTimeMask(
+                                                e.target.value
+                                            );
+                                            e.target.value = masked;
+
+                                            // Always set the masked value (validation is done in applyTimeMask)
+                                            setFieldValue("endTime", masked);
+
+                                            // Update picker if we have a complete valid time
+                                            if (
+                                                masked &&
+                                                masked.length === 5 &&
+                                                endTimePickerRef.current
+                                            ) {
+                                                endTimePickerRef.current.value =
+                                                    masked;
+                                            }
+                                        }}
+                                    />
+                                    <input
+                                        ref={endTimePickerRef}
+                                        type="time"
+                                        className="absolute opacity-0 pointer-events-none w-0 h-0"
+                                        onChange={e => {
+                                            if (e.target.value) {
+                                                setFieldValue(
+                                                    "endTime",
+                                                    e.target.value
+                                                );
+                                            }
+                                        }}
+                                    />
+                                </div>
+                                <div className="absolute inset-0 pointer-events-none flex items-center justify-between px-4">
+                                    <span className="text-placeholder">
+                                        Конец:
+                                    </span>
+                                    <div className="flex items-center gap-2 justify-end">
+                                        <button
+                                            type="button"
+                                            onClick={e => {
+                                                e.stopPropagation();
+                                                if (endTimePickerRef.current) {
+                                                    if (
+                                                        typeof endTimePickerRef
+                                                            .current
+                                                            .showPicker ===
+                                                        "function"
+                                                    ) {
+                                                        endTimePickerRef.current.showPicker();
+                                                    } else {
+                                                        endTimePickerRef.current.focus();
+                                                        endTimePickerRef.current.click();
+                                                    }
+                                                }
+                                            }}
+                                            className="flex items-center justify-center text-gray-dark hover:text-primary transition-colors pointer-events-auto"
+                                        >
+                                            <ClockIcon className="w-5 h-5" />
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <ErrorMessage
+                                name="endTime"
+                                component="p"
+                                className="absolute bottom-[-11px] left-2 text-[9px] font-normal leading-none text-red-500"
+                            />
+                        </div>
+                    </div>
+                )}
+                <div className="mb-6">
                     <label className="flex items-center gap-2 cursor-pointer">
                         <input
                             type="checkbox"
@@ -131,20 +738,10 @@ export const EventDateTime = ({
                             className="w-4 h-4"
                         />
                         <span className="text-[14px]">
-                            Указать время окончания
+                            Добавить время завершения
                         </span>
                     </label>
                 </div>
-                {(values.hasEndTime as boolean) && (
-                    <CustomizedInput
-                        fieldName="endTime"
-                        inputType="time"
-                        placeholder=""
-                        label="Время окончания"
-                        errors={errors}
-                        touched={touched}
-                    />
-                )}
             </div>
             <MainButton
                 onClick={() => setCurrentStep(prev => prev + 1)}

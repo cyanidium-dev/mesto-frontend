@@ -27,6 +27,41 @@ const tagPresets = [
         label: "Ремесленник",
         tags: ["Творчество", "Инновации", "Вдохновение"],
     },
+    {
+        value: "sports-fitness",
+        label: "Спорт и фитнес",
+        tags: ["Энергия", "Сила", "Дисциплина"],
+    },
+    {
+        value: "arts-culture",
+        label: "Искусство и культура",
+        tags: ["Творчество", "Вдохновение", "Гармония"],
+    },
+    {
+        value: "education",
+        label: "Образование",
+        tags: ["Мудрость", "Потенциал", "Стратегия"],
+    },
+    {
+        value: "wellness",
+        label: "Здоровье и благополучие",
+        tags: ["Гармония", "Доброта", "Устойчивость"],
+    },
+    {
+        value: "business-entrepreneurship",
+        label: "Бизнес и предпринимательство",
+        tags: ["Успех", "Инновации", "Решительность"],
+    },
+    {
+        value: "community-social",
+        label: "Сообщество и социальная деятельность",
+        tags: ["Сострадание", "Доброта", "Согласие"],
+    },
+    {
+        value: "technology",
+        label: "Технологии",
+        tags: ["Инновации", "Стратегия", "Потенциал"],
+    },
 ];
 
 const presetOptions = tagPresets.map(preset => ({
@@ -107,7 +142,6 @@ const TagSelector = () => {
                     labelClassName="mb-3"
                 />
             </div>
-            <p className="mb-3 text-[14px]">Или выберите теги вручную (1-4):</p>
             <div className="flex flex-wrap gap-2">
                 {allTags.map(tag => (
                     <div
@@ -134,7 +168,10 @@ export const Interests = ({ setCurrentStep, formProps }: InterestsProps) => {
         <div className="flex flex-col flex-1 justify-between h-full">
             <div>
                 <SectionTitle className="mb-6">Интересы</SectionTitle>
-                <p>Выберите до 4 тегов интересов, которые более релеванты вашему событию</p>
+                <p className="mb-6 text-[14px]">
+                    Выберите до 4 тегов интересов, которые более релеванты
+                    вашему событию
+                </p>
                 <TagSelector />
             </div>
             <MainButton

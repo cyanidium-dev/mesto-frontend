@@ -51,8 +51,11 @@ const isValidUrl = (url: string): boolean => {
 const SocialLinksInput = () => {
     const { values, setFieldValue } = useFormikContext<BaseFormValues>();
     const socialMediaUrls = values.socialMediaUrls || [];
-    const [editingPlatform, setEditingPlatform] = useState<SocialPlatform | null>(null);
-    const [inputValues, setInputValues] = useState<Record<SocialPlatform, string>>({
+    const [editingPlatform, setEditingPlatform] =
+        useState<SocialPlatform | null>(null);
+    const [inputValues, setInputValues] = useState<
+        Record<SocialPlatform, string>
+    >({
         facebook: socialMediaUrls[0] || "",
         instagram: socialMediaUrls[1] || "",
         telegram: socialMediaUrls[2] || "",
@@ -75,7 +78,7 @@ const SocialLinksInput = () => {
 
     const handleInputChange = (platform: SocialPlatform, value: string) => {
         setInputValues(prev => ({ ...prev, [platform]: value }));
-        
+
         // Auto-save when valid URL is entered
         if (isValidUrl(value)) {
             const index = getPlatformIndex(platform);
@@ -88,7 +91,7 @@ const SocialLinksInput = () => {
 
     const handleInputBlur = (platform: SocialPlatform) => {
         const value = inputValues[platform];
-        
+
         if (!value.trim() || !isValidUrl(value)) {
             setEditingPlatform(null);
             // Reset input value if invalid
@@ -98,7 +101,10 @@ const SocialLinksInput = () => {
         }
     };
 
-    const handleInputKeyDown = (platform: SocialPlatform, e: React.KeyboardEvent) => {
+    const handleInputKeyDown = (
+        platform: SocialPlatform,
+        e: React.KeyboardEvent
+    ) => {
         if (e.key === "Enter") {
             handleInputBlur(platform);
         } else if (e.key === "Escape") {
@@ -148,7 +154,10 @@ const SocialLinksInput = () => {
                                         type="url"
                                         value={inputValue}
                                         onChange={e =>
-                                            handleInputChange(platform, e.target.value)
+                                            handleInputChange(
+                                                platform,
+                                                e.target.value
+                                            )
                                         }
                                         onBlur={() => handleInputBlur(platform)}
                                         onKeyDown={e =>
@@ -207,9 +216,12 @@ export const DescriptionSocials = ({
                     as="textarea"
                     errors={errors}
                     touched={touched}
-                    labelClassName="mb-6"
+                    labelClassName="mb-2"
+                    fieldClassName="h-[172px]"
                 />
-                <p>Не более 1500 символов</p>
+                <p className="text-[12px] text-gray-text mb-6">
+                    Не более 1500 символов
+                </p>
                 <CustomizedInput
                     fieldName="siteLink"
                     inputType="url"

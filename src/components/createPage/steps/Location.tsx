@@ -15,10 +15,9 @@ import { useLocationStore } from "@/store/locationStore";
 import { EventFormValues } from "@/types/formValues";
 import { BusinessFormValues } from "@/types/formValues";
 
-const LocationPickerMap = dynamic(
-    () => import("./LocationPickerMap"),
-    { ssr: false }
-);
+const LocationPickerMap = dynamic(() => import("./LocationPickerMap"), {
+    ssr: false,
+});
 
 interface LocationProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;
@@ -63,11 +62,16 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
     const [searchResults, setSearchResults] = useState<GeocodingResult[]>([]);
     const [isSearching, setIsSearching] = useState(false);
     const [showResults, setShowResults] = useState(false);
-    const [selectedLocationName, setSelectedLocationName] = useState<string>("");
+    const [selectedLocationName, setSelectedLocationName] =
+        useState<string>("");
     const searchContainerRef = useRef<HTMLDivElement>(null);
+    const [isMapOpen, setIsMapOpen] = useState(false);
+    const lastReverseGeocodedPosition = useRef<[number, number] | null>(null);
 
-    const initialCenter = getPositionAsTuple() || mapCenter || [50.0755, 14.4378];
-    const [mapCenterState, setMapCenterState] = useState<[number, number]>(initialCenter);
+    const initialCenter = getPositionAsTuple() ||
+        mapCenter || [50.0755, 14.4378];
+    const [mapCenterState, setMapCenterState] =
+        useState<[number, number]>(initialCenter);
 
     // Close search results when clicking outside
     useEffect(() => {
@@ -94,42 +98,32 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
     }, [selectedPosition, setFieldValue]);
 
     // Debounced search function
-    const searchLocation = useCallback(
-        async (query: string) => {
-            if (!query.trim()) {
-                setSearchResults([]);
-                setIsSearching(false);
-                return;
-            }
+    const searchLocation = useCallback(async (query: string) => {
+        if (!query.trim()) {
+            setSearchResults([]);
+            setIsSearching(false);
+            return;
+        }
 
-            setIsSearching(true);
-            try {
-                const response = await fetch(
-                    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-                        query
-                    )}&limit=5&addressdetails=1`,
-                    {
-                        headers: {
-                            "User-Agent": "Mesto App",
-                        },
-                    }
-                );
+        setIsSearching(true);
+        try {
+            const response = await fetch(
+                `/api/geocode/search?q=${encodeURIComponent(query)}`
+            );
 
-                if (response.ok) {
-                    const data: GeocodingResult[] = await response.json();
-                    setSearchResults(data);
-                } else {
-                    setSearchResults([]);
-                }
-            } catch (error) {
-                console.error("Geocoding error:", error);
+            if (response.ok) {
+                const data: GeocodingResult[] = await response.json();
+                setSearchResults(data);
+            } else {
                 setSearchResults([]);
-            } finally {
-                setIsSearching(false);
             }
-        },
-        []
-    );
+        } catch (error) {
+            console.error("Geocoding error:", error);
+            setSearchResults([]);
+        } finally {
+            setIsSearching(false);
+        }
+    }, []);
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -150,14 +144,39 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
         setSelectedLocationName(result.display_name);
         setSearchQuery(result.display_name);
         setShowResults(false);
+        lastReverseGeocodedPosition.current = position;
+        // Open map if not already open
+        if (!isMapOpen) {
+            setIsMapOpen(true);
+        }
     };
 
-    const handleMapClick = (position: [number, number]) => {
+    const handleMapClick = async (position: [number, number]) => {
         setSelectedPosition(position);
         setFieldValue("position", position);
         setMapCenterState(position);
-        setSelectedLocationName("");
-        setSearchQuery("");
+        lastReverseGeocodedPosition.current = position;
+
+        // Reverse geocode to get location name
+        try {
+            const response = await fetch(
+                `/api/geocode/reverse?lat=${position[0]}&lon=${position[1]}`
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                const locationName = data.display_name || "";
+                setSelectedLocationName(locationName);
+                setSearchQuery(locationName);
+            } else {
+                setSelectedLocationName("");
+                setSearchQuery("");
+            }
+        } catch (error) {
+            console.error("Reverse geocoding error:", error);
+            setSelectedLocationName("");
+            setSearchQuery("");
+        }
     };
 
     const handleMapCenterChange = (center: [number, number]) => {
@@ -165,14 +184,52 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
         setMapCenterState(center);
     };
 
+    // Sync input value with map position when position changes
+    useEffect(() => {
+        if (values.position && Array.isArray(values.position)) {
+            const position = values.position as [number, number];
+            setSelectedPosition(position);
+            setMapCenterState(position);
+
+            // Check if we need to reverse geocode (only if position changed and we don't have a name)
+            const positionChanged =
+                !lastReverseGeocodedPosition.current ||
+                lastReverseGeocodedPosition.current[0] !== position[0] ||
+                lastReverseGeocodedPosition.current[1] !== position[1];
+
+            if (positionChanged && !selectedLocationName) {
+                lastReverseGeocodedPosition.current = position;
+                fetch(
+                    `/api/geocode/reverse?lat=${position[0]}&lon=${position[1]}`
+                )
+                    .then(res => res.json())
+                    .then(data => {
+                        const locationName = data.display_name || "";
+                        setSelectedLocationName(locationName);
+                        setSearchQuery(prev => prev || locationName);
+                    })
+                    .catch(err =>
+                        console.error("Reverse geocoding error:", err)
+                    );
+            }
+        }
+    }, [values.position, selectedLocationName]);
+
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
             <div>
                 <SectionTitle className="mb-6">Место</SectionTitle>
-                <p>Уточните где будет проходить событие</p>
+                <p className="text-[14px] text-gray-text mb-6">
+                    Уточните где будет проходить событие
+                </p>
                 {/* Search Input */}
                 <div className="relative mb-4" ref={searchContainerRef}>
-                    <label htmlFor="location" className="text-[14px] text-gray-text">Локация</label>
+                    <label
+                        htmlFor="location"
+                        className="text-[14px] text-gray-text"
+                    >
+                        Локация
+                    </label>
                     <input
                         id="location"
                         type="text"
@@ -190,7 +247,7 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                             <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
                         </div>
                     )}
-                    
+
                     {/* Search Results Dropdown */}
                     {showResults && searchResults.length > 0 && (
                         <div className="absolute z-50 w-full mt-2 bg-white border border-gray-light rounded-[16px] shadow-lg max-h-[200px] overflow-y-auto">
@@ -198,7 +255,9 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                                 <button
                                     key={result.place_id}
                                     type="button"
-                                    onClick={() => handleSearchResultSelect(result)}
+                                    onClick={() =>
+                                        handleSearchResultSelect(result)
+                                    }
                                     className="w-full px-4 py-3 text-left text-[14px] hover:bg-gray-ultra-light transition-colors border-b border-gray-light last:border-b-0"
                                 >
                                     {result.display_name}
@@ -208,33 +267,56 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                     )}
                 </div>
 
-                <p className="mb-4 text-[14px] text-gray-text">
-                    Нажмите на карте, чтобы выбрать местоположение события
-                </p>
-                
-                {selectedPosition && (
-                    <div className="mb-4">
-                        {selectedLocationName ? (
-                            <p className="text-[12px] text-gray-placeholder">
-                                Выбрано: {selectedLocationName}
-                            </p>
-                        ) : (
-                            <p className="text-[12px] text-gray-placeholder">
-                                Выбрано: {selectedPosition[0].toFixed(4)},{" "}
-                                {selectedPosition[1].toFixed(4)}
-                            </p>
-                        )}
+                {!isMapOpen ? (
+                    <div className="h-[300px] w-full rounded-[16px] overflow-hidden mb-4 relative bg-gray-ultra-light border border-gray-light flex items-center justify-center">
+                        <div className="flex flex-col items-center gap-4">
+                            <button
+                                type="button"
+                                onClick={() => setIsMapOpen(true)}
+                                className="px-6 py-3 bg-primary text-white rounded-full text-[14px] font-medium hover:bg-primary-dark transition-colors flex items-center justify-center"
+                            >
+                                Выбрать на карте
+                                <div className="ml-2 w-[20px] h-[20px] flex items-center justify-center">
+                                    <svg className="w-[20px] h-[20px] fill-white">
+                                        <use href="/images/icons/map.svg" />
+                                    </svg>
+                                </div>
+                            </button>
+                        </div>
                     </div>
+                ) : (
+                    <>
+                        <p className="mb-4 text-[14px] text-gray-text">
+                            Нажмите на карте, чтобы выбрать местоположение
+                            события
+                        </p>
+
+                        {selectedPosition && (
+                            <div className="mb-4">
+                                {selectedLocationName ? (
+                                    <p className="text-[12px] text-gray-placeholder">
+                                        Выбрано: {selectedLocationName}
+                                    </p>
+                                ) : (
+                                    <p className="text-[12px] text-gray-placeholder">
+                                        Выбрано:{" "}
+                                        {selectedPosition[0].toFixed(4)},{" "}
+                                        {selectedPosition[1].toFixed(4)}
+                                    </p>
+                                )}
+                            </div>
+                        )}
+
+                        <div className="h-[300px] w-full rounded-[16px] overflow-hidden mb-4 relative">
+                            <LocationPickerMap
+                                center={mapCenterState}
+                                selectedPosition={selectedPosition}
+                                onPositionSelect={handleMapClick}
+                                onCenterChange={handleMapCenterChange}
+                            />
+                        </div>
+                    </>
                 )}
-                
-                <div className="h-[300px] w-full rounded-[16px] overflow-hidden mb-4 relative">
-                    <LocationPickerMap
-                        center={mapCenterState}
-                        selectedPosition={selectedPosition}
-                        onPositionSelect={handleMapClick}
-                        onCenterChange={handleMapCenterChange}
-                    />
-                </div>
             </div>
             <MainButton
                 onClick={() => setCurrentStep(prev => prev + 1)}

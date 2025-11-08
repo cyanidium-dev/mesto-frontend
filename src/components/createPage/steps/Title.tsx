@@ -20,13 +20,16 @@ export const Title = ({ setCurrentStep, formProps }: TitleProps) => {
                 <CustomizedInput
                     fieldName="title"
                     inputType="text"
-                    placeholder="Придумайте название для вашего события"
-                    label="Название события"
+                    placeholder="Название события"
+                    label="Придумайте название для вашего события"
                     isRequired
                     errors={errors}
                     touched={touched}
-                    labelClassName="mb-6"
+                    labelClassName="mb-2"
                 />
+                <p className="text-[12px] text-gray-text mb-6">
+                    Не более 70 символов
+                </p>
             </div>
             <MainButton
                 onClick={() => setCurrentStep(prev => prev + 1)}
