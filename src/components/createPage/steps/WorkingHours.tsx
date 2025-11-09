@@ -10,15 +10,7 @@ interface WorkingHoursProps {
     formProps: FormikProps<BusinessFormValues>;
 }
 
-const days = [
-    "Пн",
-    "Вт",
-    "Ср",
-    "Чт",
-    "Пт",
-    "Сб",
-    "Вс",
-];
+const days = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
 
 const dayFullNames = [
     "Понедельник",
@@ -33,7 +25,7 @@ const dayFullNames = [
 const WorkingHoursInput = () => {
     const { values, setFieldValue } = useFormikContext<BusinessFormValues>();
     const workingHours = values.workingHours ?? [];
-    
+
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
     const [selectedDays, setSelectedDays] = useState<boolean[]>(
@@ -88,7 +80,11 @@ const WorkingHoursInput = () => {
             const current = currentWorkingHours[index];
             if (selectedDays[index]) {
                 // If day is selected, check if hours match
-                return !current || current.start !== startTime || current.end !== endTime;
+                return (
+                    !current ||
+                    current.start !== startTime ||
+                    current.end !== endTime
+                );
             }
             // If day is not selected, check if it's different
             return hours !== current;
@@ -113,17 +109,18 @@ const WorkingHoursInput = () => {
     return (
         <div>
             <p className="mb-4 text-[14px]">Рабочие часы</p>
-            
+
             {/* Time Range Input */}
             <div className="mb-6">
                 <label className="block text-[12px] font-normal leading-[120%] mb-2">
-                    Время работы
+                    Уточните в какие дни и часы работает компания, эта
+                    информация будет показываться в вашей бизнес точке
                 </label>
                 <div className="flex items-center gap-3">
                     <input
                         type="time"
                         value={startTime}
-                        onChange={(e) => setStartTime(e.target.value)}
+                        onChange={e => setStartTime(e.target.value)}
                         placeholder="Начало"
                         className="flex-1 px-4 h-[37px] text-[16px] font-normal leading-none text-dark bg-white placeholder-placeholder border border-gray-light rounded-full outline-none transition duration-300 ease-out focus:border-primary"
                     />
@@ -131,7 +128,7 @@ const WorkingHoursInput = () => {
                     <input
                         type="time"
                         value={endTime}
-                        onChange={(e) => setEndTime(e.target.value)}
+                        onChange={e => setEndTime(e.target.value)}
                         placeholder="Конец"
                         className="flex-1 px-4 h-[37px] text-[16px] font-normal leading-none text-dark bg-white placeholder-placeholder border border-gray-light rounded-full outline-none transition duration-300 ease-out focus:border-primary"
                     />
@@ -165,9 +162,7 @@ const WorkingHoursInput = () => {
     );
 };
 
-export const WorkingHours = ({
-    setCurrentStep,
-}: WorkingHoursProps) => {
+export const WorkingHours = ({ setCurrentStep }: WorkingHoursProps) => {
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
             <div>

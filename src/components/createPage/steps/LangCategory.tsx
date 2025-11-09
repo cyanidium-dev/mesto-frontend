@@ -154,11 +154,33 @@ const LanguageSelector = () => {
     );
 };
 
+const description = {
+    event: {
+        category: "Выберите к какой категории относиться ваше событие:",
+        languages: "Выберите до 3 языков вашего события:",
+    },
+    company: {
+        category: "Выберите к какой категории относиться ваша компания:",
+        languages: "Выбирите до 3 языков вашей компании:",
+    },
+    individual: {
+        category: "Выберите к какой категории относиться ваша деятельность:",
+        languages: "Выбирите до 3 языков вашей деятельности:",
+    },
+};
+
 export const LangCategory = ({
     setCurrentStep,
     formProps,
 }: LangCategoryProps) => {
     const { errors, values } = formProps;
+
+    let type: "event" | "company" | "individual";
+    if ("userType" in values && values.userType) {
+        type = values.userType === "individual" ? "individual" : "company";
+    } else {
+        type = "event";
+    }
 
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
@@ -166,7 +188,7 @@ export const LangCategory = ({
                 <SectionTitle className="mb-6">Категория и язык</SectionTitle>
                 <SelectInput
                     fieldName="category"
-                    label="Выберите к какой категории относиться ваше событие:"
+                    label={description[type].category}
                     required
                     placeholder="Выбрать категорию"
                     options={categories}
@@ -174,7 +196,7 @@ export const LangCategory = ({
                 />
                 <div>
                     <p className="mb-3 text-[14px]">
-                        Выберите до 3 языков вашего события:
+                        {description[type].languages}
                     </p>
                     <LanguageSelector />
                 </div>

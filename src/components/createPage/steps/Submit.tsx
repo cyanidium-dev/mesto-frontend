@@ -16,12 +16,37 @@ interface SubmitProps {
     formProps: FormikProps<EventFormValues | BusinessFormValues>;
 }
 
+const description = {
+    event: {
+        title: "Супер, вы создали событие!",
+        description:
+            "Теперь вы можете увидеть его на карте или изменить детали события зайдя через ваш профиль",
+    },
+    company: {
+        title: "Супер, вы создали бизнес точку!",
+        description:
+            "Теперь вы можете увидеть её на карте или изменить детали бизнес точки зайдя через ваш профиль",
+    },
+    individual: {
+        title: "Супер, вы создали бизнес точку!",
+        description:
+            "Теперь вы можете увидеть её на карте или изменить детали бизнес точки зайдя через ваш профиль",
+    },
+};
+
 export const Submit = ({ formProps }: SubmitProps) => {
-    const { values, handleSubmit, isSubmitting } = formProps;
+    const { values, isSubmitting } = formProps;
     const router = useRouter();
     const addEvent = useEventsStore(s => s.addEvent);
     const addBusiness = useBusinessStore(s => s.addBusiness);
     const currentUser = useUserStore(s => s.currentUser);
+
+    let type: "event" | "company" | "individual";
+    if ("userType" in values && values.userType) {
+        type = values.userType === "individual" ? "individual" : "company";
+    } else {
+        type = "event";
+    }
 
     const isEventForm = (
         values: EventFormValues | BusinessFormValues
@@ -30,102 +55,107 @@ export const Submit = ({ formProps }: SubmitProps) => {
     };
 
     const handleSave = () => {
-        if (isEventForm(values)) {
-            const eventValues: EventFormValues = values;
-            console.log(
-                "📸 Saving Event with imageUrls:",
-                eventValues.imageUrls
-            );
-            console.log("📸 ImageUrls length:", eventValues.imageUrls?.length);
-            console.log(
-                "📸 First imageUrl:",
-                eventValues.imageUrls?.[0]?.substring(0, 50) + "..."
-            );
-            const newEvent: Event = {
-                id: `event-${Date.now()}`,
-                category: eventValues.category,
-                languages: eventValues.languages,
-                tags: eventValues.tags,
-                title: eventValues.title,
-                description: eventValues.description,
-                imageUrls: eventValues.imageUrls,
-                socialMediaUrls: eventValues.socialMediaUrls,
-                location: eventValues.position!,
-                startDate: new Date(eventValues.startDate),
-                startTime: eventValues.startTime,
-                endDate:
-                    eventValues.hasEndDate && eventValues.endDate
-                        ? new Date(eventValues.endDate)
-                        : undefined,
-                endTime:
-                    eventValues.hasEndTime && eventValues.endTime
-                        ? eventValues.endTime
-                        : undefined,
-                creatorId: currentUser?.id || "anonymous",
-                attendees: [],
-                siteLink: eventValues.siteLink,
-            };
-            console.log("✅ Event saved:", newEvent);
-            addEvent(newEvent);
-        } else {
-            const businessValues: BusinessFormValues = values;
-            console.log(
-                "📸 Saving Business with imageUrls:",
-                businessValues.imageUrls
-            );
-            console.log(
-                "📸 ImageUrls length:",
-                businessValues.imageUrls?.length
-            );
-            console.log(
-                "📸 First imageUrl:",
-                businessValues.imageUrls?.[0]?.substring(0, 50) + "..."
-            );
-            const newBusiness: Business = {
-                id: `business-${Date.now()}`,
-                userType: businessValues.userType,
-                category: businessValues.category,
-                languages: businessValues.languages,
-                tags: businessValues.tags,
-                title: businessValues.title,
-                description: businessValues.description,
-                imageUrls: businessValues.imageUrls,
-                socialMediaUrls: businessValues.socialMediaUrls,
-                location: businessValues.position!,
-                workingHours: businessValues.workingHours,
-                services: businessValues.services,
-                creatorId: currentUser?.id || "anonymous",
-                siteLink: businessValues.siteLink,
-            };
-            console.log("✅ Business saved:", newBusiness);
-            addBusiness(newBusiness);
+        try {
+            if (isEventForm(values)) {
+                const eventValues: EventFormValues = values;
+                console.log(
+                    "📸 Saving Event with imageUrls:",
+                    eventValues.imageUrls
+                );
+                console.log(
+                    "📸 ImageUrls length:",
+                    eventValues.imageUrls?.length
+                );
+                console.log(
+                    "📸 First imageUrl:",
+                    eventValues.imageUrls?.[0]?.substring(0, 50) + "..."
+                );
+                const newEvent: Event = {
+                    id: `event-${Date.now()}`,
+                    category: eventValues.category,
+                    languages: eventValues.languages,
+                    tags: eventValues.tags,
+                    title: eventValues.title,
+                    description: eventValues.description,
+                    imageUrls: eventValues.imageUrls,
+                    socialMediaUrls: eventValues.socialMediaUrls,
+                    location: eventValues.position!,
+                    startDate: new Date(eventValues.startDate),
+                    startTime: eventValues.startTime,
+                    endDate:
+                        eventValues.hasEndDate && eventValues.endDate
+                            ? new Date(eventValues.endDate)
+                            : undefined,
+                    endTime:
+                        eventValues.hasEndTime && eventValues.endTime
+                            ? eventValues.endTime
+                            : undefined,
+                    creatorId: currentUser?.id || "anonymous",
+                    attendees: [],
+                    siteLink: eventValues.siteLink,
+                };
+                console.log("✅ Event saved:", newEvent);
+                addEvent(newEvent);
+            } else {
+                const businessValues: BusinessFormValues = values;
+                console.log(
+                    "📸 Saving Business with imageUrls:",
+                    businessValues.imageUrls
+                );
+                console.log(
+                    "📸 ImageUrls length:",
+                    businessValues.imageUrls?.length
+                );
+                console.log(
+                    "📸 First imageUrl:",
+                    businessValues.imageUrls?.[0]?.substring(0, 50) + "..."
+                );
+                const newBusiness: Business = {
+                    id: `business-${Date.now()}`,
+                    userType: businessValues.userType,
+                    category: businessValues.category,
+                    languages: businessValues.languages,
+                    tags: businessValues.tags,
+                    title: businessValues.title,
+                    description: businessValues.description,
+                    imageUrls: businessValues.imageUrls,
+                    socialMediaUrls: businessValues.socialMediaUrls,
+                    location: businessValues.position!,
+                    workingHours: businessValues.workingHours,
+                    services: businessValues.services,
+                    creatorId: currentUser?.id || "anonymous",
+                    siteLink: businessValues.siteLink,
+                };
+                console.log("✅ Business saved:", newBusiness);
+                addBusiness(newBusiness);
+            }
+            // Navigate to main page after saving
+            router.push("/main");
+        } catch (error) {
+            console.error("Error saving:", error);
+            // Still navigate even if there's an error
+            router.push("/main");
         }
-        handleSubmit();
     };
 
     const handleViewOnMap = () => {
+        // handleSave already navigates to /main
         handleSave();
         // TODO: Navigate to map with event selected
-        router.push("/main");
     };
 
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
-            <div>
-                <div className="w-[72px] h-[72px] rounded-full flex items-center justify-center bg-primary">
-                    <svg>
+            <div className="flex flex-col items-center justify-center mt-[95px] h-full">
+                <div className="w-[72px] h-[72px] rounded-full flex items-center justify-center">
+                    <svg className="w-[72px] h-[72px]">
                         <use href="/images/icons/check-circle.svg" />
                     </svg>
                 </div>
                 <SectionTitle className="mb-3">
-                    {isEventForm(values)
-                        ? "Супер, вы создали событие!"
-                        : "Бизнес создан!"}
+                    {description[type].title}
                 </SectionTitle>
-                <p className="text-center">
-                    Теперь вы можете увидеть его на карте или изменить детали
-                    события зайдя через ваш профиль
-                </p>
+                <p className="text-center">{description[type].description}</p>
             </div>
             <div className="flex flex-col gap-3">
                 <MainButton
@@ -134,7 +164,7 @@ export const Submit = ({ formProps }: SubmitProps) => {
                     className="h-12"
                     disabled={isSubmitting}
                 >
-                    {isSubmitting ? "Сохранение..." : "Вернуться на главную"}
+                    {isSubmitting ? "Сохранение..." : "На главную"}
                 </MainButton>
                 <MainButton
                     onClick={handleViewOnMap}

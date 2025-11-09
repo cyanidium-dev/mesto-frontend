@@ -12,7 +12,7 @@ interface ImagesUploadProps {
     formProps: FormikProps<BaseFormValues>;
 }
 
-const MultiImageUpload = () => {
+const MultiImageUpload = ({ description }: { description: string }) => {
     const { values, setFieldValue } = useFormikContext<BaseFormValues>();
     const imageUrls = values.imageUrls || [];
 
@@ -118,10 +118,7 @@ const MultiImageUpload = () => {
 
     return (
         <div>
-            <p className="mb-4 text-[14px] text-gray-text">
-                Чтобы другим людям было понятно куда они идут, добавьте фото
-                события или места где оно будет проводиться
-            </p>
+            <p className="mb-4 text-[14px] text-gray-text">{description}</p>
             <div className="grid grid-cols-4 gap-4 mb-4">
                 {Array.from({ length: 8 }).map((_, index) => {
                     const imageUrl = imageUrls[index];
@@ -183,12 +180,30 @@ const MultiImageUpload = () => {
     );
 };
 
-export const ImagesUpload = ({ setCurrentStep }: ImagesUploadProps) => {
+const description = {
+    event: "Чтобы другим людям было понятно куда они идут, добавьте фото события или места где оно будет проводиться",
+    company:
+        "Добавьте фото своей компании или о услугах, они будут отображаться в профиле бизнес точки",
+    individual:
+        "Добавьте фото своих услуг или себя, они будут отображаться в профиле бизнес точки",
+};
+
+export const ImagesUpload = ({
+    setCurrentStep,
+    formProps,
+}: ImagesUploadProps) => {
+    const { values } = formProps;
+    let type: "event" | "company" | "individual";
+    if ("userType" in values && values.userType) {
+        type = values.userType === "individual" ? "individual" : "company";
+    } else {
+        type = "event";
+    }
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
             <div>
                 <SectionTitle className="mb-6">Добавьте фото</SectionTitle>
-                <MultiImageUpload />
+                <MultiImageUpload description={description[type]} />
             </div>
             <MainButton
                 onClick={() => setCurrentStep(prev => prev + 1)}

@@ -97,7 +97,11 @@ const allTags = [
     { value: "Гармония", label: "Гармония" },
 ];
 
-const TagSelector = () => {
+const TagSelector = ({
+    type,
+}: {
+    type: "event" | "company" | "individual";
+}) => {
     const { values, setFieldValue } = useFormikContext<
         BaseFormValues & { tagPreset?: string }
     >();
@@ -132,7 +136,15 @@ const TagSelector = () => {
     };
 
     return (
-        <div>
+        <div
+            className={
+                `${
+                    type === "company"
+                        ? "flex flex-col"
+                        : "flex flex-col-reverse"
+                }` + " mb-3"
+            }
+        >
             <div className="mb-6">
                 <SelectInput
                     fieldName="tagPreset"
@@ -161,18 +173,30 @@ const TagSelector = () => {
     );
 };
 
+const description = {
+    event: "Выберите до 4 тегов интересов, которые более релеванты вашему событию",
+    company:
+        "Выберите до 4 тегов интересов, которые более релеванты вашей компании:",
+    individual:
+        "Выберите до 4 тегов интересов, которые более релеванты вашей дейтельности:",
+};
+
 export const Interests = ({ setCurrentStep, formProps }: InterestsProps) => {
     const { errors, values } = formProps;
+
+    let type: "event" | "company" | "individual";
+    if ("userType" in values && values.userType) {
+        type = values.userType === "individual" ? "individual" : "company";
+    } else {
+        type = "event";
+    }
 
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
             <div>
                 <SectionTitle className="mb-6">Интересы</SectionTitle>
-                <p className="mb-6 text-[14px]">
-                    Выберите до 4 тегов интересов, которые более релеванты
-                    вашему событию
-                </p>
-                <TagSelector />
+                <p className="mb-6 text-[14px]">{description[type]}</p>
+                <TagSelector type={type} />
             </div>
             <MainButton
                 onClick={() => setCurrentStep(prev => prev + 1)}

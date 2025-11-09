@@ -6,6 +6,8 @@ import SectionTitle from "../../shared/titles/SectionTitle";
 import CustomizedInput from "../../shared/formComponents/CustomizedInput";
 import { BaseFormValues } from "@/types/formValues";
 import Image from "next/image";
+import Select, { StylesConfig } from "react-select";
+import { ErrorMessage } from "formik";
 
 interface DescriptionSocialsProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;
@@ -208,27 +210,381 @@ const SocialLinksInput = () => {
     );
 };
 
+const description = {
+    event: {
+        title: "Описание и ссылки",
+        description: "Если есть желание, напишите детальнее о событии:",
+        siteLink: "Добвьте ссылку на сайт ивента или привяжите соц. сети:",
+        placeholder: "Название события",
+    },
+    company: {
+        title: "Услуги/Сервис",
+        description:
+            "Выбирите услуги или сервис который предоставляет ваша компания",
+        siteLink: "Добвьте ссылку на сайт компании или привяжите соц. сети:",
+        placeholder: "Начните писать услугу/сервис",
+    },
+    individual: {
+        title: "Описание",
+        description: "Добвьте ссылку на ваш сайт или привяжите соц.сети:",
+        siteLink:
+            "Добвьте ссылку на сайт деятельности или привяжите соц. сети:",
+        placeholder: "Описание",
+    },
+};
+
+const services = [
+    "СТО",
+    "Ремонт автомобилей",
+    "Техническое обслуживание",
+    "Тренера",
+    "Персональные тренировки",
+    "Фитнес-консультации",
+    "Красота",
+    "Парикмахерские услуги",
+    "Маникюр",
+    "Косметология",
+    "Успех",
+    "Бизнес-консультации",
+    "Коучинг",
+    "Менторство",
+    "Сила",
+    "Силовые тренировки",
+    "Фитнес",
+    "Тренажерный зал",
+    "Мудрость",
+    "Образование",
+    "Консультации",
+    "Обучение",
+    "Дисциплина",
+    "Тренировки",
+    "Спорт",
+    "Фитнес-программы",
+    "Сострадание",
+    "Социальные услуги",
+    "Помощь",
+    "Волонтерство",
+    "Уверенность",
+    "Коучинг",
+    "Психологические консультации",
+    "Тренинги",
+    "Творчество",
+    "Творческие мастерские",
+    "Искусство",
+    "Дизайн",
+    "Стратегия",
+    "Бизнес-консультации",
+    "Планирование",
+    "Консалтинг",
+    "Успех",
+    "Бизнес-консультации",
+    "Коучинг",
+    "Менторство",
+    "Сила",
+    "Силовые тренировки",
+    "Фитнес",
+    "Тренажерный зал",
+    "Мудрость",
+    "Образование",
+    "Консультации",
+    "Обучение",
+    "Дисциплина",
+    "Тренировки",
+    "Спорт",
+    "Фитнес-программы",
+    "Сострадание",
+    "Социальные услуги",
+    "Помощь",
+    "Волонтерство",
+    "Уверенность",
+    "Коучинг",
+    "Психологические консультации",
+    "Тренинги",
+    "Творчество",
+    "Творческие мастерские",
+    "Искусство",
+    "Дизайн",
+    "Стратегия",
+    "Бизнес-консультации",
+    "Планирование",
+    "Консалтинг",
+    "Потенциал",
+    "Развитие",
+    "Обучение",
+    "Коучинг",
+    "Надежда",
+    "Психологическая поддержка",
+    "Консультации",
+    "Помощь",
+    "Смелость",
+    "Экстремальные виды спорта",
+    "Приключения",
+    "Тренинги",
+    "Решительность",
+    "Бизнес-консультации",
+    "Коучинг",
+    "Менторство",
+    "Инновации",
+    "Технологические решения",
+    "IT-консультации",
+    "Разработка",
+    "Вдохновение",
+    "Творческие мастерские",
+    "Искусство",
+    "Дизайн",
+    "Согласие",
+    "Медиация",
+    "Консультации",
+    "Помощь",
+    "Доброта",
+    "Социальные услуги",
+    "Помощь",
+    "Волонтерство",
+    "Устойчивость",
+    "Экологические услуги",
+    "Консультации",
+    "Обучение",
+    "Энергия",
+    "Фитнес",
+    "Спорт",
+    "Тренировки",
+    "Целеустремленность",
+    "Коучинг",
+    "Менторство",
+    "Тренинги",
+    "Честность",
+    "Консультации",
+    "Юридические услуги",
+    "Помощь",
+    "Справедливость",
+    "Юридические услуги",
+    "Консультации",
+    "Помощь",
+    "Гармония",
+    "Йога",
+    "Медитация",
+    "Велнес",
+    "Релаксация",
+];
+
+interface ServicesSelectorProps {
+    fieldName: string;
+    options: string[];
+}
+
+const ServicesSelector = ({ fieldName, options }: ServicesSelectorProps) => {
+    const { values, setFieldValue, errors, touched } =
+        useFormikContext<BaseFormValues>();
+    const [inputValue, setInputValue] = useState("");
+    const [menuIsOpen, setMenuIsOpen] = useState(false);
+
+    const selectedValue = (
+        values as unknown as Record<string, string | string[]>
+    )[fieldName];
+    const selectedServices = Array.isArray(selectedValue)
+        ? selectedValue
+        : typeof selectedValue === "string" && selectedValue
+        ? [selectedValue]
+        : [];
+
+    const selectOptions = options.map(service => ({
+        value: service,
+        label: service,
+    }));
+
+    const selectedOptions = selectOptions.filter(opt =>
+        selectedServices.includes(opt.value)
+    );
+
+    const isError =
+        (errors as Record<string, unknown>)[fieldName] &&
+        (touched as Record<string, unknown>)[fieldName];
+
+    const handleInputChange = (newValue: string) => {
+        setInputValue(newValue);
+        setMenuIsOpen(newValue.length > 0);
+    };
+
+    const handleChange = (
+        selectedOptions: readonly { value: string; label: string }[] | null
+    ) => {
+        if (selectedOptions) {
+            const values = selectedOptions.map(opt => opt.value);
+            setFieldValue(fieldName, values);
+        } else {
+            setFieldValue(fieldName, []);
+        }
+        setInputValue("");
+        setMenuIsOpen(false);
+    };
+
+    type OptionType = { value: string; label: string };
+
+    const customStyles: StylesConfig<OptionType, true> = {
+        control: (provided, state) => ({
+            ...provided,
+            minHeight: "172px",
+            height: "172px",
+            padding: "8px 16px",
+            fontSize: "16px",
+            fontWeight: "normal",
+            lineHeight: "1",
+            color: "#1a1a1a",
+            backgroundColor: "#ffffff",
+            borderColor: isError
+                ? "#ef4444"
+                : state.isFocused
+                ? "#3b82f6"
+                : "#e5e7eb",
+            borderRadius: "12px",
+            borderWidth: "1px",
+            boxShadow: "none",
+            "&:hover": {
+                borderColor: isError ? "#ef4444" : "#3b82f6",
+            },
+        }),
+        input: provided => ({
+            ...provided,
+            margin: "0",
+            padding: "0",
+            fontSize: "16px",
+            fontWeight: "normal",
+            lineHeight: "1",
+        }),
+        placeholder: provided => ({
+            ...provided,
+            color: "#9ca3af",
+            fontSize: "16px",
+        }),
+        multiValue: provided => ({
+            ...provided,
+            backgroundColor: "#eff6ff",
+            borderRadius: "6px",
+        }),
+        multiValueLabel: provided => ({
+            ...provided,
+            color: "#3b82f6",
+            fontSize: "16px",
+            padding: "4px 8px",
+        }),
+        multiValueRemove: provided => ({
+            ...provided,
+            color: "#3b82f6",
+            ":hover": {
+                backgroundColor: "#dbeafe",
+                color: "#2563eb",
+            },
+        }),
+        valueContainer: provided => ({
+            ...provided,
+            padding: "0",
+            gap: "8px",
+            maxHeight: "156px",
+            overflowY: "auto",
+        }),
+        indicatorSeparator: () => ({
+            display: "none",
+        }),
+        dropdownIndicator: () => ({
+            display: "none",
+        }),
+        menu: provided => ({
+            ...provided,
+            borderRadius: "12px",
+            border: "1px solid #e5e7eb",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+            marginTop: "4px",
+            zIndex: 20,
+        }),
+        menuList: provided => ({
+            ...provided,
+            padding: "0",
+            maxHeight: "420px",
+        }),
+        option: (provided, state) => ({
+            ...provided,
+            padding: "12px",
+            fontSize: "16px",
+            color: state.isSelected || state.isFocused ? "#3b82f6" : "#1a1a1a",
+            backgroundColor:
+                state.isSelected || state.isFocused ? "#eff6ff" : "#ffffff",
+            cursor: "pointer",
+            "&:active": {
+                backgroundColor: "#eff6ff",
+                color: "#3b82f6",
+            },
+        }),
+    };
+
+    return (
+        <div className="relative flex flex-col w-full">
+            <label className="text-[12px] font-normal leading-[120%] mb-2 rounded-[12px]">
+                {description.company.description}
+            </label>
+            <Select
+                options={selectOptions}
+                value={selectedOptions}
+                onChange={handleChange}
+                onInputChange={handleInputChange}
+                inputValue={inputValue}
+                menuIsOpen={menuIsOpen}
+                placeholder={description.company.placeholder}
+                isClearable
+                isSearchable
+                isMulti
+                styles={customStyles}
+                className="react-select-container"
+                classNamePrefix="react-select"
+                filterOption={(option, searchText) => {
+                    if (!searchText) return false;
+                    return option.label
+                        .toLowerCase()
+                        .includes(searchText.toLowerCase());
+                }}
+            />
+            <ErrorMessage
+                name={fieldName}
+                component="p"
+                className="absolute bottom-[-11px] left-2 text-[9px] font-normal leading-none text-red-500"
+            />
+        </div>
+    );
+};
+
 export const DescriptionSocials = ({
     setCurrentStep,
     formProps,
 }: DescriptionSocialsProps) => {
     const { errors, touched } = formProps;
+    const { values } = formProps;
+    let type: "event" | "company" | "individual";
+    if ("userType" in values && values.userType) {
+        type = values.userType === "individual" ? "individual" : "company";
+    } else {
+        type = "event";
+    }
 
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
             <div>
-                <SectionTitle className="mb-6">Описание и ссылки</SectionTitle>
-                <CustomizedInput
-                    fieldName="description"
-                    inputType="text"
-                    placeholder="Название события"
-                    label="Если есть желание, напишите детальнее о событии:"
-                    as="textarea"
-                    errors={errors}
-                    touched={touched}
-                    labelClassName="mb-2 rounded-[12px]"
-                    fieldClassName="h-[172px] !rounded-[12px] px-4 py-2"
-                />
+                <SectionTitle className="mb-6">
+                    {description[type].title}
+                </SectionTitle>
+                {type === "company" ? (
+                    <ServicesSelector fieldName="services" options={services} />
+                ) : (
+                    <CustomizedInput
+                        fieldName="description"
+                        inputType="text"
+                        placeholder={description[type].placeholder}
+                        label={description[type].description}
+                        as="textarea"
+                        errors={errors}
+                        touched={touched}
+                        labelClassName="mb-2 rounded-[12px]"
+                        fieldClassName="h-[172px] !rounded-[12px] px-4 py-2"
+                    />
+                )}
                 <p className="text-[12px] text-gray-text mb-6">
                     Не более 1500 символов
                 </p>
@@ -236,7 +592,7 @@ export const DescriptionSocials = ({
                     fieldName="siteLink"
                     inputType="url"
                     placeholder="Адрес сайта"
-                    label="Добвьте ссылку на сайт ивента или привяжите соц. сети:"
+                    label={description[type].siteLink}
                     errors={errors}
                     touched={touched}
                     labelClassName="mb-6"

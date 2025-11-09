@@ -10,8 +10,28 @@ interface TitleProps {
     formProps: FormikProps<BaseFormValues>;
 }
 
+const description = {
+    event: {
+        title: "Придумайте название для вашего события",
+        placeholder: "Название события",
+        note: "Не более 70 символов",
+    },
+    company: {
+        title: "Придумайте название для вашей бизнес-точки",
+        placeholder: "Название",
+        note: "Не более 100 символов",
+    },
+};
+
 export const Title = ({ setCurrentStep, formProps }: TitleProps) => {
     const { errors, touched, values } = formProps;
+
+    let type: "event" | "company";
+    if ("userType" in values && values.userType) {
+        type = "company";
+    } else {
+        type = "event";
+    }
 
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
@@ -20,15 +40,15 @@ export const Title = ({ setCurrentStep, formProps }: TitleProps) => {
                 <CustomizedInput
                     fieldName="title"
                     inputType="text"
-                    placeholder="Название события"
-                    label="Придумайте название для вашего события"
+                    placeholder={description[type].placeholder}
+                    label={description[type].title}
                     isRequired
                     errors={errors}
                     touched={touched}
                     labelClassName="mb-2"
                 />
                 <p className="text-[12px] text-gray-text mb-6">
-                    Не более 70 символов
+                    {description[type].note}
                 </p>
             </div>
             <MainButton

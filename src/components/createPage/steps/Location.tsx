@@ -31,11 +31,24 @@ interface GeocodingResult {
     lon: string;
 }
 
+const description = {
+    event: "Уточните где будет проходить событие",
+    company: "Уточните где находиться ваша компания",
+    individual: "Уточните откуда или где вы работаете",
+};
+
 export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
     const { errors, values, setFieldValue } = formProps;
     const userLocation = useLocationStore(s => s.userLocation);
     const mapCenter = useLocationStore(s => s.mapCenter);
     const setMapCenter = useLocationStore(s => s.setMapCenter);
+
+    let type: "event" | "company" | "individual";
+    if ("userType" in values && values.userType) {
+        type = values.userType === "individual" ? "individual" : "company";
+    } else {
+        type = "event";
+    }
 
     // Convert position to tuple format if needed
     const getPositionAsTuple = (): [number, number] | null => {
@@ -220,7 +233,7 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
             <div>
                 <SectionTitle className="mb-6">Место</SectionTitle>
                 <p className="text-[14px] text-gray-text mb-6">
-                    Уточните где будет проходить событие
+                    {description[type]}
                 </p>
                 {/* Search Input */}
                 <div className="relative mb-4" ref={searchContainerRef}>
