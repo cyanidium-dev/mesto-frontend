@@ -6,30 +6,23 @@ import SectionTitle from "../../shared/titles/SectionTitle";
 import SelectInput from "../../shared/formComponents/SelectInput";
 import { BaseFormValues } from "@/types/formValues";
 import Select, { MultiValue, StylesConfig } from "react-select";
+import { LANGUAGES, CATEGORIES } from "@/constants/filters";
 
 interface LangCategoryProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;
     formProps: FormikProps<BaseFormValues>;
 }
 
-const categories = [
-    { value: "sport", label: "Спорт" },
-    { value: "music", label: "Музыка" },
-    { value: "food", label: "Еда" },
-    { value: "art", label: "Искусство" },
-    { value: "tech", label: "Технологии" },
-    { value: "social", label: "Общение" },
-    { value: "services", label: "Услуги" },
-];
+// Convert FilterOption to react-select format
+const categories = CATEGORIES.map(cat => ({
+    value: cat.key,
+    label: cat.label,
+}));
 
-const languages = [
-    { value: "ru", label: "Русский" },
-    { value: "en", label: "English" },
-    { value: "uk", label: "Українська" },
-    { value: "es", label: "Español" },
-    { value: "de", label: "Deutsch" },
-    { value: "fr", label: "Français" },
-];
+const languages = LANGUAGES.map(lang => ({
+    value: lang.key,
+    label: lang.label,
+}));
 
 const LanguageSelector = () => {
     const { values, setFieldValue, errors, touched } =

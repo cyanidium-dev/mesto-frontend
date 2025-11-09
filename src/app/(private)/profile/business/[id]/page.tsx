@@ -1,0 +1,349 @@
+"use client";
+import { useParams, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useBusinessStore } from "@/store/businessStore";
+import { useUserStore } from "@/store/userStore";
+import { Business } from "@/types/business";
+import { User } from "@/types/user";
+import { LatLngExpression } from "leaflet";
+import Container from "@/components/shared/container/Container";
+import NavigationButton from "@/components/shared/buttons/NavigationButton";
+import ArrowIcon from "@/components/shared/icons/ArrowIcon";
+import Image from "next/image";
+import MainButton from "@/components/shared/buttons/MainButton";
+import IconButton from "@/components/shared/buttons/IconButton";
+import dynamic from "next/dynamic";
+
+const Map = dynamic(() => import("@/components/mainPage/Map"), { ssr: false });
+
+export default function BusinessProfilePage() {
+    const params = useParams();
+    const router = useRouter();
+    const businessId = params.id as string;
+    const getBusiness = useBusinessStore(s => s.getBusiness);
+    const getUser = useUserStore(s => s.getUser);
+    const [business, setBusiness] = useState<Business | null>(null);
+    const [creator, setCreator] = useState<User | null>(null);
+
+    useEffect(() => {
+        const businessData = getBusiness(businessId);
+        if (businessData) {
+            setBusiness(businessData);
+            const creatorData = getUser(businessData.creatorId);
+            setCreator(creatorData);
+        }
+    }, [businessId, getBusiness, getUser]);
+
+    if (!business) {
+        return (
+            <Container>
+                <NavigationButton
+                    onClick={() => router.back()}
+                    className="mb-2"
+                >
+                    <ArrowIcon />
+                    Назад
+                </NavigationButton>
+                <p>Бизнес не найден</p>
+            </Container>
+        );
+    }
+
+    const businessImageUrl =
+        business.imageUrls?.find(
+            url =>
+                url &&
+                (url.startsWith("http") ||
+                    url.startsWith("data:") ||
+                    url.startsWith("/"))
+        ) ||
+        ("imageUrl" in business
+            ? (business as { imageUrl?: string }).imageUrl
+            : undefined);
+    const hasValidImage =
+        businessImageUrl &&
+        (businessImageUrl.startsWith("http") ||
+            businessImageUrl.startsWith("data:") ||
+            businessImageUrl.startsWith("/"));
+    const imageUrl = hasValidImage
+        ? businessImageUrl
+        : "/images/mockedData/girl.jpg";
+
+    // Get coordinates for map
+    const getCoordinates = (
+        location: LatLngExpression | null | undefined
+    ): [number, number] | null => {
+        if (!location) return null;
+        if (Array.isArray(location)) {
+            return [location[0], location[1]];
+        }
+        if (
+            typeof location === "object" &&
+            "lat" in location &&
+            "lng" in location
+        ) {
+            return [location.lat, location.lng];
+        }
+        return null;
+    };
+
+    const businessCoords = getCoordinates(business.location);
+
+    return (
+        <Container className="pt-4 pb-8">
+            <NavigationButton onClick={() => router.back()} className="mb-4">
+                <ArrowIcon />
+                Назад
+            </NavigationButton>
+
+            <div className="space-y-6">
+                {/* Main Image */}
+                <div className="relative w-full h-64 rounded-[16px] overflow-hidden">
+                    <Image
+                        src={imageUrl}
+                        alt={business.title || "Business"}
+                        fill
+                        className="object-cover"
+                        unoptimized
+                    />
+                </div>
+
+                {/* Title and Category */}
+                <div>
+                    <h1 className="text-2xl font-semibold mb-2">
+                        {business.title || "Бизнес"}
+                    </h1>
+                    <div className="flex items-center gap-2">
+                        {business.category && (
+                            <p className="text-sm text-gray-placeholder">
+                                {business.category}
+                            </p>
+                        )}
+                        {business.userType && (
+                            <span className="px-2 py-1 bg-gray-ultra-light rounded-full text-xs">
+                                {business.userType === "business"
+                                    ? "Бизнес"
+                                    : "Индивидуал"}
+                            </span>
+                        )}
+                    </div>
+                </div>
+
+                {/* Description */}
+                {business.description && (
+                    <div>
+                        <p className="text-sm text-gray-placeholder mb-2">
+                            Описание
+                        </p>
+                        <p className="text-base whitespace-pre-wrap">
+                            {business.description}
+                        </p>
+                    </div>
+                )}
+
+                {/* Languages */}
+                {business.languages && business.languages.length > 0 && (
+                    <div>
+                        <p className="text-sm text-gray-placeholder mb-2">
+                            Языки
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                            {business.languages.map((lang, index) => (
+                                <span
+                                    key={index}
+                                    className="px-3 py-1 bg-gray-ultra-light rounded-full text-sm"
+                                >
+                                    {lang}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Tags */}
+                {business.tags && business.tags.length > 0 && (
+                    <div>
+                        <p className="text-sm text-gray-placeholder mb-2">
+                            Теги
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                            {business.tags.map((tag, index) => (
+                                <span
+                                    key={index}
+                                    className="px-3 py-1 bg-gray-ultra-light rounded-full text-sm"
+                                >
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Services */}
+                {business.services && business.services.length > 0 && (
+                    <div>
+                        <p className="text-sm text-gray-placeholder mb-2">
+                            Услуги
+                        </p>
+                        <div className="flex flex-wrap gap-2">
+                            {business.services.map((service, index) => (
+                                <span
+                                    key={index}
+                                    className="px-3 py-1 bg-gray-ultra-light rounded-full text-sm"
+                                >
+                                    {service}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Working Hours */}
+                {business.workingHours && business.workingHours.length > 0 && (
+                    <div>
+                        <p className="text-sm text-gray-placeholder mb-2">
+                            Часы работы
+                        </p>
+                        <div className="space-y-1">
+                            {business.workingHours.map((hours, index) => {
+                                if (!hours) return null;
+                                const days = [
+                                    "Понедельник",
+                                    "Вторник",
+                                    "Среда",
+                                    "Четверг",
+                                    "Пятница",
+                                    "Суббота",
+                                    "Воскресенье",
+                                ];
+                                return (
+                                    <div
+                                        key={index}
+                                        className="flex justify-between text-sm"
+                                    >
+                                        <span>
+                                            {days[index] || `День ${index + 1}`}
+                                        </span>
+                                        <span>
+                                            {hours.start} - {hours.end}
+                                        </span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+
+                {/* Location Map */}
+                {businessCoords && (
+                    <div>
+                        <p className="text-sm text-gray-placeholder mb-2">
+                            Местоположение
+                        </p>
+                        <div className="h-64 w-full rounded-[16px] overflow-hidden">
+                            <Map
+                                center={businessCoords}
+                                onCenterChange={() => {}}
+                                markers={[business]}
+                                events={[]}
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {/* Social Media Links */}
+                {business.socialMediaUrls &&
+                    business.socialMediaUrls.length > 0 && (
+                        <div>
+                            <p className="text-sm text-gray-placeholder mb-2">
+                                Социальные сети
+                            </p>
+                            <div className="flex flex-wrap gap-2">
+                                {business.socialMediaUrls.map((url, index) => (
+                                    <a
+                                        key={index}
+                                        href={url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-primary text-sm underline"
+                                    >
+                                        {url}
+                                    </a>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                {/* Site Link */}
+                {business.siteLink && (
+                    <div>
+                        <p className="text-sm text-gray-placeholder mb-2">
+                            Сайт
+                        </p>
+                        <a
+                            href={business.siteLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary text-sm underline"
+                        >
+                            {business.siteLink}
+                        </a>
+                    </div>
+                )}
+
+                {/* Creator Info */}
+                {creator && (
+                    <div>
+                        <p className="text-sm text-gray-placeholder mb-2">
+                            Владелец
+                        </p>
+                        <div className="flex items-center gap-3">
+                            <div className="relative w-12 h-12 rounded-full overflow-hidden">
+                                <Image
+                                    src={
+                                        creator.photoUrl ||
+                                        "/images/mockedData/girl.jpg"
+                                    }
+                                    alt={creator.name}
+                                    fill
+                                    className="object-cover"
+                                    unoptimized
+                                />
+                            </div>
+                            <p className="text-base">{creator.name}</p>
+                        </div>
+                    </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="flex items-center gap-2 pt-4">
+                    <MainButton className="flex items-center gap-2 h-10 px-4 flex-1">
+                        <Image
+                            src="/images/navbar/chat.svg"
+                            alt="chat icon"
+                            width={20}
+                            height={20}
+                        />
+                        Написать
+                    </MainButton>
+                    <IconButton>
+                        <Image
+                            src="images/icons/share.svg"
+                            alt="share icon"
+                            width={20}
+                            height={20}
+                        />
+                    </IconButton>
+                    <IconButton>
+                        <Image
+                            src="images/icons/bookmark.svg"
+                            alt="bookmark icon"
+                            width={20}
+                            height={20}
+                        />
+                    </IconButton>
+                </div>
+            </div>
+        </Container>
+    );
+}
