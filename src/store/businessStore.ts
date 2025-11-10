@@ -5,6 +5,7 @@ import { mockBusinesses } from "@/data/mockBusinesses";
 interface BusinessStore {
     businesses: Business[];
     addBusiness: (business: Business) => void;
+    deleteBusiness: (id: string) => void;
     getBusiness: (id: string) => Business | null;
     getAllBusinesses: () => Business[];
     getBusinessesByFilters: (filters: BusinessFilters) => Business[];
@@ -26,7 +27,12 @@ export const useBusinessStore = create<BusinessStore>((set, get) => ({
         if (get().initialized) return;
         set({ businesses: mockBusinesses, initialized: true });
     },
-    addBusiness: business => set(state => ({ businesses: [...state.businesses, business] })),
+    addBusiness: business =>
+        set(state => ({ businesses: [...state.businesses, business] })),
+    deleteBusiness: id =>
+        set(state => ({
+            businesses: state.businesses.filter(business => business.id !== id),
+        })),
     getBusiness: id => {
         const businesses = get().businesses;
         return businesses.find(business => business.id === id) || null;
@@ -41,4 +47,3 @@ export const useBusinessStore = create<BusinessStore>((set, get) => ({
         });
     },
 }));
-

@@ -10,6 +10,7 @@ import { useUserStore } from "@/store/userStore";
 import { EventFormValues, BusinessFormValues } from "@/types/formValues";
 import { Event } from "@/types/event";
 import { Business } from "@/types/business";
+import CheckCircleIcon from "@/components/shared/icons/CheckCircleIcon";
 
 interface SubmitProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;
@@ -148,9 +149,7 @@ export const Submit = ({ formProps }: SubmitProps) => {
         <div className="flex flex-col flex-1 justify-between h-full">
             <div className="flex flex-col items-center justify-center mt-[95px] h-full">
                 <div className="w-[72px] h-[72px] rounded-full flex items-center justify-center">
-                    <svg className="w-[72px] h-[72px]">
-                        <use href="/images/icons/check-circle.svg" />
-                    </svg>
+                    <CheckCircleIcon className="w-[72px] h-[72px] text-[#00C950]" />
                 </div>
                 <SectionTitle className="mb-3">
                     {description[type].title}

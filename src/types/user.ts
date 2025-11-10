@@ -2,7 +2,7 @@ export interface User {
     id: string;
     email: string;
     name: string;
-    title?: string;
+    title?: string; // category
     description?: string;
     imageUrls?: string[];
     socialMediaUrls?: string[];

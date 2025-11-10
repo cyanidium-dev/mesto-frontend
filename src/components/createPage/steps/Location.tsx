@@ -14,6 +14,7 @@ import dynamic from "next/dynamic";
 import { useLocationStore } from "@/store/locationStore";
 import { EventFormValues } from "@/types/formValues";
 import { BusinessFormValues } from "@/types/formValues";
+import MapIcon from "@/components/shared/icons/MapIcon";
 
 const LocationPickerMap = dynamic(() => import("./LocationPickerMap"), {
     ssr: false,
@@ -290,9 +291,7 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                             >
                                 Выбрать на карте
                                 <div className="ml-2 w-[20px] h-[20px] flex items-center justify-center">
-                                    <svg className="w-[20px] h-[20px] fill-white">
-                                        <use href="/images/icons/map.svg" />
-                                    </svg>
+                                    <MapIcon className="w-[20px] h-[20px] text-white" />
                                 </div>
                             </button>
                         </div>

@@ -1,9 +1,9 @@
 "use client";
 import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
 import Container from "@/components/shared/container/Container";
 import NavigationButton from "@/components/shared/buttons/NavigationButton";
 import ArrowIcon from "@/components/shared/icons/ArrowIcon";
-import { useState } from "react";
 import ProgressBar from "@/components/shared/progress/ProgressBar";
 import { CreateForm } from "@/components/CreatePage/CreateForm";
 
@@ -68,11 +68,13 @@ export default function CreatePage() {
                 currentStep={currentStep + 1}
                 className="mb-6"
             />
-            <CreateForm
-                currentStep={currentStep}
-                setCurrentStep={setCurrentStep}
-                onCreateTypeChange={setCreateType}
-            />
+            <Suspense fallback={<div>Loading...</div>}>
+                <CreateForm
+                    currentStep={currentStep}
+                    setCurrentStep={setCurrentStep}
+                    onCreateTypeChange={setCreateType}
+                />
+            </Suspense>
         </Container>
     );
 }

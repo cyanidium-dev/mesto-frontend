@@ -8,6 +8,8 @@ import { BaseFormValues } from "@/types/formValues";
 import Image from "next/image";
 import Select, { StylesConfig } from "react-select";
 import { ErrorMessage } from "formik";
+import BrokenLinkIcon from "@/components/shared/icons/BrokenLinkIcon";
+import LinkIcon from "@/components/shared/icons/LinkIcon";
 
 interface DescriptionSocialsProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;
@@ -181,11 +183,7 @@ const SocialLinksInput = () => {
                                     onClick={() => handleDelete(platform)}
                                     className="flex items-center justify-center w-[101px] h-[32px] gap-2 px-3 bg-gray-light text-[12px] text-black hover:bg-red-50 rounded-full transition-colors"
                                 >
-                                    <div className="w-[20px] h-[20px]">
-                                        <svg className="w-[20px] h-[20px] fill-black">
-                                            <use href="/images/icons/broken-link.svg" />
-                                        </svg>
-                                    </div>
+                                    <BrokenLinkIcon className="w-[20px] h-[20px] text-black" />
                                     Удалить
                                 </button>
                             ) : (
@@ -194,11 +192,7 @@ const SocialLinksInput = () => {
                                     onClick={() => handleAddClick(platform)}
                                     className="flex items-center justify-center w-[109px] h-[32px] gap-2 px-3 bg-blue text-[12px] text-white hover:bg-primary/10 rounded-full transition-colors"
                                 >
-                                    <div className="w-[20px] h-[20px]">
-                                        <svg className="w-[20px] h-[20px] fill-white">
-                                            <use href="/images/icons/link.svg" />
-                                        </svg>
-                                    </div>
+                                    <LinkIcon className="w-[20px] h-[20px] text-white" />
                                     Добавить
                                 </button>
                             )}

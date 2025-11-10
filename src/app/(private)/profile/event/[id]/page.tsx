@@ -12,6 +12,7 @@ import ArrowIcon from "@/components/shared/icons/ArrowIcon";
 import Image from "next/image";
 import MainButton from "@/components/shared/buttons/MainButton";
 import IconButton from "@/components/shared/buttons/IconButton";
+import { CATEGORIES } from "@/constants/filters";
 import dynamic from "next/dynamic";
 
 const Map = dynamic(() => import("@/components/mainPage/Map"), { ssr: false });
@@ -120,7 +121,8 @@ export default function EventProfilePage() {
                     </h1>
                     {event.category && (
                         <p className="text-sm text-gray-placeholder">
-                            {event.category}
+                            {CATEGORIES.find(cat => cat.key === event.category)
+                                ?.label || event.category}
                         </p>
                     )}
                 </div>
@@ -233,17 +235,49 @@ export default function EventProfilePage() {
                             Социальные сети
                         </p>
                         <div className="flex flex-wrap gap-2">
-                            {event.socialMediaUrls.map((url, index) => (
-                                <a
-                                    key={index}
-                                    href={url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-primary text-sm underline"
-                                >
-                                    {url}
-                                </a>
-                            ))}
+                            {event.socialMediaUrls.map((url, index) => {
+                                const getSocialIcon = (
+                                    url: string
+                                ): string | null => {
+                                    const lowerUrl = url.toLowerCase();
+                                    if (lowerUrl.includes("facebook.com")) {
+                                        return "/images/icons/facebook.svg";
+                                    }
+                                    if (lowerUrl.includes("instagram.com")) {
+                                        return "/images/icons/instagram.png";
+                                    }
+                                    if (
+                                        lowerUrl.includes("telegram.org") ||
+                                        lowerUrl.includes("t.me")
+                                    ) {
+                                        return "/images/icons/telegram.png";
+                                    }
+                                    return null;
+                                };
+                                const icon = getSocialIcon(url);
+                                return (
+                                    <a
+                                        key={index}
+                                        href={url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
+                                        aria-label={`Social media link ${
+                                            index + 1
+                                        }`}
+                                    >
+                                        {icon && (
+                                            <Image
+                                                src={icon}
+                                                alt=""
+                                                width={20}
+                                                height={20}
+                                                className="flex-shrink-0"
+                                            />
+                                        )}
+                                    </a>
+                                );
+                            })}
                         </div>
                     </div>
                 )}
@@ -258,9 +292,16 @@ export default function EventProfilePage() {
                             href={event.siteLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-primary text-sm underline"
+                            className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
+                            aria-label="Website link"
                         >
-                            {event.siteLink}
+                            <Image
+                                src="/images/icons/link.svg"
+                                alt=""
+                                width={20}
+                                height={20}
+                                className="flex-shrink-0"
+                            />
                         </a>
                     </div>
                 )}

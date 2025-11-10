@@ -9,8 +9,10 @@ import Container from "@/components/shared/container/Container";
 import NavigationButton from "@/components/shared/buttons/NavigationButton";
 import ArrowIcon from "@/components/shared/icons/ArrowIcon";
 import Image from "next/image";
-import Card from "@/components/mainPage/Card";
-import EventCard from "@/components/mainPage/EventCard";
+import { ItemsList } from "@/components/profilePage/ItemsList";
+import { CATEGORIES } from "@/constants/filters";
+import ShareIcon from "@/components/shared/icons/ShareIcon";
+import GearIcon from "@/components/shared/icons/GearIcon";
 
 type TabKey = "info" | "events" | "businesses";
 
@@ -33,6 +35,102 @@ export default function ProfilePage() {
         if (!currentUser) return [];
         return allEvents.filter(event => event.creatorId === currentUser.id);
     }, [allEvents, currentUser]);
+
+    // Get individual businesses for the user
+    const individualBusinesses = useMemo(() => {
+        if (!currentUser) return [];
+        return userBusinesses.filter(
+            business => business.userType === "individual"
+        );
+    }, [userBusinesses, currentUser]);
+
+    // Collect all images from individual businesses
+    const individualBusinessImages = useMemo(() => {
+        const images: string[] = [];
+        individualBusinesses.forEach(business => {
+            if (business.imageUrls) {
+                business.imageUrls.forEach(url => {
+                    if (url && !images.includes(url)) {
+                        images.push(url);
+                    }
+                });
+            }
+        });
+        return images;
+    }, [individualBusinesses]);
+
+    // Collect all social links from individual businesses
+    const individualBusinessSocialLinks = useMemo(() => {
+        const links: string[] = [];
+        individualBusinesses.forEach(business => {
+            if (business.socialMediaUrls) {
+                business.socialMediaUrls.forEach(url => {
+                    if (url && !links.includes(url)) {
+                        links.push(url);
+                    }
+                });
+            }
+        });
+        return links;
+    }, [individualBusinesses]);
+
+    // Collect all site links from individual businesses
+    const individualBusinessSiteLinks = useMemo(() => {
+        const links: string[] = [];
+        individualBusinesses.forEach(business => {
+            if (business.siteLink && !links.includes(business.siteLink)) {
+                links.push(business.siteLink);
+            }
+        });
+        return links;
+    }, [individualBusinesses]);
+
+    // Collect all tags from individual businesses
+    const individualBusinessTags = useMemo(() => {
+        const tags: string[] = [];
+        individualBusinesses.forEach(business => {
+            if (business.tags) {
+                business.tags.forEach(tag => {
+                    if (tag && !tags.includes(tag)) {
+                        tags.push(tag);
+                    }
+                });
+            }
+        });
+        return tags;
+    }, [individualBusinesses]);
+
+    // Get category from individual businesses (use first one)
+    const individualBusinessCategory = useMemo(() => {
+        const firstIndividual = individualBusinesses[0];
+        if (!firstIndividual?.category) return "";
+        // Find the label for the category value
+        const categoryOption = CATEGORIES.find(
+            cat => cat.key === firstIndividual.category
+        );
+        return categoryOption?.label || firstIndividual.category;
+    }, [individualBusinesses]);
+
+    // Get description from individual businesses (use first one or combine)
+    const individualBusinessDescription = useMemo(() => {
+        const firstIndividual = individualBusinesses[0];
+        return firstIndividual?.description || "";
+    }, [individualBusinesses]);
+
+    // Helper function to detect social media platform from URL
+    const getSocialIcon = (url: string): string | null => {
+        const lowerUrl = url.toLowerCase();
+        if (lowerUrl.includes("facebook.com")) {
+            return "/images/icons/facebook.svg";
+        }
+        if (lowerUrl.includes("instagram.com")) {
+            return "/images/icons/instagram.png";
+        }
+        if (lowerUrl.includes("telegram.org") || lowerUrl.includes("t.me")) {
+            return "/images/icons/telegram.png";
+        }
+        return null;
+    };
 
     if (!currentUser) {
         return (
@@ -57,8 +155,8 @@ export default function ProfilePage() {
             </NavigationButton>
 
             {/* Static Header - PFP, Name, Title */}
-            <div className="flex items-center mb-3">
-                <div className="flex items-center justify-between w-full">
+            <div className="flex items-center justify-between w-full mb-3">
+                <div className="flex items-center ">
                     <div className="relative w-[60px] h-[60px] rounded-full overflow-hidden mr-2">
                         <Image
                             src={
@@ -75,23 +173,20 @@ export default function ProfilePage() {
                         <h1 className="text-2xl font-semibold mb-[4px]">
                             {currentUser.name}
                         </h1>
-                        {currentUser.title && (
+                        {(individualBusinessCategory || currentUser.title) && (
                             <p className="text-sm text-gray-placeholder">
-                                {currentUser.title}
+                                {individualBusinessCategory ||
+                                    currentUser.title}
                             </p>
                         )}
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
                     <button className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light">
-                        <svg className="w-5 h-5">
-                            <use href="/images/icons/share.svg" />
-                        </svg>
+                        <ShareIcon className="w-5 h-5" />
                     </button>
                     <button className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light">
-                        <svg className="w-5 h-5">
-                            <use href="/images/icons/gear.svg" />
-                        </svg>
+                        <GearIcon className="w-5 h-5" />
                     </button>
                 </div>
             </div>
@@ -109,115 +204,122 @@ export default function ProfilePage() {
             >
                 <Tab key="info" title="Профиль">
                     <div className="w-full space-y-3 mt-4">
-                        <div>
-                            <p className="text-sm text-gray-placeholder">
-                                Email
-                            </p>
-                            <p className="text-base">{currentUser.email}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-placeholder">
-                                Город
-                            </p>
-                            <p className="text-base">{currentUser.city}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-placeholder">
-                                Дата рождения
-                            </p>
-                            <p className="text-base">
-                                {new Date(
-                                    currentUser.birthDay
-                                ).toLocaleDateString("ru-RU")}
-                            </p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-placeholder">Пол</p>
-                            <p className="text-base">{currentUser.gender}</p>
-                        </div>
-                        {currentUser.interests &&
-                            currentUser.interests.length > 0 && (
-                                <div>
-                                    <p className="text-sm text-gray-placeholder">
-                                        Интересы
-                                    </p>
-                                    <div className="flex flex-wrap gap-2 mt-2">
-                                        {currentUser.interests.map(
-                                            (interest, index) => (
-                                                <span
-                                                    key={index}
-                                                    className="px-3 py-1 bg-gray-ultra-light rounded-full text-sm"
-                                                >
-                                                    {interest}
-                                                </span>
-                                            )
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-                        {currentUser.description && (
+                        {/* Images from individual businesses */}
+                        {individualBusinessImages.length > 0 && (
                             <div>
-                                <p className="text-sm text-gray-placeholder">
-                                    Описание
+                                <p className="text-sm text-gray-placeholder mb-2">
+                                    Фото
                                 </p>
-                                <p className="text-base whitespace-pre-wrap">
-                                    {currentUser.description}
-                                </p>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {individualBusinessImages.map(
+                                        (imageUrl, index) => (
+                                            <div
+                                                key={index}
+                                                className="relative w-full aspect-square rounded-[16px] overflow-hidden"
+                                            >
+                                                <Image
+                                                    src={imageUrl}
+                                                    alt={`Image ${index + 1}`}
+                                                    fill
+                                                    className="object-cover"
+                                                    unoptimized
+                                                />
+                                            </div>
+                                        )
+                                    )}
+                                </div>
                             </div>
                         )}
-                        {currentUser.tags && currentUser.tags.length > 0 && (
+
+                        {/* Social links from individual businesses */}
+                        {(individualBusinessSocialLinks.length > 0 ||
+                            individualBusinessSiteLinks.length > 0) && (
                             <div>
-                                <p className="text-sm text-gray-placeholder">
-                                    Теги
+                                <p className="text-sm text-gray-placeholder mb-2">
+                                    Социальные сети
                                 </p>
                                 <div className="flex flex-wrap gap-2 mt-2">
-                                    {currentUser.tags.map((tag, index) => (
-                                        <span
-                                            key={index}
-                                            className="px-3 py-1 bg-gray-ultra-light rounded-full text-sm"
-                                        >
-                                            {tag}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-                        {currentUser.socialMediaUrls &&
-                            currentUser.socialMediaUrls.length > 0 && (
-                                <div>
-                                    <p className="text-sm text-gray-placeholder">
-                                        Социальные сети
-                                    </p>
-                                    <div className="flex flex-wrap gap-2 mt-2">
-                                        {currentUser.socialMediaUrls.map(
-                                            (url, index) => (
+                                    {individualBusinessSocialLinks.map(
+                                        (url, index) => {
+                                            const icon = getSocialIcon(url);
+                                            return (
                                                 <a
                                                     key={index}
                                                     href={url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="text-primary text-sm underline"
+                                                    className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
+                                                    aria-label={`Social media link ${
+                                                        index + 1
+                                                    }`}
                                                 >
-                                                    {url}
+                                                    {icon && (
+                                                        <Image
+                                                            src={icon}
+                                                            alt=""
+                                                            width={20}
+                                                            height={20}
+                                                            className="flex-shrink-0"
+                                                        />
+                                                    )}
                                                 </a>
-                                            )
-                                        )}
-                                    </div>
+                                            );
+                                        }
+                                    )}
+                                    {individualBusinessSiteLinks.map(
+                                        (url, index) => (
+                                            <a
+                                                key={`site-${index}`}
+                                                href={url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
+                                                aria-label="Website link"
+                                            >
+                                                <Image
+                                                    src="/images/icons/link.svg"
+                                                    alt=""
+                                                    width={20}
+                                                    height={20}
+                                                    className="flex-shrink-0"
+                                                />
+                                            </a>
+                                        )
+                                    )}
                                 </div>
-                            )}
-                        {currentUser.siteLink && (
+                            </div>
+                        )}
+
+                        {/* Tags from individual businesses */}
+                        {individualBusinessTags.length > 0 && (
+                            <div>
+                                <p className="text-sm text-gray-placeholder mb-2">
+                                    Теги
+                                </p>
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                    {individualBusinessTags.map(
+                                        (tag, index) => (
+                                            <span
+                                                key={index}
+                                                className="px-3 py-1 bg-gray-ultra-light rounded-full text-sm"
+                                            >
+                                                {tag}
+                                            </span>
+                                        )
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Description from individual businesses */}
+                        {individualBusinessDescription && (
                             <div>
                                 <p className="text-sm text-gray-placeholder">
-                                    Сайт
+                                    Описание
                                 </p>
-                                <a
-                                    href={currentUser.siteLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-primary text-sm underline"
-                                >
-                                    {currentUser.siteLink}
-                                </a>
+                                <p className="text-base whitespace-pre-wrap">
+                                    {individualBusinessDescription}
+                                </p>
                             </div>
                         )}
                     </div>
@@ -225,11 +327,7 @@ export default function ProfilePage() {
                 <Tab key="events" title={`События (${userEvents.length})`}>
                     <div className="mt-4">
                         {userEvents.length > 0 ? (
-                            <ul className="flex flex-col gap-2">
-                                {userEvents.map(event => (
-                                    <EventCard key={event.id} event={event} />
-                                ))}
-                            </ul>
+                            <ItemsList items={userEvents} />
                         ) : (
                             <p className="text-center text-gray-placeholder py-8">
                                 Нет созданных событий
@@ -243,14 +341,7 @@ export default function ProfilePage() {
                 >
                     <div className="mt-4">
                         {userBusinesses.length > 0 ? (
-                            <ul className="flex flex-col gap-2">
-                                {userBusinesses.map(business => (
-                                    <Card
-                                        key={business.id}
-                                        business={business}
-                                    />
-                                ))}
-                            </ul>
+                            <ItemsList items={userBusinesses} />
                         ) : (
                             <p className="text-center text-gray-placeholder py-8">
                                 Нет созданных бизнесов

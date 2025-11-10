@@ -3,7 +3,7 @@ import { User } from "@/types/user";
 export const mockUser: User = {
     id: "user-1",
     email: "user@example.com",
-    name: "Иван Иванов",
+    name: 'Алексей Founder "Mesto"',
     birthDay: new Date("1990-05-15"),
     city: "Прага",
     gender: "Мужской",
