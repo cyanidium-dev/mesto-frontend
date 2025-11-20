@@ -1,5 +1,23 @@
 import { Business } from "@/types/business";
 
+// Helper function to generate evenly distributed coordinates around a center point
+const generateCoordinates = (
+    centerLat: number,
+    centerLng: number,
+    index: number,
+    total: number,
+    radius: number = 0.015
+): [number, number] => {
+    const angle = (2 * Math.PI * index) / total;
+    const distance = radius * (0.7 + (index % 3) * 0.1); // Vary distance slightly
+    const latOffset = distance * Math.cos(angle);
+    const lngOffset = distance * Math.sin(angle);
+    return [centerLat + latOffset, centerLng + lngOffset];
+};
+
+const centerLat = 50.0755;
+const centerLng = 14.4378;
+
 export const mockBusinesses: Business[] = [
     {
         id: "business-1",
@@ -8,7 +26,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Уютное кафе с отличным кофе и домашней выпечкой. Работаем ежедневно с 8:00 до 22:00.",
         imageUrls: ["/images/mockedData/girl.jpg"],
-        location: [50.0755, 14.4378] as [number, number],
+        location: generateCoordinates(centerLat, centerLng, 0, 15) as [number, number],
         category: "food",
         languages: ["ru", "en"],
         tags: ["кафе", "кофе", "выпечка"],
@@ -35,7 +53,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Частный репетитор по математике. Индивидуальные занятия для школьников и студентов.",
         imageUrls: ["/images/mockedData/girl.jpg"],
-        location: [50.0855, 14.4478] as [number, number],
+        location: generateCoordinates(centerLat, centerLng, 1, 15) as [number, number],
         category: "services",
         languages: ["ru", "uk"],
         tags: ["образование", "репетитор", "математика"],
@@ -59,7 +77,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Современный фитнес-клуб с профессиональным оборудованием и опытными тренерами.",
         imageUrls: ["/images/mockedData/girl.jpg"],
-        location: [50.0955, 14.4578] as [number, number],
+        location: generateCoordinates(centerLat, centerLng, 2, 15) as [number, number],
         category: "sport",
         languages: ["ru", "en", "de"],
         tags: ["фитнес", "спорт", "тренировки"],
@@ -92,7 +110,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Аутентичная итальянская кухня в центре города. Свежие пасты, пицца из дровяной печи и отличное вино.",
         imageUrls: ["/images/mockedData/girl.jpg"],
-        location: [50.1055, 14.4678] as [number, number],
+        location: generateCoordinates(centerLat, centerLng, 3, 15) as [number, number],
         category: "food",
         languages: ["ru", "en", "it"],
         tags: ["ресторан", "итальянская кухня", "паста", "пицца"],
@@ -120,7 +138,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Полный спектр услуг красоты: стрижки, окрашивание, маникюр, педикюр, макияж.",
         imageUrls: ["/images/mockedData/girl.jpg"],
-        location: [50.1155, 14.4778] as [number, number],
+        location: generateCoordinates(centerLat, centerLng, 4, 15) as [number, number],
         category: "beauty",
         languages: ["ru", "en", "uk"],
         tags: ["салон", "красота", "стрижка", "маникюр"],
@@ -145,7 +163,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Большой выбор книг на разных языках. Художественная литература, научные издания, детские книги.",
         imageUrls: ["/images/mockedData/girl.jpg"],
-        location: [50.1255, 14.4878] as [number, number],
+        location: generateCoordinates(centerLat, centerLng, 5, 15) as [number, number],
         category: "education",
         languages: ["ru", "en", "de", "uk"],
         tags: ["книги", "литература", "образование"],
@@ -170,7 +188,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Профессиональная ветеринарная помощь. Консультации, вакцинация, хирургия, стоматология для животных.",
         imageUrls: ["/images/mockedData/girl.jpg"],
-        location: [50.1355, 14.4978] as [number, number],
+        location: generateCoordinates(centerLat, centerLng, 6, 15) as [number, number],
         category: "services",
         languages: ["ru", "en"],
         tags: ["ветеринар", "животные", "здоровье"],
@@ -204,7 +222,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Широкий ассортимент электроники: смартфоны, ноутбуки, планшеты, аксессуары. Гарантия и сервис.",
         imageUrls: ["/images/mockedData/girl.jpg"],
-        location: [50.1455, 14.5078] as [number, number],
+        location: generateCoordinates(centerLat, centerLng, 7, 15) as [number, number],
         category: "technology",
         languages: ["ru", "en", "de"],
         tags: ["электроника", "техника", "смартфоны"],
@@ -232,7 +250,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Занятия йогой для всех уровней. Хатха, виньяса, аштанга. Утренние и вечерние группы.",
         imageUrls: ["/images/mockedData/girl.jpg"],
-        location: [50.1555, 14.5178] as [number, number],
+        location: generateCoordinates(centerLat, centerLng, 8, 15) as [number, number],
         category: "sport",
         languages: ["ru", "en"],
         tags: ["йога", "медитация", "здоровье"],
@@ -262,7 +280,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Настоящая итальянская пицца, приготовленная в дровяной печи. Свежие ингредиенты и быстрая доставка.",
         imageUrls: ["/images/mockedData/girl.jpg"],
-        location: [50.1655, 14.5278] as [number, number],
+        location: generateCoordinates(centerLat, centerLng, 9, 15) as [number, number],
         category: "food",
         languages: ["ru", "en", "it"],
         tags: ["пицца", "итальянская кухня", "доставка"],
@@ -290,7 +308,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Обучение различным стилям танцев: латина, сальса, бачата, хип-хоп, современные танцы.",
         imageUrls: ["/images/mockedData/girl.jpg"],
-        location: [50.1755, 14.5378] as [number, number],
+        location: generateCoordinates(centerLat, centerLng, 10, 15) as [number, number],
         category: "art",
         languages: ["ru", "en"],
         tags: ["танцы", "латина", "сальса"],
@@ -320,7 +338,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Специализированная кофейня с обжаркой собственного производства. Эспрессо, капучино, альтернативные методы заваривания.",
         imageUrls: ["/images/mockedData/girl.jpg"],
-        location: [50.1855, 14.5478] as [number, number],
+        location: generateCoordinates(centerLat, centerLng, 11, 15) as [number, number],
         category: "food",
         languages: ["ru", "en", "de"],
         tags: ["кофе", "кофейня", "обжарка"],
@@ -348,7 +366,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Профессиональная фотосъемка: портреты, свадьбы, корпоративы, семейные фотосессии. Студия и выездная съемка.",
         imageUrls: ["/images/mockedData/girl.jpg"],
-        location: [50.1955, 14.5578] as [number, number],
+        location: generateCoordinates(centerLat, centerLng, 12, 15) as [number, number],
         category: "art",
         languages: ["ru", "en"],
         tags: ["фото", "фотосъемка", "портреты"],
@@ -383,7 +401,7 @@ export const mockBusinesses: Business[] = [
             "/images/mockedData/girl.jpg",
             "/images/mockedData/girl.jpg",
         ],
-        location: [50.0755, 14.4378] as [number, number],
+        location: generateCoordinates(centerLat, centerLng, 13, 15) as [number, number],
         category: "art",
         languages: ["ru", "en"],
         tags: ["фотограф", "портреты", "свадьбы"],
@@ -412,7 +430,7 @@ export const mockBusinesses: Business[] = [
             "/images/mockedData/girl.jpg",
             "/images/mockedData/girl.jpg",
         ],
-        location: [50.0855, 14.4478] as [number, number],
+        location: generateCoordinates(centerLat, centerLng, 14, 15) as [number, number],
         category: "education",
         languages: ["ru", "en"],
         tags: ["английский", "репетитор", "образование"],
