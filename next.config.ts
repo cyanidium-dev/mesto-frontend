@@ -8,21 +8,4 @@ const withPWA = require("next-pwa")({
 
 module.exports = withPWA({
     reactStrictMode: true,
-    // Improve hot reloading reliability
-    webpack: (config, { dev, isServer }) => {
-        if (dev && !isServer) {
-            // Better file watching for Windows
-            config.watchOptions = {
-                poll: 1000, // Check for changes every second
-                aggregateTimeout: 300, // Delay before rebuilding once the first file changed
-                ignored: /node_modules/,
-            };
-        }
-        return config;
-    },
-    // Experimental features for better HMR
-    experimental: {
-        // Ensure proper HMR behavior
-        optimizePackageImports: ["@heroui/react"],
-    },
 });
