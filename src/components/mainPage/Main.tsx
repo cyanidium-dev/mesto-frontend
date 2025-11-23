@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import SearchBar, { FilterValues } from "./SearchBar";
 import dynamic from "next/dynamic";
 import List from "./List";
@@ -16,6 +17,7 @@ import { calculateDistance, getCoordinates } from "@/utils/distance";
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
 export default function Main() {
+    const searchParams = useSearchParams();
     const [viewMode, setViewMode] = useState<"map" | "list">("map");
     const [filters, setFilters] = useState<FilterValues>({
         search: "",
@@ -31,6 +33,8 @@ export default function Main() {
     const setMapCenter = useLocationStore(s => s.setMapCenter);
 
     const initialized = useRef(false);
+    const getEvent = useEventsStore(s => s.getEvent);
+    const getBusiness = useBusinessStore(s => s.getBusiness);
 
     const fakeBusinesses = useNearbyBusinesses();
     const savedBusinesses = useBusinessStore(s => s.getAllBusinesses());
@@ -147,6 +151,30 @@ export default function Main() {
         }
     }, [userLocation, mapCenter, setMapCenter, setUserLocation]);
 
+    // Handle "show on map" from query params
+    useEffect(() => {
+        const viewParam = searchParams.get("view");
+        const focusId = searchParams.get("focus");
+        
+        if (viewParam === "map") {
+            setViewMode("map");
+        }
+        
+        if (focusId && viewMode === "map") {
+            // Find the item and center map on it
+            const event = getEvent(focusId);
+            const business = getBusiness(focusId);
+            const item = event || business;
+            
+            if (item) {
+                const coords = getCoordinates(item.location);
+                if (coords) {
+                    setMapCenter(coords);
+                }
+            }
+        }
+    }, [searchParams, viewMode, getEvent, getBusiness, setMapCenter]);
+
     return (
         <>
             <SearchBar
@@ -160,6 +188,7 @@ export default function Main() {
                     onCenterChange={setMapCenter}
                     markers={businesses}
                     events={events}
+                    selectedItemId={searchParams.get("focus")}
                 />
             ) : (
                 <List businesses={businesses} events={events} />

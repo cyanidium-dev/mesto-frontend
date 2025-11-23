@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   MapContainer,
   TileLayer,
@@ -25,16 +26,17 @@ interface MapProps {
   onCenterChange: (center: [number, number]) => void;
   markers: Business[];
   events?: Event[];
+  selectedItemId?: string | null;
 }
 
-function UpdateMapCenter({ center }: { center: [number, number] }) {
+function UpdateMapCenter({ center, zoom }: { center: [number, number]; zoom?: number }) {
   const map = useMap();
 
   useEffect(() => {
     if (center) {
-      map.flyTo(center, map.getZoom());
+      map.flyTo(center, zoom ?? map.getZoom());
     }
-  }, [center, map]);
+  }, [center, zoom, map]);
 
   return null;
 }
@@ -81,9 +83,31 @@ function MapEventsHandler({
   return null;
 }
 
-export default function Map({ center, onCenterChange, markers, events = [] }: MapProps) {
+export default function Map({ center, onCenterChange, markers, events = [], selectedItemId }: MapProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [selectedItem, setSelectedItem] = useState<Business | Event | null>(null);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
+  // Handle selected item from props (e.g., from "show on map" button)
+  useEffect(() => {
+    if (selectedItemId) {
+      const allItems = [...markers, ...events];
+      const item = allItems.find(i => i.id === selectedItemId);
+      if (item) {
+        if (item.id !== selectedItem?.id) {
+          // Only update if it's a different item
+          setSelectedItem(item);
+        }
+        // Always open the sheet if selectedItemId is set
+        setIsBottomSheetOpen(true);
+      }
+    } else if (!selectedItemId && selectedItem) {
+      // If selectedItemId is cleared, close the bottom sheet
+      setIsBottomSheetOpen(false);
+      setSelectedItem(null);
+    }
+  }, [selectedItemId, markers, events, selectedItem]);
 
   const handleGeolocate = () => {
     if (navigator.geolocation) {
@@ -107,11 +131,22 @@ export default function Map({ center, onCenterChange, markers, events = [] }: Ma
   const handleMarkerClick = (item: Business | Event) => {
     setSelectedItem(item);
     setIsBottomSheetOpen(true);
+    // Update URL to include focus parameter for consistency
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.set("focus", item.id);
+    if (!newParams.has("view")) {
+      newParams.set("view", "map");
+    }
+    router.push(`/main?${newParams.toString()}`, { scroll: false });
   };
 
   const handleCloseBottomSheet = () => {
     setIsBottomSheetOpen(false);
     setSelectedItem(null);
+    // Clear the focus parameter from URL when closing
+    const newParams = new URLSearchParams(searchParams.toString());
+    newParams.delete("focus");
+    router.push(`/main?${newParams.toString()}`, { scroll: false });
   };
 
   const handleMapClick = () => {

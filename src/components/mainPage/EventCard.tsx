@@ -1,19 +1,27 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Event } from "@/types/event";
 import Image from "next/image";
 import MainButton from "../shared/buttons/MainButton";
 import IconButton from "../shared/buttons/IconButton";
+import MapIcon from "../shared/icons/MapIcon";
 
 interface EventCardProps {
     event: Event;
 }
 
 export default function EventCard({ event }: EventCardProps) {
+    const router = useRouter();
     const [isShownMore, setIsShownMore] = useState(false);
     const [shouldClamp, setShouldClamp] = useState(true);
     const toggleShowMore = () => setIsShownMore(prev => !prev);
+    
+    const handleShowOnMap = () => {
+        // Switch to map view and center on this event
+        router.push(`/main?view=map&focus=${event.id}`);
+    };
 
     useEffect(() => {
         if (isShownMore) {
@@ -50,7 +58,16 @@ export default function EventCard({ event }: EventCardProps) {
     const eventTime = startTime || "";
 
     return (
-        <li className="p-2 shadow-md rounded-[16px] bg-white">
+        <li className="p-2 shadow-md rounded-[16px] bg-white relative">
+            {/* Show on Map Button - Top Right */}
+            <button
+                onClick={handleShowOnMap}
+                className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 transition-colors"
+                aria-label="Show on map"
+            >
+                <MapIcon className="w-5 h-5 text-white" />
+            </button>
+            
             <div
                 className={`flex gap-2 mb-2 overflow-hidden transition-[max-height] duration-700 ${
                     isShownMore
@@ -112,14 +129,6 @@ export default function EventCard({ event }: EventCardProps) {
                         <Image
                             src="images/icons/share.svg"
                             alt="share icon"
-                            width={20}
-                            height={20}
-                        />
-                    </IconButton>
-                    <IconButton>
-                        <Image
-                            src="images/icons/bookmark.svg"
-                            alt="bookmark icon"
                             width={20}
                             height={20}
                         />
