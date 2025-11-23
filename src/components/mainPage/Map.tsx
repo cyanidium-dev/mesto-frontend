@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   MapContainer,
   TileLayer,
   useMap,
   useMapEvents,
   Marker,
-  Popup,
 } from "react-leaflet";
 import L from "leaflet";
 import type { MarkerCluster } from "leaflet";
@@ -17,6 +16,7 @@ import "react-leaflet-markercluster/styles";
 import MarkerClusterGroup from "react-leaflet-markercluster";
 
 import LocateIcon from "../shared/icons/LocateIcon";
+import MapBottomSheet from "./MapBottomSheet";
 import { Business } from "@/types/business";
 import { Event } from "@/types/event";
 
@@ -42,9 +42,11 @@ function UpdateMapCenter({ center }: { center: [number, number] }) {
 function MapEventsHandler({
   onCenterChange,
   center,
+  onMapClick,
 }: {
   onCenterChange: (center: [number, number]) => void;
   center: [number, number];
+  onMapClick?: () => void;
 }) {
   const prevCenterRef = useRef(center);
   const map = useMap();
@@ -69,10 +71,10 @@ function MapEventsHandler({
       }
     },
     click() {
-      map.closePopup();
+      onMapClick?.();
     },
     dragstart() {
-      map.closePopup();
+      onMapClick?.();
     },
   });
 
@@ -80,6 +82,9 @@ function MapEventsHandler({
 }
 
 export default function Map({ center, onCenterChange, markers, events = [] }: MapProps) {
+  const [selectedItem, setSelectedItem] = useState<Business | Event | null>(null);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+
   const handleGeolocate = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -99,6 +104,20 @@ export default function Map({ center, onCenterChange, markers, events = [] }: Ma
     }
   };
 
+  const handleMarkerClick = (item: Business | Event) => {
+    setSelectedItem(item);
+    setIsBottomSheetOpen(true);
+  };
+
+  const handleCloseBottomSheet = () => {
+    setIsBottomSheetOpen(false);
+    setSelectedItem(null);
+  };
+
+  const handleMapClick = () => {
+    handleCloseBottomSheet();
+  };
+
   return (
     <div className="relative max-w-[440px]">
       <MapContainer
@@ -112,7 +131,11 @@ export default function Map({ center, onCenterChange, markers, events = [] }: Ma
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
         <UpdateMapCenter center={center} />
-        <MapEventsHandler onCenterChange={onCenterChange} center={center} />
+        <MapEventsHandler 
+          onCenterChange={onCenterChange} 
+          center={center} 
+          onMapClick={handleMapClick}
+        />
 
         {/* Використовуємо MarkerClusterGroup для кластеризації */}
         <MarkerClusterGroup
@@ -195,16 +218,10 @@ export default function Map({ center, onCenterChange, markers, events = [] }: Ma
                 key={business.id}
                 position={business.location as [number, number]}
                 icon={icon}
-              >
-                <Popup>
-                  <div className="text-sm">
-                    <h3 className="font-semibold">{business.title || "Бизнес"}</h3>
-                    <p className="mb-0! mt-2! line-clamp-3">
-                      {business.description}
-                    </p>
-                  </div>
-                </Popup>
-              </Marker>
+                eventHandlers={{
+                  click: () => handleMarkerClick(business),
+                }}
+              />
             );
           })}
           {events.map((event) => {
@@ -261,23 +278,10 @@ export default function Map({ center, onCenterChange, markers, events = [] }: Ma
                 key={event.id}
                 position={event.location as [number, number]}
                 icon={icon}
-              >
-                <Popup>
-                  <div className="text-sm">
-                    <h3 className="font-semibold">{event.title}</h3>
-                    {eventDate && (
-                      <p className="text-xs text-gray-600 mt-1">
-                        {eventDate} {eventTime && `в ${eventTime}`}
-                      </p>
-                    )}
-                    {event.description && (
-                      <p className="mb-0! mt-2! line-clamp-3">
-                        {event.description}
-                      </p>
-                    )}
-                  </div>
-                </Popup>
-              </Marker>
+                eventHandlers={{
+                  click: () => handleMarkerClick(event),
+                }}
+              />
             );
           })}
         </MarkerClusterGroup>
@@ -292,6 +296,13 @@ export default function Map({ center, onCenterChange, markers, events = [] }: Ma
       >
         <LocateIcon />
       </button>
+
+      {/* Bottom Sheet */}
+      <MapBottomSheet
+        item={selectedItem}
+        isOpen={isBottomSheetOpen}
+        onClose={handleCloseBottomSheet}
+      />
     </div>
   );
 }

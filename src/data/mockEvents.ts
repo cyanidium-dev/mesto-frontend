@@ -1,17 +1,34 @@
 import { Event } from "@/types/event";
 
-// Helper function to generate evenly distributed coordinates around a center point
+// Helper function to generate evenly distributed coordinates across a rectangular area
 const generateCoordinates = (
     centerLat: number,
     centerLng: number,
     index: number,
     total: number,
-    radius: number = 0.015
+    areaSize: number = 0.03 // Size of the area in degrees (approximately 3km)
 ): [number, number] => {
-    const angle = (2 * Math.PI * index) / total;
-    const distance = radius * (0.7 + (index % 3) * 0.1); // Vary distance slightly
-    const latOffset = distance * Math.cos(angle);
-    const lngOffset = distance * Math.sin(angle);
+    // Calculate grid dimensions for even distribution
+    const cols = Math.ceil(Math.sqrt(total));
+    const rows = Math.ceil(total / cols);
+    
+    // Calculate position in grid
+    const col = index % cols;
+    const row = Math.floor(index / cols);
+    
+    // Calculate spacing
+    const latSpacing = areaSize / (rows + 1);
+    const lngSpacing = areaSize / (cols + 1);
+    
+    // Add some variation to avoid perfect grid (deterministic based on index)
+    const variation = (index * 0.1) % 1; // Deterministic variation
+    const randomLat = (variation - 0.5) * latSpacing * 0.3;
+    const randomLng = ((variation * 1.7) % 1 - 0.5) * lngSpacing * 0.3;
+    
+    // Calculate offsets from center
+    const latOffset = (row + 1) * latSpacing - areaSize / 2 + randomLat;
+    const lngOffset = (col + 1) * lngSpacing - areaSize / 2 + randomLng;
+    
     return [centerLat + latOffset, centerLng + lngOffset];
 };
 
@@ -27,7 +44,12 @@ export const mockEvents: Event[] = [
         title: "Футбольный матч в парке",
         description:
             "Присоединяйтесь к нам на дружеский футбольный матч в центральном парке. Приветствуются игроки всех уровней!",
-        imageUrls: ["/images/mockedData/girl.jpg"],
+        imageUrls: [
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+        ],
         socialMediaUrls: ["https://facebook.com/event1"],
         location: generateCoordinates(centerLat, centerLng, 0, 13) as [
             number,
@@ -50,7 +72,12 @@ export const mockEvents: Event[] = [
         title: "Рок концерт под открытым небом",
         description:
             "Живая музыка, отличная атмосфера и незабываемые эмоции. Приходите со своими друзьями!",
-        imageUrls: ["/images/mockedData/girl.jpg"],
+        imageUrls: [
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+        ],
         socialMediaUrls: ["https://instagram.com/event2"],
         location: generateCoordinates(centerLat, centerLng, 1, 13) as [
             number,
@@ -70,7 +97,12 @@ export const mockEvents: Event[] = [
         title: "Выставка современного искусства",
         description:
             "Экспозиция работ местных художников. Открытие состоится в пятницу вечером.",
-        imageUrls: ["/images/mockedData/girl.jpg"],
+        imageUrls: [
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+        ],
         location: generateCoordinates(centerLat, centerLng, 2, 13) as [
             number,
             number
@@ -91,7 +123,12 @@ export const mockEvents: Event[] = [
         title: "Мастер-класс по итальянской кухне",
         description:
             "Учимся готовить настоящую пасту и пиццу. Все ингредиенты включены. Приходите с друзьями!",
-        imageUrls: ["/images/mockedData/girl.jpg"],
+        imageUrls: [
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+        ],
         location: generateCoordinates(centerLat, centerLng, 3, 13) as [
             number,
             number
@@ -113,7 +150,12 @@ export const mockEvents: Event[] = [
         title: "Городской марафон",
         description:
             "Ежегодный городской марафон. Дистанции: 5км, 10км, 21км, 42км. Регистрация обязательна.",
-        imageUrls: ["/images/mockedData/girl.jpg"],
+        imageUrls: [
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+        ],
         location: generateCoordinates(centerLat, centerLng, 4, 13) as [
             number,
             number
@@ -133,7 +175,12 @@ export const mockEvents: Event[] = [
         title: "Джазовый вечер",
         description:
             "Живая джазовая музыка в уютной атмосфере. Выступление местных музыкантов.",
-        imageUrls: ["/images/mockedData/girl.jpg"],
+        imageUrls: [
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+        ],
         location: generateCoordinates(centerLat, centerLng, 5, 13) as [
             number,
             number
@@ -155,7 +202,12 @@ export const mockEvents: Event[] = [
         title: "Лекция о космосе",
         description:
             "Увлекательная лекция о последних открытиях в астрономии. Для всех возрастов.",
-        imageUrls: ["/images/mockedData/girl.jpg"],
+        imageUrls: [
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+        ],
         location: generateCoordinates(centerLat, centerLng, 6, 13) as [
             number,
             number
@@ -177,7 +229,12 @@ export const mockEvents: Event[] = [
         title: "Театральная постановка 'Гамлет'",
         description:
             "Классическая постановка Шекспира на современный лад. Английский язык с субтитрами.",
-        imageUrls: ["/images/mockedData/girl.jpg"],
+        imageUrls: [
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+        ],
         location: generateCoordinates(centerLat, centerLng, 7, 13) as [
             number,
             number
@@ -199,7 +256,12 @@ export const mockEvents: Event[] = [
         title: "Йога на рассвете",
         description:
             "Утренняя практика йоги в парке. Встречаем рассвет вместе. Принесите коврик!",
-        imageUrls: ["/images/mockedData/girl.jpg"],
+        imageUrls: [
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+        ],
         location: generateCoordinates(centerLat, centerLng, 9, 13) as [
             number,
             number
@@ -221,7 +283,12 @@ export const mockEvents: Event[] = [
         title: "Дегустация вин",
         description:
             "Знакомство с винами из разных регионов. Профессиональный сомелье расскажет о каждом сорте.",
-        imageUrls: ["/images/mockedData/girl.jpg"],
+        imageUrls: [
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+        ],
         location: generateCoordinates(centerLat, centerLng, 10, 13) as [
             number,
             number
@@ -243,7 +310,12 @@ export const mockEvents: Event[] = [
         title: "Сальса вечеринка",
         description:
             "Танцевальная вечеринка в стиле сальса. Урок для начинающих в 20:00, затем свободные танцы.",
-        imageUrls: ["/images/mockedData/girl.jpg"],
+        imageUrls: [
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+        ],
         location: generateCoordinates(centerLat, centerLng, 11, 13) as [
             number,
             number
@@ -265,7 +337,12 @@ export const mockEvents: Event[] = [
         title: "Воркшоп по программированию",
         description:
             "Практический воркшоп для начинающих программистов. Изучаем основы JavaScript.",
-        imageUrls: ["/images/mockedData/girl.jpg"],
+        imageUrls: [
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+        ],
         location: generateCoordinates(centerLat, centerLng, 12, 13) as [
             number,
             number
@@ -287,7 +364,12 @@ export const mockEvents: Event[] = [
         title: "Классический концерт",
         description:
             "Произведения Моцарта и Бетховена в исполнении камерного оркестра.",
-        imageUrls: ["/images/mockedData/girl.jpg"],
+        imageUrls: [
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+            "/images/mockedData/girl.jpg",
+        ],
         location: generateCoordinates(centerLat, centerLng, 12, 13) as [
             number,
             number
