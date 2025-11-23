@@ -89,25 +89,27 @@ export default function Map({ center, onCenterChange, markers, events = [], sele
   const [selectedItem, setSelectedItem] = useState<Business | Event | null>(null);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
-  // Handle selected item from props (e.g., from "show on map" button)
+  // Handle selected item from props (e.g., from "show on map" button or marker click)
+  // This is the single source of truth for opening/closing the bottom sheet
   useEffect(() => {
     if (selectedItemId) {
       const allItems = [...markers, ...events];
       const item = allItems.find(i => i.id === selectedItemId);
       if (item) {
-        if (item.id !== selectedItem?.id) {
-          // Only update if it's a different item
-          setSelectedItem(item);
-        }
-        // Always open the sheet if selectedItemId is set
+        // Always set the item and open the sheet when selectedItemId is set
+        setSelectedItem(item);
         setIsBottomSheetOpen(true);
+      } else {
+        // Item not found, clear state
+        setSelectedItem(null);
+        setIsBottomSheetOpen(false);
       }
-    } else if (!selectedItemId && selectedItem) {
+    } else {
       // If selectedItemId is cleared, close the bottom sheet
-      setIsBottomSheetOpen(false);
       setSelectedItem(null);
+      setIsBottomSheetOpen(false);
     }
-  }, [selectedItemId, markers, events, selectedItem]);
+  }, [selectedItemId, markers, events]);
 
   const handleGeolocate = () => {
     if (navigator.geolocation) {
@@ -129,9 +131,7 @@ export default function Map({ center, onCenterChange, markers, events = [], sele
   };
 
   const handleMarkerClick = (item: Business | Event) => {
-    setSelectedItem(item);
-    setIsBottomSheetOpen(true);
-    // Update URL to include focus parameter for consistency
+    // Update URL to include focus parameter - let useEffect handle state
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set("focus", item.id);
     if (!newParams.has("view")) {
