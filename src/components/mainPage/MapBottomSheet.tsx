@@ -126,20 +126,16 @@ export default function MapBottomSheet({
         // Wait for full-screen expansion animation to complete
         setTimeout(() => {
             // Navigate to profile page
+            // Don't call onClose() here - the navigation will unmount this component
+            // and the sheet will naturally close. Calling onClose() would update the URL
+            // back to /main, causing a redirect back.
             if (isEvent) {
                 router.push(`/profile/event/${item.id}`);
             } else {
                 router.push(`/profile/business/${item.id}`);
             }
-            
-            // Keep sheet visible during navigation to prevent flashing
-            // Use a longer delay to allow the new page to start rendering
-            // This prevents the flash of the map/background
-            setTimeout(() => {
-                onClose();
-            }, 600); // Longer delay to allow page to start loading
         }, 400); // Animation duration for expansion
-    }, [item, isEvent, router, onClose]);
+    }, [item, isEvent, router]);
 
     // Handle drag end (touch)
     const handleTouchEnd = () => {
