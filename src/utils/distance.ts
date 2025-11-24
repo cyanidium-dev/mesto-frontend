@@ -39,13 +39,13 @@ export function getCoordinates(
     }
 
     if (typeof location === "object") {
-        // Handle { lat: number; lng: number } or LatLng object
+        // Handle LatLng class instance or LatLngLiteral (both have lat and lng properties)
         if ("lat" in location && "lng" in location) {
             return [location.lat, location.lng];
         }
-        // Handle LatLng class instance (has methods like toArray)
-        if (typeof location.toArray === "function") {
-            const arr = location.toArray();
+        // Handle objects with toArray method (for compatibility with custom LatLng-like objects)
+        if ("toArray" in location && typeof (location as unknown as { toArray: () => [number, number] }).toArray === "function") {
+            const arr = (location as unknown as { toArray: () => [number, number] }).toArray();
             return [arr[0], arr[1]];
         }
     }

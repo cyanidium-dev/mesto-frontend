@@ -43,10 +43,15 @@ const generateFakeBusinesses = (lat: number, lng: number): Business[] => {
 
     return {
       id: `business-${i + 1}`,
+      userType: i % 2 === 0 ? "business" : "individual",
       title: base.name,
       description: base.desc,
-      position: [lat + latOffset, lng + lngOffset] as [number, number],
-      imageUrl: `/images/mockedData/girl.jpg`, // кастомізований пошук
+      imageUrls: [`/images/mockedData/girl.jpg`],
+      location: [lat + latOffset, lng + lngOffset] as [number, number],
+      category: "services",
+      languages: ["ru", "uk"],
+      tags: ["услуги", "выезд"],
+      creatorId: `user-${i + 1}`,
     };
   });
 };
