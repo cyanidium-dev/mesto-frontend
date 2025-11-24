@@ -13,6 +13,9 @@ import Image from "next/image";
 import MainButton from "@/components/shared/buttons/MainButton";
 import IconButton from "@/components/shared/buttons/IconButton";
 import { CATEGORIES } from "@/constants/filters";
+import ShareIcon from "@/components/shared/icons/ShareIcon";
+import DotsIcon from "@/components/shared/icons/DotsIcon";
+import CalendlyIcon from "@/components/shared/icons/CalendlyIcon";
 import dynamic from "next/dynamic";
 
 const Map = dynamic(() => import("@/components/mainPage/Map"), { ssr: false });
@@ -90,47 +93,88 @@ export default function BusinessProfilePage() {
 
     const businessCoords = getCoordinates(business.location);
 
+    // Get all valid image URLs
+    const allImageUrls = business.imageUrls?.filter(
+        url =>
+            url &&
+            (url.startsWith("http") ||
+                url.startsWith("data:") ||
+                url.startsWith("/"))
+    ) || [];
+
     return (
-        <Container className="pt-4 pb-8">
-            <NavigationButton onClick={() => router.back()} className="mb-4">
-                <ArrowIcon />
-                Назад
-            </NavigationButton>
+        <div className="flex flex-col h-screen">
+            <Container className="pt-4 pb-24 flex-1 overflow-y-auto">
+                <NavigationButton onClick={() => router.back()} className="mb-4">
+                    <ArrowIcon />
+                    Назад
+                </NavigationButton>
 
-            <div className="space-y-6">
-                {/* Main Image */}
-                <div className="relative w-full h-64 rounded-[16px] overflow-hidden">
-                    <Image
-                        src={imageUrl}
-                        alt={business.title || "Business"}
-                        fill
-                        className="object-cover"
-                        unoptimized
-                    />
-                </div>
-
-                {/* Title and Category */}
-                <div>
-                    <h1 className="text-2xl font-semibold mb-2">
-                        {business.title || "Бизнес"}
-                    </h1>
+                {/* Static Header - Profile Picture, Name, Title */}
+                <div className="flex items-center justify-between w-full mb-3">
+                    <div className="flex items-center">
+                        <div className="relative w-[60px] h-[60px] rounded-full overflow-hidden mr-2">
+                            <Image
+                                src={imageUrl}
+                                alt={business.title || "Business"}
+                                fill
+                                className="object-cover"
+                                unoptimized
+                            />
+                        </div>
+                        <div className="text-center">
+                            <h1 className="text-2xl font-semibold mb-[4px]">
+                                {business.title || "Бизнес"}
+                            </h1>
+                            {(business.category || business.userType) && (
+                                <p className="text-sm text-gray-placeholder">
+                                    {business.category
+                                        ? CATEGORIES.find(
+                                              cat =>
+                                                  cat.key === business.category
+                                          )?.label || business.category
+                                        : business.userType === "business"
+                                        ? "Бизнес"
+                                        : "Индивидуал"}
+                                </p>
+                            )}
+                        </div>
+                    </div>
                     <div className="flex items-center gap-2">
-                        {business.category && (
-                            <p className="text-sm text-gray-placeholder">
-                                {CATEGORIES.find(
-                                    cat => cat.key === business.category
-                                )?.label || business.category}
-                            </p>
-                        )}
-                        {business.userType && (
-                            <span className="px-2 py-1 bg-gray-ultra-light rounded-full text-xs">
-                                {business.userType === "business"
-                                    ? "Бизнес"
-                                    : "Индивидуал"}
-                            </span>
-                        )}
+                        <button className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light">
+                            <ShareIcon className="w-5 h-5" />
+                        </button>
+                        <button className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light">
+                            <DotsIcon className="w-5 h-5" />
+                        </button>
                     </div>
                 </div>
+
+                <div className="w-full space-y-3">
+                    {/* Images Gallery */}
+                    {allImageUrls.length > 0 && (
+                        <div>
+                            <p className="text-sm text-gray-placeholder mb-2">
+                                Фото
+                            </p>
+                            <div className="grid grid-cols-2 gap-2">
+                                {allImageUrls.map((imageUrl, index) => (
+                                    <div
+                                        key={index}
+                                        className="relative w-full aspect-square rounded-[16px] overflow-hidden"
+                                    >
+                                        <Image
+                                            src={imageUrl}
+                                            alt={`Image ${index + 1}`}
+                                            fill
+                                            className="object-cover"
+                                            unoptimized
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                 {/* Description */}
                 {business.description && (
@@ -358,36 +402,16 @@ export default function BusinessProfilePage() {
                         </div>
                     </div>
                 )}
-
-                {/* Action Buttons */}
-                <div className="flex items-center gap-2 pt-4">
-                    <MainButton className="flex items-center gap-2 h-10 px-4 flex-1">
-                        <Image
-                            src="/images/navbar/chat.svg"
-                            alt="chat icon"
-                            width={20}
-                            height={20}
-                        />
-                        Написать
-                    </MainButton>
-                    <IconButton>
-                        <Image
-                            src="images/icons/share.svg"
-                            alt="share icon"
-                            width={20}
-                            height={20}
-                        />
-                    </IconButton>
-                    <IconButton>
-                        <Image
-                            src="images/icons/bookmark.svg"
-                            alt="bookmark icon"
-                            width={20}
-                            height={20}
-                        />
-                    </IconButton>
                 </div>
+            </Container>
+
+            {/* Fixed Bottom Section with Calendly Button */}
+            <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-ultra-light px-4 py-4 z-10">
+                <MainButton className="flex items-center justify-center gap-2 h-12 w-full">
+                    <CalendlyIcon className="w-5 h-5" />
+                    Забронировать через Calendly
+                </MainButton>
             </div>
-        </Container>
+        </div>
     );
 }

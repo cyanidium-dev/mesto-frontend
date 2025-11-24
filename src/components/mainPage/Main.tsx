@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import SearchBar, { FilterValues } from "./SearchBar";
 import dynamic from "next/dynamic";
 import List from "./List";
@@ -17,6 +17,7 @@ import { calculateDistance, getCoordinates } from "@/utils/distance";
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
 export default function Main() {
+    const router = useRouter();
     const searchParams = useSearchParams();
     const [viewMode, setViewMode] = useState<"map" | "list">("map");
     const [filters, setFilters] = useState<FilterValues>({
@@ -33,6 +34,7 @@ export default function Main() {
     const setMapCenter = useLocationStore(s => s.setMapCenter);
 
     const initialized = useRef(false);
+    const isUpdatingFromUrl = useRef(false);
     const getEvent = useEventsStore(s => s.getEvent);
     const getBusiness = useBusinessStore(s => s.getBusiness);
 
@@ -151,14 +153,44 @@ export default function Main() {
         }
     }, [userLocation, mapCenter, setMapCenter, setUserLocation]);
 
-    // Handle "show on map" from query params
+    // Sync viewMode with URL changes (e.g., "view on map" button)
     useEffect(() => {
         const viewParam = searchParams.get("view");
-        const focusId = searchParams.get("focus");
-        
-        if (viewParam === "map") {
-            setViewMode("map");
+        if (viewParam === "map" || viewParam === "list") {
+            setViewMode(prev => {
+                if (prev === viewParam) return prev;
+                isUpdatingFromUrl.current = true;
+                setTimeout(() => {
+                    isUpdatingFromUrl.current = false;
+                }, 0);
+                return viewParam;
+            });
         }
+    }, [searchParams]);
+
+    // Update URL when viewMode changes from user action (not from URL)
+    useEffect(() => {
+        if (isUpdatingFromUrl.current) {
+            return; // Don't update URL if we're updating from URL
+        }
+        
+        const viewParam = searchParams.get("view");
+        // Only update URL if viewMode doesn't match URL param
+        if (viewMode !== viewParam) {
+            const newParams = new URLSearchParams(searchParams.toString());
+            if (viewMode === "map") {
+                newParams.set("view", "map");
+            } else {
+                // Remove view param for list view
+                newParams.delete("view");
+            }
+            router.push(`/main?${newParams.toString()}`, { scroll: false });
+        }
+    }, [viewMode, router, searchParams]);
+
+    // Handle "show on map" from query params (focus parameter)
+    useEffect(() => {
+        const focusId = searchParams.get("focus");
         
         if (focusId && viewMode === "map") {
             // Find the item and center map on it
