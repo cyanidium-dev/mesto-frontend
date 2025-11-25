@@ -1,5 +1,8 @@
 import { Business } from "@/types/business";
 
+// Default Calendly URL for testing
+const DEFAULT_CALENDLY_URL = "https://calendly.com/demo";
+
 // Helper function to generate evenly distributed coordinates across a rectangular area
 const generateCoordinates = (
     centerLat: number,
@@ -68,6 +71,7 @@ export const mockBusinesses: Business[] = [
         creatorId: "user-1",
         services: ["кофе", "выпечка", "завтраки", "ланчи"],
         siteLink: "https://cafe.example.com",
+        calendlyUrl: DEFAULT_CALENDLY_URL,
     },
     {
         id: "business-2",
@@ -536,4 +540,7 @@ export const mockBusinesses: Business[] = [
             "разговорная практика",
         ],
     },
-];
+].map(business => ({
+    ...business,
+    calendlyUrl: business.calendlyUrl || DEFAULT_CALENDLY_URL,
+})) as Business[];

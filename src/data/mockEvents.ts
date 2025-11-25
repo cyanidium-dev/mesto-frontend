@@ -35,6 +35,16 @@ const generateCoordinates = (
 const centerLat = 50.0755;
 const centerLng = 14.4378;
 
+// Organizer mapping by category grouping
+// Events in the same category share the same organizer
+const categoryOrganizers: Record<string, string> = {
+    sport: "user-1",      // Sport events organized by user-1
+    music: "user-2",      // Music events organized by user-2
+    art: "user-3",        // Art events organized by user-3
+    food: "user-4",       // Food events organized by user-4
+    education: "user-7",  // Education events organized by user-7
+};
+
 export const mockEvents: Event[] = [
     {
         id: "event-1",
@@ -59,7 +69,7 @@ export const mockEvents: Event[] = [
         startTime: "18:00",
         endDate: new Date(2024, 11, 25),
         endTime: "20:00",
-        creatorId: "user-1",
+        creatorId: categoryOrganizers.sport,
         attendees: [],
         maxAttendees: 20,
         siteLink: "https://example.com/event1",
@@ -85,7 +95,7 @@ export const mockEvents: Event[] = [
         ],
         startDate: new Date(2024, 11, 28),
         startTime: "19:30",
-        creatorId: "user-2",
+        creatorId: categoryOrganizers.music,
         attendees: [],
         siteLink: "https://example.com/event2",
     },
@@ -110,7 +120,7 @@ export const mockEvents: Event[] = [
         startDate: new Date(2024, 11, 30),
         startTime: "17:00",
         endDate: new Date(2025, 0, 15),
-        creatorId: "user-3",
+        creatorId: categoryOrganizers.art,
         attendees: [],
         isRepetitive: true,
         repeatedTimes: 3,
@@ -137,7 +147,7 @@ export const mockEvents: Event[] = [
         startTime: "18:00",
         endDate: new Date(2024, 11, 26),
         endTime: "21:00",
-        creatorId: "user-4",
+        creatorId: categoryOrganizers.food,
         attendees: [],
         maxAttendees: 15,
         siteLink: "https://example.com/cooking",
@@ -162,7 +172,7 @@ export const mockEvents: Event[] = [
         ],
         startDate: new Date(2025, 0, 10),
         startTime: "08:00",
-        creatorId: "user-5",
+        creatorId: categoryOrganizers.sport,
         attendees: [],
         maxAttendees: 500,
         siteLink: "https://example.com/marathon",
@@ -189,7 +199,7 @@ export const mockEvents: Event[] = [
         startTime: "20:00",
         endDate: new Date(2024, 11, 27),
         endTime: "23:00",
-        creatorId: "user-6",
+        creatorId: categoryOrganizers.music,
         attendees: [],
         maxAttendees: 50,
         siteLink: "https://example.com/jazz",
@@ -216,7 +226,7 @@ export const mockEvents: Event[] = [
         startTime: "19:00",
         endDate: new Date(2024, 11, 29),
         endTime: "21:00",
-        creatorId: "user-7",
+        creatorId: categoryOrganizers.education,
         attendees: [],
         maxAttendees: 100,
         siteLink: "https://example.com/space",
@@ -243,7 +253,7 @@ export const mockEvents: Event[] = [
         startTime: "19:30",
         endDate: new Date(2025, 0, 5),
         endTime: "22:00",
-        creatorId: "user-8",
+        creatorId: categoryOrganizers.art,
         attendees: [],
         maxAttendees: 200,
         siteLink: "https://example.com/hamlet",
@@ -270,7 +280,7 @@ export const mockEvents: Event[] = [
         startTime: "07:00",
         endDate: new Date(2025, 0, 1),
         endTime: "08:30",
-        creatorId: "user-9",
+        creatorId: categoryOrganizers.sport,
         attendees: [],
         maxAttendees: 30,
         siteLink: "https://example.com/yoga",
@@ -297,7 +307,7 @@ export const mockEvents: Event[] = [
         startTime: "18:00",
         endDate: new Date(2025, 0, 8),
         endTime: "21:00",
-        creatorId: "user-10",
+        creatorId: categoryOrganizers.food,
         attendees: [],
         maxAttendees: 25,
         siteLink: "https://example.com/wine",
@@ -324,7 +334,7 @@ export const mockEvents: Event[] = [
         startTime: "20:00",
         endDate: new Date(2025, 0, 12),
         endTime: "01:00",
-        creatorId: "user-11",
+        creatorId: categoryOrganizers.art,
         attendees: [],
         maxAttendees: 80,
         siteLink: "https://example.com/salsa",
@@ -351,7 +361,7 @@ export const mockEvents: Event[] = [
         startTime: "10:00",
         endDate: new Date(2025, 0, 15),
         endTime: "17:00",
-        creatorId: "user-12",
+        creatorId: categoryOrganizers.education,
         attendees: [],
         maxAttendees: 20,
         siteLink: "https://example.com/coding",
@@ -378,7 +388,7 @@ export const mockEvents: Event[] = [
         startTime: "19:00",
         endDate: new Date(2025, 0, 20),
         endTime: "21:30",
-        creatorId: "user-13",
+        creatorId: categoryOrganizers.music,
         attendees: [],
         maxAttendees: 150,
         siteLink: "https://example.com/classical",

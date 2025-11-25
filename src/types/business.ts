@@ -18,4 +18,5 @@ export interface Business {
     creatorId: string;
     services?: string[];
     siteLink?: string;
+    calendlyUrl?: string;
 }

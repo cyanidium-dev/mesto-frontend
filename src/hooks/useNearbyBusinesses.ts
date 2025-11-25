@@ -36,24 +36,28 @@ const generateFakeBusinesses = (lat: number, lng: number): Business[] => {
     },
   ];
 
-  return Array.from({ length: 20 }, (_, i) => {
-    const latOffset = (Math.random() - 0.5) * 0.01;
-    const lngOffset = (Math.random() - 0.5) * 0.01;
-    const base = names[i % names.length];
+    // Default Calendly URL for testing
+    const DEFAULT_CALENDLY_URL = "https://calendly.com/demo";
 
-    return {
-      id: `business-${i + 1}`,
-      userType: i % 2 === 0 ? "business" : "individual",
-      title: base.name,
-      description: base.desc,
-      imageUrls: [`/images/mockedData/girl.jpg`],
-      location: [lat + latOffset, lng + lngOffset] as [number, number],
-      category: "services",
-      languages: ["ru", "uk"],
-      tags: ["услуги", "выезд"],
-      creatorId: `user-${i + 1}`,
-    };
-  });
+    return Array.from({ length: 20 }, (_, i) => {
+      const latOffset = (Math.random() - 0.5) * 0.01;
+      const lngOffset = (Math.random() - 0.5) * 0.01;
+      const base = names[i % names.length];
+
+      return {
+        id: `business-${i + 1}`,
+        userType: i % 2 === 0 ? "business" : "individual",
+        title: base.name,
+        description: base.desc,
+        imageUrls: [`/images/mockedData/girl.jpg`],
+        location: [lat + latOffset, lng + lngOffset] as [number, number],
+        category: "services",
+        languages: ["ru", "uk"],
+        tags: ["услуги", "выезд"],
+        creatorId: `user-${i + 1}`,
+        calendlyUrl: DEFAULT_CALENDLY_URL,
+      };
+    });
 };
 
 export const useNearbyBusinesses = (): Business[] => {
