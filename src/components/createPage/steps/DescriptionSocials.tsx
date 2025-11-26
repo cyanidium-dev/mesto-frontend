@@ -10,6 +10,8 @@ import Select, { StylesConfig } from "react-select";
 import { ErrorMessage } from "formik";
 import BrokenLinkIcon from "@/components/shared/icons/BrokenLinkIcon";
 import LinkIcon from "@/components/shared/icons/LinkIcon";
+import GlobeIcon from "@/components/shared/icons/GlobeIcon";
+import CheckmarkIcon from "@/components/shared/icons/CheckmarkIcon";
 
 interface DescriptionSocialsProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;
@@ -46,7 +48,14 @@ const isValidUrl = (url: string): boolean => {
     if (!url.trim()) return false;
     try {
         const urlObj = new URL(url);
-        return urlObj.protocol === "http:" || urlObj.protocol === "https:";
+        // Require valid protocol and hostname
+        const hasValidProtocol =
+            urlObj.protocol === "http:" || urlObj.protocol === "https:";
+        const hasValidHostname =
+            Boolean(urlObj.hostname) &&
+            urlObj.hostname.length > 0 &&
+            urlObj.hostname !== "localhost";
+        return hasValidProtocol && hasValidHostname;
     } catch {
         return false;
     }
@@ -82,26 +91,19 @@ const SocialLinksInput = () => {
 
     const handleInputChange = (platform: SocialPlatform, value: string) => {
         setInputValues(prev => ({ ...prev, [platform]: value }));
+    };
 
-        // Auto-save when valid URL is entered
+    const handleCheckmarkClick = (platform: SocialPlatform) => {
+        const value = inputValues[platform];
         if (isValidUrl(value)) {
             const index = getPlatformIndex(platform);
             const updated = [...socialMediaUrls];
             updated[index] = value;
             setFieldValue("socialMediaUrls", updated);
             setEditingPlatform(null);
-        }
-    };
-
-    const handleInputBlur = (platform: SocialPlatform) => {
-        const value = inputValues[platform];
-
-        if (!value.trim() || !isValidUrl(value)) {
-            setEditingPlatform(null);
-            // Reset input value if invalid
-            if (!isValidUrl(value) && value.trim()) {
-                setInputValues(prev => ({ ...prev, [platform]: "" }));
-            }
+        } else {
+            // If invalid, clear the input
+            setInputValues(prev => ({ ...prev, [platform]: "" }));
         }
     };
 
@@ -110,9 +112,12 @@ const SocialLinksInput = () => {
         e: React.KeyboardEvent
     ) => {
         if (e.key === "Enter") {
-            handleInputBlur(platform);
+            handleCheckmarkClick(platform);
         } else if (e.key === "Escape") {
             setEditingPlatform(null);
+            // Reset to saved value on escape
+            const linkValue = getLinkValue(platform);
+            setInputValues(prev => ({ ...prev, [platform]: linkValue }));
         }
     };
 
@@ -140,6 +145,8 @@ const SocialLinksInput = () => {
                     const isEditing = editingPlatform === platform;
                     const hasValidLink = linkValue && isValidUrl(linkValue);
 
+                    const isValidInput = inputValue && isValidUrl(inputValue);
+
                     return (
                         <div key={platform} className="flex items-center gap-3">
                             <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -154,48 +161,59 @@ const SocialLinksInput = () => {
                                     {label}
                                 </span>
                                 {isEditing ? (
-                                    <input
-                                        type="url"
-                                        value={inputValue}
-                                        onChange={e =>
-                                            handleInputChange(
-                                                platform,
-                                                e.target.value
-                                            )
-                                        }
-                                        onBlur={() => handleInputBlur(platform)}
-                                        onKeyDown={e =>
-                                            handleInputKeyDown(platform, e)
-                                        }
-                                        placeholder="https://..."
-                                        autoFocus
-                                        className="flex-1 px-3 h-[37px] text-[14px] font-normal leading-none text-dark bg-white placeholder-placeholder border border-gray-light rounded-full outline-none transition duration-300 ease-out focus:border-primary"
-                                    />
-                                ) : hasValidLink ? (
-                                    <span className="text-[12px] text-gray-placeholder truncate flex-1">
-                                        {linkValue}
-                                    </span>
+                                    <div className="relative flex-1 min-w-0">
+                                        <input
+                                            type="url"
+                                            value={inputValue}
+                                            onChange={e =>
+                                                handleInputChange(
+                                                    platform,
+                                                    e.target.value
+                                                )
+                                            }
+                                            onKeyDown={e =>
+                                                handleInputKeyDown(platform, e)
+                                            }
+                                            placeholder="https://..."
+                                            autoFocus
+                                            className="w-full px-3 pr-10 h-[37px] text-[14px] font-normal leading-none text-dark bg-white placeholder-placeholder border border-gray-light rounded-full outline-none transition duration-300 ease-out focus:border-primary"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() =>
+                                                handleCheckmarkClick(platform)
+                                            }
+                                            className={`absolute right-3 top-1/2 -translate-y-1/2 flex items-center justify-center transition-opacity ${
+                                                isValidInput
+                                                    ? "opacity-100 cursor-pointer"
+                                                    : "opacity-50 cursor-not-allowed"
+                                            }`}
+                                            disabled={!isValidInput}
+                                        >
+                                            <CheckmarkIcon className="w-5 h-5 text-black" />
+                                        </button>
+                                    </div>
                                 ) : null}
                             </div>
                             {!isEditing && hasValidLink ? (
                                 <button
                                     type="button"
                                     onClick={() => handleDelete(platform)}
-                                    className="flex items-center justify-center w-[101px] h-[32px] gap-2 px-3 bg-gray-light text-[12px] text-black hover:bg-red-50 rounded-full transition-colors"
+                                    className="flex items-center justify-center w-[101px] h-[32px] gap-2 px-3 bg-gray-light text-[12px] text-black hover:bg-red-50 rounded-full transition-colors flex-shrink-0"
                                 >
                                     <BrokenLinkIcon className="w-[20px] h-[20px] text-black" />
                                     Удалить
                                 </button>
-                            ) : (
+                            ) : !isEditing ? (
                                 <button
                                     type="button"
                                     onClick={() => handleAddClick(platform)}
-                                    className="flex items-center justify-center w-[109px] h-[32px] gap-2 px-3 bg-blue text-[12px] text-white hover:bg-primary/10 rounded-full transition-colors"
+                                    className="flex items-center justify-center w-[109px] h-[32px] gap-2 px-3 bg-blue text-[12px] text-white hover:bg-primary/10 rounded-full transition-colors flex-shrink-0"
                                 >
                                     <LinkIcon className="w-[20px] h-[20px] text-white" />
                                     Добавить
                                 </button>
-                            )}
+                            ) : null}
                         </div>
                     );
                 })}
@@ -259,7 +277,6 @@ const services = [
     "Помощь",
     "Волонтерство",
     "Уверенность",
-    "Коучинг",
     "Психологические консультации",
     "Тренинги",
     "Творчество",
@@ -267,93 +284,31 @@ const services = [
     "Искусство",
     "Дизайн",
     "Стратегия",
-    "Бизнес-консультации",
-    "Планирование",
-    "Консалтинг",
-    "Успех",
-    "Бизнес-консультации",
-    "Коучинг",
-    "Менторство",
-    "Сила",
-    "Силовые тренировки",
-    "Фитнес",
-    "Тренажерный зал",
-    "Мудрость",
-    "Образование",
-    "Консультации",
-    "Обучение",
-    "Дисциплина",
-    "Тренировки",
-    "Спорт",
-    "Фитнес-программы",
-    "Сострадание",
-    "Социальные услуги",
-    "Помощь",
-    "Волонтерство",
-    "Уверенность",
-    "Коучинг",
-    "Психологические консультации",
-    "Тренинги",
-    "Творчество",
-    "Творческие мастерские",
-    "Искусство",
-    "Дизайн",
-    "Стратегия",
-    "Бизнес-консультации",
     "Планирование",
     "Консалтинг",
     "Потенциал",
     "Развитие",
-    "Обучение",
-    "Коучинг",
     "Надежда",
     "Психологическая поддержка",
-    "Консультации",
-    "Помощь",
     "Смелость",
     "Экстремальные виды спорта",
     "Приключения",
-    "Тренинги",
     "Решительность",
-    "Бизнес-консультации",
-    "Коучинг",
-    "Менторство",
     "Инновации",
     "Технологические решения",
     "IT-консультации",
     "Разработка",
     "Вдохновение",
-    "Творческие мастерские",
-    "Искусство",
-    "Дизайн",
     "Согласие",
     "Медиация",
-    "Консультации",
-    "Помощь",
     "Доброта",
-    "Социальные услуги",
-    "Помощь",
-    "Волонтерство",
     "Устойчивость",
     "Экологические услуги",
-    "Консультации",
-    "Обучение",
     "Энергия",
-    "Фитнес",
-    "Спорт",
-    "Тренировки",
     "Целеустремленность",
-    "Коучинг",
-    "Менторство",
-    "Тренинги",
     "Честность",
-    "Консультации",
     "Юридические услуги",
-    "Помощь",
     "Справедливость",
-    "Юридические услуги",
-    "Консультации",
-    "Помощь",
     "Гармония",
     "Йога",
     "Медитация",
@@ -433,6 +388,7 @@ const ServicesSelector = ({ fieldName, options }: ServicesSelectorProps) => {
             borderRadius: "12px",
             borderWidth: "1px",
             boxShadow: "none",
+            alignItems: "flex-start",
             "&:hover": {
                 borderColor: isError ? "#ef4444" : "#3b82f6",
             },
@@ -452,21 +408,22 @@ const ServicesSelector = ({ fieldName, options }: ServicesSelectorProps) => {
         }),
         multiValue: provided => ({
             ...provided,
-            backgroundColor: "#eff6ff",
-            borderRadius: "6px",
+            backgroundColor: "#E5E7EB",
+            borderRadius: "9999px",
+            fontSize: "14px",
         }),
         multiValueLabel: provided => ({
             ...provided,
-            color: "#3b82f6",
-            fontSize: "16px",
-            padding: "4px 8px",
+            color: "#1F2937",
+            padding: "2px 8px",
         }),
         multiValueRemove: provided => ({
             ...provided,
-            color: "#3b82f6",
-            ":hover": {
-                backgroundColor: "#dbeafe",
-                color: "#2563eb",
+            color: "#6B7280",
+            borderRadius: "9999px",
+            "&:hover": {
+                backgroundColor: "#EF4444",
+                color: "white",
             },
         }),
         valueContainer: provided => ({
@@ -475,6 +432,8 @@ const ServicesSelector = ({ fieldName, options }: ServicesSelectorProps) => {
             gap: "8px",
             maxHeight: "156px",
             overflowY: "auto",
+            alignItems: "flex-start",
+            flexWrap: "wrap",
         }),
         indicatorSeparator: () => ({
             display: "none",
@@ -512,9 +471,9 @@ const ServicesSelector = ({ fieldName, options }: ServicesSelectorProps) => {
 
     return (
         <div className="relative flex flex-col w-full">
-            <label className="text-[12px] font-normal leading-[120%] mb-2 rounded-[12px]">
+            <p className="text-[14px] font-normal leading-[120%] mb-6 rounded-[12px]">
                 {description.company.description}
-            </label>
+            </p>
             <Select
                 options={selectOptions}
                 value={selectedOptions}
@@ -549,14 +508,20 @@ export const DescriptionSocials = ({
     setCurrentStep,
     formProps,
 }: DescriptionSocialsProps) => {
-    const { errors, touched } = formProps;
-    const { values } = formProps;
+    const { errors, touched, values, setFieldValue } = formProps;
     let type: "event" | "company" | "individual";
     if ("userType" in values && values.userType) {
         type = values.userType === "individual" ? "individual" : "company";
     } else {
         type = "event";
     }
+
+    const siteLinkValue = (values.siteLink as string) || "";
+    const hasSiteLinkValue = siteLinkValue.trim().length > 0;
+
+    const handleClearSiteLink = () => {
+        setFieldValue("siteLink", "");
+    };
 
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
@@ -567,30 +532,73 @@ export const DescriptionSocials = ({
                 {type === "company" ? (
                     <ServicesSelector fieldName="services" options={services} />
                 ) : (
-                    <CustomizedInput
-                        fieldName="description"
-                        inputType="text"
-                        placeholder={description[type].placeholder}
-                        label={description[type].description}
-                        as="textarea"
-                        errors={errors}
-                        touched={touched}
-                        labelClassName="mb-2 rounded-[12px]"
-                        fieldClassName="h-[172px] !rounded-[12px] px-4 py-2"
-                    />
+                    <>
+                        <p className="text-[14px] font-normal leading-[120%] mb-6">
+                            {description[type].description}
+                        </p>
+                        <CustomizedInput
+                            fieldName="description"
+                            inputType="text"
+                            placeholder={description[type].placeholder}
+                            as="textarea"
+                            errors={errors}
+                            touched={touched}
+                            labelClassName="mb-1 rounded-[12px]"
+                            fieldClassName="h-[172px] !rounded-[12px] px-4 py-2"
+                        />
+                    </>
                 )}
-                <p className="text-[12px] text-gray-text mb-6">
+                <p className="text-[12px] text-gray-placeholder mb-6">
                     Не более 1500 символов
                 </p>
-                <CustomizedInput
-                    fieldName="siteLink"
-                    inputType="url"
-                    placeholder="Адрес сайта"
-                    label={description[type].siteLink}
-                    errors={errors}
-                    touched={touched}
-                    labelClassName="mb-6"
-                />
+                <p className="text-[14px] font-normal leading-[120%] mb-6">
+                    {description[type].siteLink}
+                </p>
+                <div className="relative mb-3">
+                    <CustomizedInput
+                        fieldName="siteLink"
+                        inputType="url"
+                        placeholder="Адрес сайта"
+                        errors={errors}
+                        touched={touched}
+                        fieldClassName={
+                            hasSiteLinkValue ? "pl-12 pr-12" : "pr-12"
+                        }
+                    />
+                    {hasSiteLinkValue ? (
+                        <>
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2">
+                                <GlobeIcon className="w-5 h-5 text-black" />
+                            </div>
+                            <button
+                                type="button"
+                                onClick={handleClearSiteLink}
+                                className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center w-5 h-5 text-gray-placeholder hover:text-black transition-colors"
+                                aria-label="Clear input"
+                            >
+                                <svg
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 20 20"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        d="M15 5L5 15M5 5L15 15"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    />
+                                </svg>
+                            </button>
+                        </>
+                    ) : (
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                            <GlobeIcon className="w-5 h-5 text-black" />
+                        </div>
+                    )}
+                </div>
                 <SocialLinksInput />
             </div>
             <MainButton

@@ -47,7 +47,7 @@ export const Title = ({ setCurrentStep, formProps }: TitleProps) => {
                     touched={touched}
                     labelClassName="mb-2"
                 />
-                <p className="text-[12px] text-gray-text mb-6">
+                <p className="text-[12px] text-gray-placeholder">
                     {description[type].note}
                 </p>
             </div>

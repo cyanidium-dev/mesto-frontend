@@ -194,6 +194,7 @@ export const CreateForm = ({
             >
                 {props => (
                     <>
+                        <FormValuesLogger step={currentStep} formType="event" />
                         {currentStep === 1 ? (
                             <LangCategory
                                 formProps={
@@ -260,6 +261,25 @@ export const CreateForm = ({
             </ReusableForm>
         );
     }
+
+    // Helper component to log form values on step change
+    const FormValuesLogger = ({
+        step,
+        formType,
+    }: {
+        step: number;
+        formType: "event" | "business";
+    }) => {
+        const { values } = useFormikContext<
+            EventFormValues | BusinessFormValues
+        >();
+
+        useEffect(() => {
+            console.log(`[Step ${step}] Form Values (${formType}):`, JSON.parse(JSON.stringify(values)));
+        }, [step, formType]); // Only log when step or formType changes, not on every value change
+
+        return null;
+    };
 
     // Helper component to auto-set title for individual businesses
     const IndividualBusinessTitleSetter = () => {
@@ -445,6 +465,7 @@ export const CreateForm = ({
 
                 return (
                     <>
+                        <FormValuesLogger step={currentStep} formType="business" />
                         <IndividualBusinessTitleSetter />
                         {getBusinessStep()}
                     </>

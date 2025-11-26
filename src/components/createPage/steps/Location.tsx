@@ -14,11 +14,15 @@ import dynamic from "next/dynamic";
 import { useLocationStore } from "@/store/locationStore";
 import { EventFormValues } from "@/types/formValues";
 import { BusinessFormValues } from "@/types/formValues";
-import MapIcon from "@/components/shared/icons/MapIcon";
+import LocationIcon from "@/components/shared/icons/LocationIcon";
+import LocationMapIcon from "@/components/shared/icons/LocationMapIcon";
 
-const LocationPickerMap = dynamic(() => import("./LocationPickerMap"), {
-    ssr: false,
-});
+const LocationPickerMap = dynamic(
+    () => import("@/components/createPage/steps/LocationPickerMap"),
+    {
+        ssr: false,
+    }
+);
 
 interface LocationProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;
@@ -240,27 +244,33 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                 <div className="relative mb-4" ref={searchContainerRef}>
                     <label
                         htmlFor="location"
-                        className="text-[14px] text-gray-text"
+                        className="text-[14px] text-gray-text mb-2"
                     >
                         Локация
                     </label>
-                    <input
-                        id="location"
-                        type="text"
-                        value={searchQuery}
-                        onChange={e => {
-                            setSearchQuery(e.target.value);
-                            setShowResults(true);
-                        }}
-                        onFocus={() => setShowResults(true)}
-                        placeholder="Выбирите локацию"
-                        className="w-full px-4 h-[37px] text-[16px] font-normal leading-none text-dark bg-white placeholder-placeholder border border-gray-light rounded-full outline-none transition duration-300 ease-out focus:border-primary"
-                    />
-                    {isSearching && (
-                        <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                            <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                        </div>
-                    )}
+                    <div className="relative">
+                        <input
+                            id="location"
+                            type="text"
+                            value={searchQuery}
+                            onChange={e => {
+                                setSearchQuery(e.target.value);
+                                setShowResults(true);
+                            }}
+                            onFocus={() => setShowResults(true)}
+                            placeholder="Выбирите локацию"
+                            className="w-full pl-4 pr-12 h-[37px] text-[16px] font-normal leading-none text-dark bg-white placeholder-placeholder border border-gray-light rounded-full outline-none transition duration-300 ease-out focus:border-primary"
+                        />
+                        {isSearching ? (
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                            </div>
+                        ) : (
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                                <LocationMapIcon className="w-5 h-5 text-gray-placeholder" />
+                            </div>
+                        )}
+                    </div>
 
                     {/* Search Results Dropdown */}
                     {showResults && searchResults.length > 0 && (
@@ -282,7 +292,7 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                 </div>
 
                 {!isMapOpen ? (
-                    <div className="h-[300px] w-full rounded-[16px] overflow-hidden mb-4 relative bg-gray-ultra-light border border-gray-light flex items-center justify-center">
+                    <div className="h-[168px] w-[343px] rounded-[16px] overflow-hidden mb-4 relative bg-gray-ultra-light border border-gray-light flex items-center justify-center">
                         <div className="flex flex-col items-center gap-4">
                             <button
                                 type="button"
@@ -291,7 +301,7 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                             >
                                 Выбрать на карте
                                 <div className="ml-2 w-[20px] h-[20px] flex items-center justify-center">
-                                    <MapIcon className="w-[20px] h-[20px] text-white" />
+                                    <LocationIcon className="w-[20px] h-[20px] text-white" />
                                 </div>
                             </button>
                         </div>
@@ -319,7 +329,7 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                             </div>
                         )}
 
-                        <div className="h-[300px] w-full rounded-[16px] overflow-hidden mb-4 relative">
+                        <div className="h-[168px] w-[343px] rounded-[16px] overflow-hidden mb-4 relative">
                             <LocationPickerMap
                                 center={mapCenterState}
                                 selectedPosition={selectedPosition}

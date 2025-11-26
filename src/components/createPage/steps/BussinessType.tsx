@@ -15,12 +15,12 @@ const userTypes = [
     {
         label: "Компания",
         value: "business",
-        emoji: "/images/icons/man.png",
+        emoji: "/images/icons/office-building.png",
     },
     {
         label: "Частное лицо",
         value: "individual",
-        emoji: "/images/icons/girl.png",
+        emoji: "/images/icons/smiling-face-with-sunglasses.png",
     },
 ];
 
@@ -47,7 +47,7 @@ export const BussinessType = ({
         <div className="flex flex-col flex-1 justify-between h-full">
             <div>
                 <SectionTitle className="mb-6">Кто вы?</SectionTitle>
-                <p className="mb-6 text-[14px] text-gray-text text-center">
+                <p className="mb-6 text-[14px] text-gray-text">
                     Выбирите свое позиционирование
                 </p>
                 <ImageRadioButtonInput

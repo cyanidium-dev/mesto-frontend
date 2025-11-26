@@ -118,8 +118,8 @@ const MultiImageUpload = ({ description }: { description: string }) => {
 
     return (
         <div>
-            <p className="mb-4 text-[14px] text-gray-text">{description}</p>
-            <div className="grid grid-cols-4 gap-4 mb-4">
+            <p className="mb-6 text-[14px] text-gray-text">{description}</p>
+            <div className="grid grid-cols-4 gap-2 mb-2">
                 {Array.from({ length: 8 }).map((_, index) => {
                     const imageUrl = imageUrls[index];
                     const inputRef = inputRefs[index];
@@ -173,9 +173,7 @@ const MultiImageUpload = ({ description }: { description: string }) => {
                     );
                 })}
             </div>
-            <p className="text-[12px] text-gray-text">
-                Можно добавить до 8 фото
-            </p>
+            <p className="text-[14px]">Можно добавить до 8 фото</p>
         </div>
     );
 };

@@ -140,8 +140,8 @@ const TagSelector = ({
             className={
                 `${
                     type === "company"
-                        ? "flex flex-col"
-                        : "flex flex-col-reverse"
+                        ? "flex flex-col-reverse"
+                        : "flex flex-col"
                 }` + " mb-3"
             }
         >
@@ -151,10 +151,11 @@ const TagSelector = ({
                     label="Или найдите свое:"
                     placeholder="Выбрать"
                     options={presetOptions}
-                    labelClassName="mb-3"
+                    wrapperClassName="mt-3"
+                    fieldClassName="px-[10px] py-2 leading-[19px]"
                 />
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 mb-3">
                 {allTags.map(tag => (
                     <div
                         key={tag.value}

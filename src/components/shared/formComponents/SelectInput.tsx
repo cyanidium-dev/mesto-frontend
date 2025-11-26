@@ -1,6 +1,7 @@
 import { ErrorMessage, useFormikContext } from "formik";
 import Image from "next/image";
 import { useState } from "react";
+import { twMerge } from "tailwind-merge";
 import ArrowIcon from "../icons/ArrowIcon";
 
 interface Option {
@@ -70,22 +71,27 @@ export default function SelectInput({
                 {required && <span className="text-red"> *</span>}
             </p>
             <div
-                className={`${fieldWrapperStyles} relative flex items-center bg-white ${wrapperClassName} ${
+                className={twMerge(
+                    fieldWrapperStyles,
+                    "relative flex items-center bg-white",
+                    wrapperClassName,
                     errors[fieldName] && touched[fieldName]
                         ? "before:bg-red"
                         : "before:bg-transparent group-hover:before:bg-primary/20 focus-within:before:bg-primary/20"
-                }`}
+                )}
             >
                 <div
-                    className={`${fieldStyles} ${fieldClassName} ${
+                    className={twMerge(
+                        fieldStyles,
+                        fieldClassName,
                         errors[fieldName] && touched[fieldName]
                             ? "border-red"
                             : "border-gray-light focus:border-primary"
-                    } `}
+                    )}
                 >
                     {displayText}
                     <ArrowIcon
-                        className={`absolute right-3 bottom-3 transition duration-300 ease-out ${
+                        className={`absolute right-3 bottom-1/2 translate-y-1/2 transition duration-300 ease-out ${
                             isDropDownOpen ? "rotate-90" : "-rotate-90"
                         }`}
                     />

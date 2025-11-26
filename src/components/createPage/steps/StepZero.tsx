@@ -22,13 +22,13 @@ const validationSchema = yup.object({
 
 const createTypeOptions = [
     {
-        label: "Событие",
-        value: "event",
+        label: "Бизнес точку",
+        value: "business",
         emoji: "/images/icons/classical-building.png",
     },
     {
-        label: "Бизнес",
-        value: "business",
+        label: "Событие",
+        value: "event",
         emoji: "/images/icons/admission-ticket.png",
     },
 ];

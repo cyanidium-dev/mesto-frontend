@@ -327,7 +327,7 @@ export default function Map({ center, onCenterChange, markers, events = [], sele
       <button
         onClick={handleGeolocate}
         aria-label="Locate my position"
-        className="absolute bottom-[72px] right-4 z-[50] flex items-center justify-center w-12 h-12 rounded-full bg-primary shadow-md border-none p-0 cursor-pointer active:brightness-125 transition duration-300 ease-in-out"
+        className="absolute bottom-[97px] right-4 z-[50] flex items-center justify-center w-12 h-12 rounded-full bg-primary shadow-md border-none p-0 cursor-pointer active:brightness-125 transition duration-300 ease-in-out"
       >
         <LocateIcon />
       </button>

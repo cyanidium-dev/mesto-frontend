@@ -5,7 +5,7 @@ import Container from "@/components/shared/container/Container";
 import NavigationButton from "@/components/shared/buttons/NavigationButton";
 import ArrowIcon from "@/components/shared/icons/ArrowIcon";
 import ProgressBar from "@/components/shared/progress/ProgressBar";
-import { CreateForm } from "@/components/CreatePage/CreateForm";
+import { CreateForm } from "@/components/createPage/CreateForm";
 
 export default function CreatePage() {
     const router = useRouter();

@@ -148,13 +148,15 @@ export const Submit = ({ formProps }: SubmitProps) => {
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
             <div className="flex flex-col items-center justify-center mt-[95px] h-full">
-                <div className="w-[72px] h-[72px] rounded-full flex items-center justify-center">
+                <div className="w-[72px] h-[72px] rounded-full flex items-center justify-center mb-6">
                     <CheckCircleIcon className="w-[72px] h-[72px] text-[#00C950]" />
                 </div>
-                <SectionTitle className="mb-3">
+                <SectionTitle className="mb-3 text-center relative">
                     {description[type].title}
                 </SectionTitle>
-                <p className="text-center">{description[type].description}</p>
+                <p className="text-center max-w-[265px]">
+                    {description[type].description}
+                </p>
             </div>
             <div className="flex flex-col gap-3">
                 <MainButton

@@ -5,8 +5,13 @@ import MainButton from "../../shared/buttons/MainButton";
 import SectionTitle from "../../shared/titles/SectionTitle";
 import SelectInput from "../../shared/formComponents/SelectInput";
 import { BaseFormValues } from "@/types/formValues";
-import Select, { MultiValue, StylesConfig } from "react-select";
+import Select, {
+    MultiValue,
+    StylesConfig,
+    DropdownIndicatorProps,
+} from "react-select";
 import { LANGUAGES, CATEGORIES } from "@/constants/filters";
+import ArrowIcon from "../../shared/icons/ArrowIcon";
 
 interface LangCategoryProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;
@@ -60,29 +65,49 @@ const LanguageSelector = () => {
             "&:focus-within": {
                 border: `1px solid ${isError ? "#fb2c36" : "#155dfc"}`,
             },
-            paddingLeft: "0",
-            paddingRight: "0",
+            paddingLeft: "10px",
+            paddingRight: "10px",
+            paddingTop: "8px",
+            paddingBottom: "8px",
             fontSize: "16px",
             cursor: "pointer",
+            position: "relative",
+            alignItems: "flex-start",
         }),
         valueContainer: provided => ({
             ...provided,
             height: "auto",
-            padding: "14px 12px",
+            padding: "0",
+            alignItems: "flex-start",
+            flexWrap: "wrap",
         }),
         input: provided => ({
             ...provided,
             margin: "0px",
             fontSize: "16px",
+            lineHeight: "19px",
         }),
         indicatorsContainer: provided => ({
             ...provided,
             height: "auto",
         }),
+        indicatorSeparator: () => ({
+            display: "none",
+        }),
+        clearIndicator: provided => ({
+            ...provided,
+            padding: "0",
+            marginRight: "32px",
+        }),
+        dropdownIndicator: provided => ({
+            ...provided,
+            padding: "0",
+        }),
         placeholder: provided => ({
             ...provided,
-            color: "#9CA3AF",
+            color: "#000000",
             fontSize: "16px",
+            lineHeight: "19px",
         }),
         multiValue: provided => ({
             ...provided,
@@ -130,6 +155,30 @@ const LanguageSelector = () => {
         }),
     };
 
+    const DropdownIndicator = (
+        props: DropdownIndicatorProps<OptionType, true>
+    ) => {
+        const { selectProps, innerProps } = props;
+        const menuIsOpen = selectProps.menuIsOpen || false;
+        return (
+            <div
+                {...innerProps}
+                style={{
+                    position: "absolute",
+                    right: "12px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                }}
+            >
+                <ArrowIcon
+                    className={`transition duration-300 ease-out ${
+                        menuIsOpen ? "rotate-90" : "-rotate-90"
+                    }`}
+                />
+            </div>
+        );
+    };
+
     return (
         <Select
             isMulti
@@ -141,6 +190,10 @@ const LanguageSelector = () => {
             maxMenuHeight={200}
             isOptionDisabled={() => selectedOptions.length >= 3}
             styles={customStyles}
+            components={{
+                DropdownIndicator,
+                IndicatorSeparator: () => null,
+            }}
             className="react-select-container"
             classNamePrefix="react-select"
         />
@@ -186,6 +239,7 @@ export const LangCategory = ({
                     placeholder="Выбрать категорию"
                     options={categories}
                     labelClassName="mb-6"
+                    fieldClassName="px-[10px] py-2 leading-[19px]"
                 />
                 <div>
                     <p className="mb-3 text-[14px]">
