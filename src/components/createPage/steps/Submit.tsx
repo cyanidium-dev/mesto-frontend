@@ -55,94 +55,71 @@ export const Submit = ({ formProps }: SubmitProps) => {
         return "startDate" in values;
     };
 
-    const handleSave = () => {
+    const handleSave = (navigateToMap = false) => {
         try {
+            let itemId: string | null = null;
+
             if (isEventForm(values)) {
-                const eventValues: EventFormValues = values;
-                console.log(
-                    "📸 Saving Event with imageUrls:",
-                    eventValues.imageUrls
-                );
-                console.log(
-                    "📸 ImageUrls length:",
-                    eventValues.imageUrls?.length
-                );
-                console.log(
-                    "📸 First imageUrl:",
-                    eventValues.imageUrls?.[0]?.substring(0, 50) + "..."
-                );
+                itemId = `event-${Date.now()}`;
                 const newEvent: Event = {
-                    id: `event-${Date.now()}`,
-                    category: eventValues.category,
-                    languages: eventValues.languages,
-                    tags: eventValues.tags,
-                    title: eventValues.title,
-                    description: eventValues.description,
-                    imageUrls: eventValues.imageUrls,
-                    socialMediaUrls: eventValues.socialMediaUrls,
-                    location: eventValues.position!,
-                    startDate: new Date(eventValues.startDate),
-                    startTime: eventValues.startTime,
+                    id: itemId,
+                    category: values.category,
+                    languages: values.languages,
+                    tags: values.tags,
+                    title: values.title,
+                    description: values.description,
+                    imageUrls: values.imageUrls,
+                    socialMediaUrls: values.socialMediaUrls,
+                    location: values.position!,
+                    startDate: new Date(values.startDate),
+                    startTime: values.startTime,
                     endDate:
-                        eventValues.hasEndDate && eventValues.endDate
-                            ? new Date(eventValues.endDate)
+                        values.hasEndDate && values.endDate
+                            ? new Date(values.endDate)
                             : undefined,
                     endTime:
-                        eventValues.hasEndTime && eventValues.endTime
-                            ? eventValues.endTime
+                        values.hasEndTime && values.endTime
+                            ? values.endTime
                             : undefined,
                     creatorId: currentUser?.id || "anonymous",
                     attendees: [],
-                    siteLink: eventValues.siteLink,
+                    siteLink: values.siteLink,
                 };
-                console.log("✅ Event saved:", newEvent);
                 addEvent(newEvent);
             } else {
-                const businessValues: BusinessFormValues = values;
-                console.log(
-                    "📸 Saving Business with imageUrls:",
-                    businessValues.imageUrls
-                );
-                console.log(
-                    "📸 ImageUrls length:",
-                    businessValues.imageUrls?.length
-                );
-                console.log(
-                    "📸 First imageUrl:",
-                    businessValues.imageUrls?.[0]?.substring(0, 50) + "..."
-                );
+                itemId = `business-${Date.now()}`;
                 const newBusiness: Business = {
-                    id: `business-${Date.now()}`,
-                    userType: businessValues.userType,
-                    category: businessValues.category,
-                    languages: businessValues.languages,
-                    tags: businessValues.tags,
-                    title: businessValues.title,
-                    description: businessValues.description,
-                    imageUrls: businessValues.imageUrls,
-                    socialMediaUrls: businessValues.socialMediaUrls,
-                    location: businessValues.position!,
-                    workingHours: businessValues.workingHours,
-                    services: businessValues.services,
+                    id: itemId,
+                    userType: values.userType,
+                    category: values.category,
+                    languages: values.languages,
+                    tags: values.tags,
+                    title: values.title,
+                    description: values.description,
+                    imageUrls: values.imageUrls,
+                    socialMediaUrls: values.socialMediaUrls,
+                    location: values.position!,
+                    workingHours: values.workingHours,
+                    services: values.services,
                     creatorId: currentUser?.id || "anonymous",
-                    siteLink: businessValues.siteLink,
+                    siteLink: values.siteLink,
                 };
-                console.log("✅ Business saved:", newBusiness);
                 addBusiness(newBusiness);
             }
-            // Navigate to main page after saving
-            router.push("/main");
+
+            if (navigateToMap && itemId) {
+                router.push(`/main?view=map&focus=${itemId}`);
+            } else {
+                router.push("/main");
+            }
         } catch (error) {
             console.error("Error saving:", error);
-            // Still navigate even if there's an error
             router.push("/main");
         }
     };
 
     const handleViewOnMap = () => {
-        // handleSave already navigates to /main
-        handleSave();
-        // TODO: Navigate to map with event selected
+        handleSave(true);
     };
 
     return (

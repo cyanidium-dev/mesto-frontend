@@ -1,5 +1,12 @@
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, useMemo, Dispatch, SetStateAction } from "react";
+import {
+    useState,
+    useEffect,
+    useMemo,
+    useCallback,
+    Dispatch,
+    SetStateAction,
+} from "react";
 import { StepZero } from "./steps/StepZero";
 import { LangCategory } from "./steps/LangCategory";
 import { Interests } from "./steps/Interests";
@@ -49,7 +56,6 @@ export const CreateForm = ({
         urlType === "event" || urlType === "business" ? urlType : null
     );
 
-    // Load item for editing
     const editItem = useMemo(() => {
         if (!editId) return null;
         if (urlType === "event") {
@@ -60,7 +66,6 @@ export const CreateForm = ({
         return null;
     }, [editId, urlType, getEvent, getBusiness]);
 
-    // Convert Event to EventFormValues
     const convertEventToFormValues = (event: Event): EventFormValues => {
         return {
             type: "",
@@ -89,7 +94,6 @@ export const CreateForm = ({
         };
     };
 
-    // Convert Business to BusinessFormValues
     const convertBusinessToFormValues = (
         business: Business
     ): BusinessFormValues => {
@@ -115,10 +119,13 @@ export const CreateForm = ({
         };
     };
 
-    const handleCreateTypeChange = (type: "event" | "business" | null) => {
-        setCreateType(type);
-        onCreateTypeChange?.(type);
-    };
+    const handleCreateTypeChange = useCallback(
+        (type: "event" | "business" | null) => {
+            setCreateType(type);
+            onCreateTypeChange?.(type);
+        },
+        [onCreateTypeChange]
+    );
 
     const submitForm = () => {
         router.push("/main");
@@ -165,7 +172,6 @@ export const CreateForm = ({
                   services: [],
               };
 
-    // If editing, skip StepZero and go directly to the form
     useEffect(() => {
         if (editId && urlType && !createType) {
             handleCreateTypeChange(urlType as "event" | "business");
@@ -194,7 +200,6 @@ export const CreateForm = ({
             >
                 {props => (
                     <>
-                        <FormValuesLogger step={currentStep} formType="event" />
                         {currentStep === 1 ? (
                             <LangCategory
                                 formProps={
@@ -262,26 +267,6 @@ export const CreateForm = ({
         );
     }
 
-    // Helper component to log form values on step change
-    const FormValuesLogger = ({
-        step,
-        formType,
-    }: {
-        step: number;
-        formType: "event" | "business";
-    }) => {
-        const { values } = useFormikContext<
-            EventFormValues | BusinessFormValues
-        >();
-
-        useEffect(() => {
-            console.log(`[Step ${step}] Form Values (${formType}):`, JSON.parse(JSON.stringify(values)));
-        }, [step, formType]); // Only log when step or formType changes, not on every value change
-
-        return null;
-    };
-
-    // Helper component to auto-set title for individual businesses
     const IndividualBusinessTitleSetter = () => {
         const { values, setFieldValue } =
             useFormikContext<BusinessFormValues>();
@@ -289,17 +274,17 @@ export const CreateForm = ({
         const isIndividual = values.userType === "individual";
 
         useEffect(() => {
-            if (isIndividual && currentUser) {
-                // Set title to user's name when userType is "individual"
-                if (values.title !== currentUser.name) {
-                    setFieldValue("title", currentUser.name);
-                }
+            if (
+                isIndividual &&
+                currentUser &&
+                values.title !== currentUser.name
+            ) {
+                setFieldValue("title", currentUser.name);
             } else if (
                 !isIndividual &&
                 currentUser &&
                 values.title === currentUser.name
             ) {
-                // Clear title if switching back to business type and title is still user's name
                 setFieldValue("title", "");
             }
         }, [isIndividual, currentUser, values.title, setFieldValue]);
@@ -317,7 +302,6 @@ export const CreateForm = ({
             {props => {
                 const isIndividual = props.values.userType === "individual";
 
-                // Skip Title step (step 4) for individual users
                 const getBusinessStep = () => {
                     if (currentStep === 1) {
                         return (
@@ -347,7 +331,6 @@ export const CreateForm = ({
                             />
                         );
                     } else if (currentStep === 4) {
-                        // Skip Title step for individual, go to WorkingHours
                         if (isIndividual) {
                             return (
                                 <WorkingHours
@@ -365,7 +348,6 @@ export const CreateForm = ({
                             />
                         );
                     } else if (currentStep === 5) {
-                        // For individual: Location, for business: WorkingHours
                         if (isIndividual) {
                             return (
                                 <Location
@@ -385,7 +367,6 @@ export const CreateForm = ({
                             />
                         );
                     } else if (currentStep === 6) {
-                        // For individual: DescriptionSocials, for business: Location
                         if (isIndividual) {
                             return (
                                 <DescriptionSocials
@@ -407,7 +388,6 @@ export const CreateForm = ({
                             />
                         );
                     } else if (currentStep === 7) {
-                        // For individual: ImagesUpload, for business: DescriptionSocials
                         if (isIndividual) {
                             return (
                                 <ImagesUpload
@@ -427,7 +407,6 @@ export const CreateForm = ({
                             />
                         );
                     } else if (currentStep === 8) {
-                        // For individual: Submit, for business: ImagesUpload
                         if (isIndividual) {
                             return (
                                 <Submit
@@ -449,7 +428,6 @@ export const CreateForm = ({
                             />
                         );
                     } else {
-                        // Step 9: Submit (only for business)
                         return (
                             <Submit
                                 formProps={
@@ -465,7 +443,6 @@ export const CreateForm = ({
 
                 return (
                     <>
-                        <FormValuesLogger step={currentStep} formType="business" />
                         <IndividualBusinessTitleSetter />
                         {getBusinessStep()}
                     </>
