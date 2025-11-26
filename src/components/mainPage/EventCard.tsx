@@ -118,7 +118,7 @@ export default function EventCard({ event }: EventCardProps) {
                 <div className="flex items-center gap-2">
                     <MainButton className="flex items-center gap-2 h-8 px-3 w-fit text-[12px]">
                         <Image
-                            src="/images/navbar/chat.svg"
+                            src="/images/icons/handUp.svg"
                             alt="book icon"
                             width={20}
                             height={20}

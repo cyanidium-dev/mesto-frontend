@@ -12,6 +12,9 @@ import { Event } from "@/types/event";
 import { Business } from "@/types/business";
 import CheckCircleIcon from "@/components/shared/icons/CheckCircleIcon";
 
+// Default Calendly URL for testing
+const DEFAULT_CALENDLY_URL = "https://calendly.com/demo";
+
 interface SubmitProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;
     formProps: FormikProps<EventFormValues | BusinessFormValues>;
@@ -61,6 +64,19 @@ export const Submit = ({ formProps }: SubmitProps) => {
 
             if (isEventForm(values)) {
                 itemId = `event-${Date.now()}`;
+
+                // Generate maxAttendees based on event category or use default
+                const getDefaultMaxAttendees = (category: string): number => {
+                    const categoryDefaults: Record<string, number> = {
+                        sport: 30,
+                        music: 100,
+                        art: 50,
+                        food: 25,
+                        education: 20,
+                    };
+                    return categoryDefaults[category] || 50;
+                };
+
                 const newEvent: Event = {
                     id: itemId,
                     category: values.category,
@@ -83,6 +99,7 @@ export const Submit = ({ formProps }: SubmitProps) => {
                             : undefined,
                     creatorId: currentUser?.id || "anonymous",
                     attendees: [],
+                    maxAttendees: getDefaultMaxAttendees(values.category),
                     siteLink: values.siteLink,
                 };
                 addEvent(newEvent);
@@ -103,6 +120,7 @@ export const Submit = ({ formProps }: SubmitProps) => {
                     services: values.services,
                     creatorId: currentUser?.id || "anonymous",
                     siteLink: values.siteLink,
+                    calendlyUrl: DEFAULT_CALENDLY_URL,
                 };
                 addBusiness(newBusiness);
             }

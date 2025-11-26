@@ -1,6 +1,6 @@
 import { User } from "@/types/user";
 import { create } from "zustand";
-import { mockUser } from "@/data/mockUser";
+import { mockUser, mockUsers } from "@/data/mockUser";
 
 interface UserStore {
     currentUser: User | null;
@@ -26,9 +26,13 @@ export const useUserStore = create<UserStore>((set, get) => ({
     },
     initializeMockData: () => {
         if (get().initialized) return;
+        const usersRecord = mockUsers.reduce((acc, user) => {
+            acc[user.id] = user;
+            return acc;
+        }, {} as Record<string, User>);
         set({
             currentUser: mockUser,
-            users: { [mockUser.id]: mockUser },
+            users: usersRecord,
             initialized: true,
         });
     },

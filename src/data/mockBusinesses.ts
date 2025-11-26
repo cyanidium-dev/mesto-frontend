@@ -14,29 +14,49 @@ const generateCoordinates = (
     // Calculate grid dimensions for even distribution
     const cols = Math.ceil(Math.sqrt(total));
     const rows = Math.ceil(total / cols);
-    
+
     // Calculate position in grid
     const col = index % cols;
     const row = Math.floor(index / cols);
-    
+
     // Calculate spacing
     const latSpacing = areaSize / (rows + 1);
     const lngSpacing = areaSize / (cols + 1);
-    
+
     // Add some variation to avoid perfect grid (deterministic based on index)
     const variation = (index * 0.1) % 1; // Deterministic variation
     const randomLat = (variation - 0.5) * latSpacing * 0.3;
-    const randomLng = ((variation * 1.7) % 1 - 0.5) * lngSpacing * 0.3;
-    
+    const randomLng = (((variation * 1.7) % 1) - 0.5) * lngSpacing * 0.3;
+
     // Calculate offsets from center
     const latOffset = (row + 1) * latSpacing - areaSize / 2 + randomLat;
     const lngOffset = (col + 1) * lngSpacing - areaSize / 2 + randomLng;
-    
+
     return [centerLat + latOffset, centerLng + lngOffset];
 };
 
 const centerLat = 50.0755;
 const centerLng = 14.4378;
+
+// Available mock images
+const mockImages = [
+    "/images/mockedData/businessPfp.png",
+    "/images/mockedData/businessGalleryItem.png",
+    "/images/mockedData/eventImageMain.png",
+    "/images/mockedData/eventImageSecondary.jpg",
+    "/images/mockedData/girl.jpg",
+    "/images/mockedData/individualPfp.png",
+    "/images/mockedData/businessPfp.png",
+    "/images/mockedData/businessGalleryItem.png",
+];
+
+// Helper function to generate 8 gallery images
+const generateGalleryImages = (index: number): string[] => {
+    return Array.from({ length: 8 }, (_, i) => {
+        const imageIndex = (index * 8 + i) % mockImages.length;
+        return mockImages[imageIndex];
+    });
+};
 
 export const mockBusinesses: Business[] = [
     {
@@ -45,13 +65,11 @@ export const mockBusinesses: Business[] = [
         title: "Кафе 'Уютное место'",
         description:
             "Уютное кафе с отличным кофе и домашней выпечкой. Работаем ежедневно с 8:00 до 22:00.",
-        imageUrls: [
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 0, 15) as [
+            number,
+            number
         ],
-        location: generateCoordinates(centerLat, centerLng, 0, 15) as [number, number],
         category: "food",
         languages: ["ru", "en"],
         tags: ["кафе", "кофе", "выпечка"],
@@ -78,13 +96,11 @@ export const mockBusinesses: Business[] = [
         userType: "individual",
         description:
             "Частный репетитор по математике. Индивидуальные занятия для школьников и студентов.",
-        imageUrls: [
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 1, 15) as [
+            number,
+            number
         ],
-        location: generateCoordinates(centerLat, centerLng, 1, 15) as [number, number],
         category: "services",
         languages: ["ru", "uk"],
         tags: ["образование", "репетитор", "математика"],
@@ -107,13 +123,11 @@ export const mockBusinesses: Business[] = [
         title: "Спортивный клуб 'Фитнес'",
         description:
             "Современный фитнес-клуб с профессиональным оборудованием и опытными тренерами.",
-        imageUrls: [
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 2, 15) as [
+            number,
+            number
         ],
-        location: generateCoordinates(centerLat, centerLng, 2, 15) as [number, number],
         category: "sport",
         languages: ["ru", "en", "de"],
         tags: ["фитнес", "спорт", "тренировки"],
@@ -145,13 +159,11 @@ export const mockBusinesses: Business[] = [
         title: "Ресторан 'Итальянская кухня'",
         description:
             "Аутентичная итальянская кухня в центре города. Свежие пасты, пицца из дровяной печи и отличное вино.",
-        imageUrls: [
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 3, 15) as [
+            number,
+            number
         ],
-        location: generateCoordinates(centerLat, centerLng, 3, 15) as [number, number],
         category: "food",
         languages: ["ru", "en", "it"],
         tags: ["ресторан", "итальянская кухня", "паста", "пицца"],
@@ -178,13 +190,11 @@ export const mockBusinesses: Business[] = [
         title: "Салон красоты 'Элегант'",
         description:
             "Полный спектр услуг красоты: стрижки, окрашивание, маникюр, педикюр, макияж.",
-        imageUrls: [
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 4, 15) as [
+            number,
+            number
         ],
-        location: generateCoordinates(centerLat, centerLng, 4, 15) as [number, number],
         category: "beauty",
         languages: ["ru", "en", "uk"],
         tags: ["салон", "красота", "стрижка", "маникюр"],
@@ -208,13 +218,11 @@ export const mockBusinesses: Business[] = [
         title: "Книжный магазин 'Читай-город'",
         description:
             "Большой выбор книг на разных языках. Художественная литература, научные издания, детские книги.",
-        imageUrls: [
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 5, 15) as [
+            number,
+            number
         ],
-        location: generateCoordinates(centerLat, centerLng, 5, 15) as [number, number],
         category: "education",
         languages: ["ru", "en", "de", "uk"],
         tags: ["книги", "литература", "образование"],
@@ -238,13 +246,11 @@ export const mockBusinesses: Business[] = [
         title: "Ветеринарная клиника 'Друг'",
         description:
             "Профессиональная ветеринарная помощь. Консультации, вакцинация, хирургия, стоматология для животных.",
-        imageUrls: [
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 6, 15) as [
+            number,
+            number
         ],
-        location: generateCoordinates(centerLat, centerLng, 6, 15) as [number, number],
         category: "services",
         languages: ["ru", "en"],
         tags: ["ветеринар", "животные", "здоровье"],
@@ -277,13 +283,11 @@ export const mockBusinesses: Business[] = [
         title: "Магазин электроники 'Техно'",
         description:
             "Широкий ассортимент электроники: смартфоны, ноутбуки, планшеты, аксессуары. Гарантия и сервис.",
-        imageUrls: [
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 7, 15) as [
+            number,
+            number
         ],
-        location: generateCoordinates(centerLat, centerLng, 7, 15) as [number, number],
         category: "technology",
         languages: ["ru", "en", "de"],
         tags: ["электроника", "техника", "смартфоны"],
@@ -310,13 +314,11 @@ export const mockBusinesses: Business[] = [
         title: "Йога-студия 'Гармония'",
         description:
             "Занятия йогой для всех уровней. Хатха, виньяса, аштанга. Утренние и вечерние группы.",
-        imageUrls: [
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 8, 15) as [
+            number,
+            number
         ],
-        location: generateCoordinates(centerLat, centerLng, 8, 15) as [number, number],
         category: "sport",
         languages: ["ru", "en"],
         tags: ["йога", "медитация", "здоровье"],
@@ -345,13 +347,11 @@ export const mockBusinesses: Business[] = [
         title: "Пиццерия 'Мама Миа'",
         description:
             "Настоящая итальянская пицца, приготовленная в дровяной печи. Свежие ингредиенты и быстрая доставка.",
-        imageUrls: [
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 9, 15) as [
+            number,
+            number
         ],
-        location: generateCoordinates(centerLat, centerLng, 9, 15) as [number, number],
         category: "food",
         languages: ["ru", "en", "it"],
         tags: ["пицца", "итальянская кухня", "доставка"],
@@ -378,13 +378,11 @@ export const mockBusinesses: Business[] = [
         title: "Студия танцев 'Ритм'",
         description:
             "Обучение различным стилям танцев: латина, сальса, бачата, хип-хоп, современные танцы.",
-        imageUrls: [
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 10, 15) as [
+            number,
+            number
         ],
-        location: generateCoordinates(centerLat, centerLng, 10, 15) as [number, number],
         category: "art",
         languages: ["ru", "en"],
         tags: ["танцы", "латина", "сальса"],
@@ -413,13 +411,11 @@ export const mockBusinesses: Business[] = [
         title: "Кофейня 'Аромат'",
         description:
             "Специализированная кофейня с обжаркой собственного производства. Эспрессо, капучино, альтернативные методы заваривания.",
-        imageUrls: [
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 11, 15) as [
+            number,
+            number
         ],
-        location: generateCoordinates(centerLat, centerLng, 11, 15) as [number, number],
         category: "food",
         languages: ["ru", "en", "de"],
         tags: ["кофе", "кофейня", "обжарка"],
@@ -446,13 +442,11 @@ export const mockBusinesses: Business[] = [
         title: "Фотостудия 'Момент'",
         description:
             "Профессиональная фотосъемка: портреты, свадьбы, корпоративы, семейные фотосессии. Студия и выездная съемка.",
-        imageUrls: [
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 12, 15) as [
+            number,
+            number
         ],
-        location: generateCoordinates(centerLat, centerLng, 12, 15) as [number, number],
         category: "art",
         languages: ["ru", "en"],
         tags: ["фото", "фотосъемка", "портреты"],
@@ -482,12 +476,11 @@ export const mockBusinesses: Business[] = [
         userType: "individual",
         description:
             "Профессиональный фотограф. Специализируюсь на портретной и свадебной фотографии. Более 5 лет опыта.",
-        imageUrls: [
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
+        imageUrls: generateGalleryImages(13),
+        location: generateCoordinates(centerLat, centerLng, 13, 15) as [
+            number,
+            number
         ],
-        location: generateCoordinates(centerLat, centerLng, 13, 15) as [number, number],
         category: "art",
         languages: ["ru", "en"],
         tags: ["фотограф", "портреты", "свадьбы"],
@@ -512,11 +505,11 @@ export const mockBusinesses: Business[] = [
         userType: "individual",
         description:
             "Частный преподаватель английского языка. Индивидуальные и групповые занятия. Подготовка к экзаменам IELTS, TOEFL.",
-        imageUrls: [
-            "/images/mockedData/girl.jpg",
-            "/images/mockedData/girl.jpg",
+        imageUrls: generateGalleryImages(14),
+        location: generateCoordinates(centerLat, centerLng, 14, 15) as [
+            number,
+            number
         ],
-        location: generateCoordinates(centerLat, centerLng, 14, 15) as [number, number],
         category: "education",
         languages: ["ru", "en"],
         tags: ["английский", "репетитор", "образование"],
