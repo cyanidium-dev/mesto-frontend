@@ -2,6 +2,8 @@
 import Image from "next/image";
 import { Event } from "@/types/event";
 import ArrowDiagonalIcon from "@/components/shared/icons/ArrowDiagonalIcon";
+import GlobeIcon from "@/components/shared/icons/GlobeIcon";
+import SocialIconFromUrl from "@/components/shared/icons/SocialIconFromUrl";
 
 interface EventDescriptionTabProps {
     event: Event;
@@ -10,19 +12,6 @@ interface EventDescriptionTabProps {
 export default function EventDescriptionTab({
     event,
 }: EventDescriptionTabProps) {
-    const getSocialIcon = (url: string): string | null => {
-        const lowerUrl = url.toLowerCase();
-        if (lowerUrl.includes("facebook.com")) {
-            return "/images/icons/facebook.svg";
-        }
-        if (lowerUrl.includes("instagram.com")) {
-            return "/images/icons/instagram.png";
-        }
-        if (lowerUrl.includes("telegram.org") || lowerUrl.includes("t.me")) {
-            return "/images/icons/telegram.png";
-        }
-        return null;
-    };
 
     return (
         <div className="space-y-4 mt-4">
@@ -45,18 +34,11 @@ export default function EventDescriptionTab({
                                 className="w-[32px] h-[32px] flex items-center justify-center rounded-full relative group"
                                 aria-label="Website link"
                             >
-                                <Image
-                                    src="/images/icons/globe.svg"
-                                    alt=""
-                                    width={32}
-                                    height={32}
-                                    className="flex-shrink-0"
-                                />
+                                <GlobeIcon className="flex-shrink-0 w-8 h-8" />
                                 <ArrowDiagonalIcon className="absolute bottom-0 right-0 w-3 h-3 text-black opacity-0 group-hover:opacity-100 transition-opacity" />
                             </a>
                         )}
                         {event.socialMediaUrls?.map((url, index) => {
-                            const icon = getSocialIcon(url);
                             return (
                                 <a
                                     key={index}
@@ -68,15 +50,11 @@ export default function EventDescriptionTab({
                                         index + 1
                                     }`}
                                 >
-                                    {icon && (
-                                        <Image
-                                            src={icon}
-                                            alt=""
-                                            width={32}
-                                            height={32}
-                                            className="flex-shrink-0"
-                                        />
-                                    )}
+                                    <SocialIconFromUrl
+                                        url={url}
+                                        className="flex-shrink-0"
+                                        size={32}
+                                    />
                                     <ArrowDiagonalIcon className="absolute bottom-0 right-0 w-3 h-3 text-black opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </a>
                             );

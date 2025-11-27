@@ -18,7 +18,6 @@ interface LangCategoryProps {
     formProps: FormikProps<BaseFormValues>;
 }
 
-// Convert FilterOption to react-select format
 const categories = CATEGORIES.map(cat => ({
     value: cat.key,
     label: cat.label,
@@ -35,7 +34,6 @@ const LanguageSelector = () => {
     const selectedLanguages = values.languages || [];
     const isError = errors.languages && touched.languages;
 
-    // Convert string array to react-select format
     const selectedOptions = languages.filter(lang =>
         selectedLanguages.includes(lang.value)
     );
@@ -43,7 +41,6 @@ const LanguageSelector = () => {
     const handleChange = (
         selectedOptions: MultiValue<{ value: string; label: string }>
     ) => {
-        // Convert react-select format to string array
         const values = selectedOptions
             ? selectedOptions.map(option => option.value)
             : [];

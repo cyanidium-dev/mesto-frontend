@@ -129,7 +129,6 @@ export const Submit = ({ formProps }: SubmitProps) => {
                 router.push("/main");
             }
         } catch (error) {
-            console.error("Error saving:", error);
             router.push("/main");
         }
     };

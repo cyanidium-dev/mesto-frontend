@@ -81,12 +81,6 @@ export default function CalendlyModal({
         }
         calendlyUrlWithParams = urlObj.toString();
     } catch (error) {
-        console.error(
-            "Error parsing Calendly URL:",
-            error,
-            "URL:",
-            fullCalendlyUrl
-        );
         const separator = fullCalendlyUrl.includes("?") ? "&" : "?";
         calendlyUrlWithParams = `${fullCalendlyUrl}${separator}hide_landing_page_details=1&hide_gdpr_banner=1&text_color=0022ff`;
     }
@@ -115,7 +109,6 @@ export default function CalendlyModal({
                     url: fullCalendlyUrl,
                 });
             } catch {
-                console.log("Share cancelled");
             }
         } else {
             handleCopyLink("regular");
@@ -178,14 +171,9 @@ export default function CalendlyModal({
                 "calendly-inline-widget"
             );
             if (calendlyContainer) {
-                console.log(
-                    "Initializing Calendly widget with URL:",
-                    calendlyUrlWithParams
-                );
                 calendlyContainer.innerHTML = "";
 
                 const handleIframeError = () => {
-                    console.error("Calendly iframe failed to load");
                     calendlyContainer.innerHTML = `
                         <div class="flex items-center justify-center min-h-[600px] p-4">
                             <div class="text-center">
@@ -210,12 +198,8 @@ export default function CalendlyModal({
                         const iframe =
                             calendlyContainer.querySelector("iframe");
                         if (iframe) {
-                            console.log("Calendly iframe found");
                             iframe.onerror = handleIframeError;
                             iframe.onload = () => {
-                                console.log(
-                                    "Calendly iframe loaded successfully"
-                                );
                                 setTimeout(() => {
                                     try {
                                         const iframeDoc =
@@ -233,17 +217,11 @@ export default function CalendlyModal({
                                                 errorText.includes(
                                                     "Page Not Found"
                                                 )
-                                            ) {
-                                                console.error(
-                                                    "Calendly page not found detected"
-                                                );
+                                                ) {
                                                 handleIframeError();
                                             }
                                         }
                                     } catch (e) {
-                                        console.log(
-                                            "Cannot access iframe content (CORS), assuming it loaded correctly"
-                                        );
                                     }
                                 }, 2000);
                             };
@@ -255,28 +233,19 @@ export default function CalendlyModal({
                                     (event.data.includes("calendly") ||
                                         event.data.includes("error"))
                                 ) {
-                                    console.log(
-                                        "Calendly message event:",
-                                        event.data
-                                    );
                                 }
                             });
                         } else {
-                            console.warn("No iframe found after 1 second");
                             setTimeout(() => {
                                 if (
                                     !calendlyContainer.querySelector("iframe")
                                 ) {
-                                    console.error(
-                                        "No iframe found after timeout"
-                                    );
                                     handleIframeError();
                                 }
                             }, 3000);
                         }
                     }, 1000);
                 } catch (error) {
-                    console.error("Error initializing Calendly widget:", error);
                     handleIframeError();
                 }
             }
@@ -289,26 +258,6 @@ export default function CalendlyModal({
         }
     };
 
-    useEffect(() => {
-        console.log(
-            "CalendlyModal isOpen:",
-            isOpen,
-            "calendlyLoaded:",
-            calendlyLoaded,
-            "calendlyUrl:",
-            calendlyUrl,
-            "fullCalendlyUrl:",
-            fullCalendlyUrl,
-            "calendlyUrlWithParams:",
-            calendlyUrlWithParams
-        );
-    }, [
-        isOpen,
-        calendlyLoaded,
-        calendlyUrl,
-        fullCalendlyUrl,
-        calendlyUrlWithParams,
-    ]);
 
     return (
         <>
@@ -317,12 +266,9 @@ export default function CalendlyModal({
                 type="text/javascript"
                 async
                 onLoad={() => {
-                    console.log("Calendly script loaded");
                     setCalendlyLoaded(true);
                 }}
-                onError={e => {
-                    console.error("Calendly script failed to load:", e);
-                }}
+                onError={() => {}}
             />
 
             {isOpen && (

@@ -53,7 +53,6 @@ export const useBookingStore = create<BookingStore>((set, get) => ({
     
     initializeMockData: () => {
         if (get().initialized) return;
-        // Initialize with empty array, bookings will be added through the UI
         set({ initialized: true });
     },
 }));

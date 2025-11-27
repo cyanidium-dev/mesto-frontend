@@ -63,7 +63,6 @@ export default function CalendlyEventTypesModal({
                     url: fullCalendlyUrl,
                 });
             } catch {
-                console.log("Share cancelled");
             }
         } else {
             handleCopyLink("regular");

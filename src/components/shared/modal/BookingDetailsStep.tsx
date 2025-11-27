@@ -1,7 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { Event } from "@/types/event";
+import MinusIcon from "@/components/shared/icons/MinusIcon";
+import PlusIcon from "@/components/shared/icons/PlusIcon";
 
 interface BookingDetailsStepProps {
     event: Event;
@@ -60,7 +61,7 @@ export default function BookingDetailsStep({
                     <span>{formatDate(startDate)}</span>
                     <span>
                         {formatTime(event.startTime)}
-                        {event.endTime && `-${formatTime(event.endTime)}`} [EC]
+                        {event.endTime && `-${formatTime(event.endTime)}`}
                     </span>
                 </div>
             </div>
@@ -78,13 +79,7 @@ export default function BookingDetailsStep({
                             className="w-8 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 transition-colors"
                             aria-label="Decrease quantity"
                         >
-                            <Image
-                                src="/images/icons/minus.svg"
-                                alt=""
-                                width={20}
-                                height={20}
-                                className="flex-shrink-0"
-                            />
+                            <MinusIcon className="flex-shrink-0 text-white" />
                         </button>
                         <span className="w-[80px] h-[32px] flex items-center justify-center shrink-0 text-[12px] text-center font-medium bg-white rounded-full px-3 py-1">
                             {quantity}
@@ -94,13 +89,7 @@ export default function BookingDetailsStep({
                             className="w-8 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 transition-colors"
                             aria-label="Increase quantity"
                         >
-                            <Image
-                                src="/images/icons/plus.svg"
-                                alt=""
-                                width={20}
-                                height={20}
-                                className="flex-shrink-0"
-                            />
+                            <PlusIcon className="flex-shrink-0 text-white" />
                         </button>
                     </div>
                 </div>

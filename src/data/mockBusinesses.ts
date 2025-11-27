@@ -461,7 +461,6 @@ export const mockBusinesses: Business[] = [
         ],
         siteLink: "https://photo.example.com",
     },
-    // Individual businesses for user-1
     {
         id: "business-individual-1",
         userType: "individual",

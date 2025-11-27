@@ -1,6 +1,5 @@
 import { LatLngExpression } from "leaflet";
 
-// Base form values that are common to both events and businesses
 export interface BaseFormValues {
     category: string;
     languages: string[];
@@ -13,10 +12,9 @@ export interface BaseFormValues {
     imageUrls: string[];
 }
 
-// Event-specific form values
 export interface EventFormValues extends Omit<BaseFormValues, "title"> {
     type: string;
-    title: string; // Required for events
+    title: string;
     startDate: string;
     startTime: string;
     hasEndDate: boolean;
@@ -25,7 +23,6 @@ export interface EventFormValues extends Omit<BaseFormValues, "title"> {
     endTime: string;
 }
 
-// Business-specific form values
 export interface BusinessFormValues extends BaseFormValues {
     type: string;
     userType: "business" | "individual";

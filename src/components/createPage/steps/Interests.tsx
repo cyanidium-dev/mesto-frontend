@@ -108,7 +108,6 @@ const TagSelector = ({
     const currentTags = values.tags || [];
     const selectedPreset = values.tagPreset || "";
 
-    // Update tags when preset changes
     useEffect(() => {
         if (selectedPreset) {
             const preset = tagPresets.find(p => p.value === selectedPreset);
@@ -129,7 +128,6 @@ const TagSelector = ({
                 setFieldValue("tags", [...currentTags, tagValue]);
             }
         }
-        // Clear preset when manually selecting tags
         if (selectedPreset) {
             setFieldValue("tagPreset", "");
         }

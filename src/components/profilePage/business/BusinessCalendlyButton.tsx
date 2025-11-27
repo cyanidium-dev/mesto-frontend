@@ -10,7 +10,6 @@ export default function BusinessCalendlyButton({
     onOpen,
 }: BusinessCalendlyButtonProps) {
     const handleClick = () => {
-        console.log("Calendly button clicked");
         onOpen();
     };
 

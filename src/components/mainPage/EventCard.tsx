@@ -114,29 +114,15 @@ export default function EventCard({ event }: EventCardProps) {
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <MainButton className="flex items-center gap-2 h-8 px-3 w-fit text-[12px]">
-                        <Image
-                            src="/images/icons/handUp.svg"
-                            alt="book icon"
-                            width={20}
-                            height={20}
-                        />
+                        <HandUpIcon className="text-white" />
                         Забронировать
                     </MainButton>
                     <IconButton>
-                        <Image
-                            src="images/icons/share.svg"
-                            alt="share icon"
-                            width={20}
-                            height={20}
-                        />
+                        <ShareIcon />
                     </IconButton>
                 </div>
                 <IconButton onClick={toggleShowMore}>
-                    <Image
-                        src="images/icons/arrow.svg"
-                        alt="arrow icon"
-                        width={20}
-                        height={20}
+                    <ArrowIcon
                         className={`transition duration-500 ease-in-out ${
                             isShownMore ? "-rotate-180" : "rotate-0"
                         }`}

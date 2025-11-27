@@ -34,10 +34,8 @@ const WorkingHoursInput = () => {
         new Array(7).fill(false)
     );
 
-    // Initialize from existing workingHours (only once on mount)
     useEffect(() => {
         if (workingHours.length > 0) {
-            // Find a day with hours to use as default
             const dayWithHours = workingHours.findIndex(
                 hours => hours && hours.start && hours.end
             );
@@ -47,7 +45,6 @@ const WorkingHoursInput = () => {
                 setStartTime(start);
                 setEndTime(end);
                 setTimeInputValue(`${start} - ${end}`);
-                // Mark days that have the same hours
                 workingHours.forEach((hours, index) => {
                     if (
                         hours &&
@@ -66,9 +63,7 @@ const WorkingHoursInput = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // Update workingHours when time range or selected days change
     useEffect(() => {
-        // Skip if no times are set yet
         if (!startTime || !endTime) return;
 
         const currentWorkingHours = values.workingHours ?? [];
@@ -76,26 +71,21 @@ const WorkingHoursInput = () => {
             if (selectedDays[index] && startTime && endTime) {
                 return { start: startTime, end: endTime };
             }
-            // Keep existing hours for unselected days
             return currentWorkingHours[index] || null;
         });
 
-        // Check if the updated array is different from current
         const hasChanged = updated.some((hours, index) => {
             const current = currentWorkingHours[index];
             if (selectedDays[index]) {
-                // If day is selected, check if hours match
                 return (
                     !current ||
                     current.start !== startTime ||
                     current.end !== endTime
                 );
             }
-            // If day is not selected, check if it's different
             return hours !== current;
         });
 
-        // Only update if there are selected days with times and something changed
         const hasSelectedDays = selectedDays.some(selected => selected);
         if (hasSelectedDays && hasChanged) {
             setFieldValue("workingHours", updated);
@@ -111,22 +101,17 @@ const WorkingHoursInput = () => {
         });
     };
 
-    // Format digits into time mask "HH:MM - HH:MM" with real-time validation
     const formatTimeMask = (inputValue: string): string => {
-        // Remove all non-digit characters
         const cleanDigits = inputValue.replace(/\D/g, "");
 
         if (cleanDigits.length === 0) return "";
 
-        // Limit to 8 digits (HHMMHHMM)
         const limitedDigits = cleanDigits.slice(0, 8);
 
         let formatted = "";
 
         if (limitedDigits.length <= 2) {
-            // Just hours for start time
             const hours = limitedDigits;
-            // Validate hours immediately when 2 digits are entered
             if (hours.length === 2) {
                 const h = parseInt(hours, 10);
                 if (h > 23) {
@@ -138,11 +123,9 @@ const WorkingHoursInput = () => {
                 formatted = hours;
             }
         } else if (limitedDigits.length <= 4) {
-            // Hours and minutes for start time
             const startH = limitedDigits.slice(0, 2);
             const startM = limitedDigits.slice(2);
 
-            // Validate hours
             let hours = parseInt(startH, 10) || 0;
             if (startH.length === 2 && hours > 23) {
                 hours = 23;
@@ -150,10 +133,8 @@ const WorkingHoursInput = () => {
             const formattedHours = hours.toString().padStart(2, "0");
 
             if (startM.length > 0) {
-                // Validate minutes - but allow partial input while typing
                 let minutes = parseInt(startM, 10) || 0;
                 if (startM.length === 2) {
-                    // Only validate when complete
                     if (minutes > 59) {
                         minutes = 59;
                     }
@@ -162,7 +143,6 @@ const WorkingHoursInput = () => {
                         .padStart(2, "0");
                     formatted = `${formattedHours}:${formattedMinutes}`;
                 } else {
-                    // Partial minutes - show as is, but validate first digit
                     if (startM.length === 1 && parseInt(startM, 10) > 5) {
                         formatted = `${formattedHours}:5`;
                     } else {
@@ -170,16 +150,13 @@ const WorkingHoursInput = () => {
                     }
                 }
             } else {
-                // No minutes yet
                 formatted = `${formattedHours}:`;
             }
         } else if (limitedDigits.length <= 6) {
-            // Start time complete, starting end time
             const startH = limitedDigits.slice(0, 2);
             const startM = limitedDigits.slice(2, 4);
             const endH = limitedDigits.slice(4);
 
-            // Validate start time
             let startHours = parseInt(startH, 10) || 0;
             let startMinutes = parseInt(startM, 10) || 0;
             if (startHours > 23) startHours = 23;
@@ -188,13 +165,11 @@ const WorkingHoursInput = () => {
                 .toString()
                 .padStart(2, "0")}:${startMinutes.toString().padStart(2, "0")}`;
 
-            // Validate end hours - allow partial input
             if (endH.length > 0) {
                 let endHours = parseInt(endH, 10) || 0;
                 if (endH.length === 2 && endHours > 23) {
                     endHours = 23;
                 }
-                // Don't pad if it's partial input
                 const formattedEndH =
                     endH.length === 2
                         ? endHours.toString().padStart(2, "0")
@@ -204,13 +179,11 @@ const WorkingHoursInput = () => {
                 formatted = `${formattedStart} - `;
             }
         } else {
-            // Both times complete
             const startH = limitedDigits.slice(0, 2);
             const startM = limitedDigits.slice(2, 4);
             const endH = limitedDigits.slice(4, 6);
             const endM = limitedDigits.slice(6);
 
-            // Validate start time
             let startHours = parseInt(startH, 10) || 0;
             let startMinutes = parseInt(startM, 10) || 0;
             if (startHours > 23) startHours = 23;
@@ -219,12 +192,10 @@ const WorkingHoursInput = () => {
                 .toString()
                 .padStart(2, "0")}:${startMinutes.toString().padStart(2, "0")}`;
 
-            // Validate end time - handle partial input
             let endHours = parseInt(endH, 10) || 0;
             if (endHours > 23) endHours = 23;
 
             if (endM.length === 2) {
-                // Complete minutes
                 let endMinutes = parseInt(endM, 10) || 0;
                 if (endMinutes > 59) endMinutes = 59;
                 const formattedEnd = `${endHours
@@ -234,7 +205,6 @@ const WorkingHoursInput = () => {
                     .padStart(2, "0")}`;
                 formatted = `${formattedStart} - ${formattedEnd}`;
             } else if (endM.length === 1) {
-                // Partial minutes - validate first digit
                 let endMinutes = parseInt(endM, 10) || 0;
                 if (endMinutes > 5) endMinutes = 5;
                 const formattedEnd = `${endHours
@@ -242,7 +212,6 @@ const WorkingHoursInput = () => {
                     .padStart(2, "0")}:${endMinutes}`;
                 formatted = `${formattedStart} - ${formattedEnd}`;
             } else {
-                // No minutes yet
                 const formattedEnd = `${endHours.toString().padStart(2, "0")}:`;
                 formatted = `${formattedStart} - ${formattedEnd}`;
             }
@@ -251,24 +220,18 @@ const WorkingHoursInput = () => {
         return formatted;
     };
 
-    // Parse input to extract start and end times with validation
     const handleTimeRangeChange = (value: string) => {
-        // Format and validate the input with mask - this will correct invalid values immediately
         const formatted = formatTimeMask(value);
         setTimeInputValue(formatted);
 
-        // Extract digits only for parsing
         const digits = value.replace(/\D/g, "");
 
-        // Parse start time (first 4 digits) - only when we have complete time
         if (digits.length >= 4) {
             const startH = digits.slice(0, 2);
             const startM = digits.slice(2, 4);
-            // Validate hours (0-23) and minutes (0-59)
             let hours = parseInt(startH, 10) || 0;
             let minutes = parseInt(startM, 10) || 0;
 
-            // Clamp to valid ranges
             hours = Math.min(23, Math.max(0, hours));
             minutes = Math.min(59, Math.max(0, minutes));
 
@@ -280,15 +243,12 @@ const WorkingHoursInput = () => {
             setStartTime("");
         }
 
-        // Parse end time (last 4 digits) - only when we have complete time
         if (digits.length >= 8) {
             const endH = digits.slice(4, 6);
             const endM = digits.slice(6, 8);
-            // Validate hours (0-23) and minutes (0-59)
             let hours = parseInt(endH, 10) || 0;
             let minutes = parseInt(endM, 10) || 0;
 
-            // Clamp to valid ranges
             hours = Math.min(23, Math.max(0, hours));
             minutes = Math.min(59, Math.max(0, minutes));
 
@@ -301,19 +261,15 @@ const WorkingHoursInput = () => {
         }
     };
 
-    // Sync timeInputValue when startTime or endTime change externally (but not from user input)
     useEffect(() => {
-        // Don't sync if user is currently typing (input has partial values)
         const currentDigits = timeInputValue.replace(/\D/g, "");
         const hasPartialInput =
             currentDigits.length > 0 && currentDigits.length < 8;
 
-        // Only sync if we have complete times and the input doesn't match (external change)
         if (startTime && endTime && !hasPartialInput) {
             const formatted = `${startTime} - ${endTime}`;
             const formattedDigits = formatted.replace(/\D/g, "");
 
-            // Only sync if the digits don't match (external change, not user typing)
             if (currentDigits !== formattedDigits) {
                 setTimeInputValue(formatted);
             }
@@ -323,7 +279,6 @@ const WorkingHoursInput = () => {
             timeInputValue &&
             !hasPartialInput
         ) {
-            // Clear if both times are cleared and input is empty
             if (currentDigits.length === 0) {
                 setTimeInputValue("");
             }
@@ -333,7 +288,6 @@ const WorkingHoursInput = () => {
 
     return (
         <div>
-            {/* Time Range Input */}
             <div className="mb-6">
                 <p className="block text-[14px] mb-6">
                     Уточните в какие дни и часы работает компания, эта
@@ -354,7 +308,6 @@ const WorkingHoursInput = () => {
                 </div>
             </div>
 
-            {/* Day Selection Buttons */}
             <div>
                 <p className="mb-3 text-[12px] text-gray-text">Рабочие дни</p>
                 <div className="flex gap-2 flex-wrap">

@@ -6,6 +6,7 @@ import SectionTitle from "../../shared/titles/SectionTitle";
 import { useRef } from "react";
 import Image from "next/image";
 import { BaseFormValues } from "@/types/formValues";
+import CameraIcon from "../../shared/icons/CameraIcon";
 
 interface ImagesUploadProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;
@@ -25,7 +26,6 @@ const MultiImageUpload = ({ description }: { description: string }) => {
         });
     };
 
-    // Watch for file uploads in temp fields and convert them to data URLs
     const typedValues = values as BaseFormValues & Record<string, unknown>;
     const tempImage0 = typedValues.tempImage0;
     const tempImage1 = typedValues.tempImage1;
@@ -49,12 +49,10 @@ const MultiImageUpload = ({ description }: { description: string }) => {
                 const tempFieldName = tempFields[i];
                 const tempValue = typedValues[tempFieldName];
 
-                // If there's a File in temp field and no image at this index yet
                 if (tempValue instanceof File && !imageUrls[i]) {
                     const dataUrl = await convertFileToDataUrl(tempValue);
                     updatedUrls[i] = dataUrl;
                     hasChanges = true;
-                    // Clear the temp field
                     setFieldValue(tempFieldName, "");
                 }
             }
@@ -160,12 +158,7 @@ const MultiImageUpload = ({ description }: { description: string }) => {
                                         }
                                         className="w-8 h-8 flex items-center justify-center bg-primary rounded-full hover:bg-primary-dark transition-colors"
                                     >
-                                        <Image
-                                            src="/images/icons/camera.svg"
-                                            alt="camera"
-                                            width={20}
-                                            height={20}
-                                        />
+                                        <CameraIcon className="text-white" />
                                     </button>
                                 </div>
                             )}

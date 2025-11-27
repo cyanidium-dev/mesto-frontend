@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
-import Image from "next/image";
 import MainButton from "@/components/shared/buttons/MainButton";
 import BookingModal from "@/components/shared/modal/BookingModal";
 import { Event } from "@/types/event";
+import HandUpIcon from "@/components/shared/icons/HandUpIcon";
 
 interface EventBottomBarProps {
     event: Event;
@@ -21,12 +21,7 @@ export default function EventBottomBar({ event }: EventBottomBarProps) {
                         className="flex text-[14px] items-center gap-2 h-10 w-[165px]"
                         onClick={() => setIsBookingOpen(true)}
                     >
-                        <Image
-                            src="/images/icons/handUp.svg"
-                            alt="book icon"
-                            width={20}
-                            height={20}
-                        />
+                        <HandUpIcon className="text-white" />
                         Забронировать
                     </MainButton>
                 </div>

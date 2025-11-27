@@ -37,7 +37,6 @@ export default function EventProfilePage() {
     useEffect(() => {
         const eventData = getEvent(eventId);
         if (eventData) {
-            console.log(eventData);
             setEvent(eventData);
             const creatorData = getUser(eventData.creatorId);
             if (creatorData) {

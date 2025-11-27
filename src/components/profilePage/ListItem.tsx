@@ -25,7 +25,6 @@ export const ListItem = ({ item }: ListItemProps) => {
 
     const title = "title" in item ? item.title : (item as Business).title || "";
     const categoryValue = item.category;
-    // Get category label from value
     const categoryLabel = categoryValue
         ? CATEGORIES.find(cat => cat.key === categoryValue)?.label ||
           categoryValue

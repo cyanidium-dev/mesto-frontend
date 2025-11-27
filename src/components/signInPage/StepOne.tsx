@@ -35,21 +35,11 @@ export default function StepOne({ setCurrentStep, formProps }: StepOneProps) {
             Или войти через:
           </p>
           <MainButton variant="bordered" className="h-10">
-            <Image
-              src="/images/icons/google.svg"
-              alt="google icon"
-              width={20}
-              height={20}
-            />
+            <GoogleIcon />
             &nbsp; Войти через Google
           </MainButton>
           <MainButton variant="bordered" className="h-10">
-            <Image
-              src="/images/icons/facebook.svg"
-              alt="google icon"
-              width={20}
-              height={20}
-            />
+            <FacebookIcon />
             &nbsp; Войти через Facebook
           </MainButton>
         </div>

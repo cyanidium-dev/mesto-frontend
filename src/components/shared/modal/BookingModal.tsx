@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import ArrowIcon from "../icons/ArrowIcon";
+import CloseXIcon from "../icons/CloseXIcon";
 import ProgressBar from "../progress/ProgressBar";
 import { Event } from "@/types/event";
 import { useBookingStore } from "@/store/bookingStore";
@@ -32,7 +32,7 @@ export default function BookingModal({
 
     const [step, setStep] = useState<BookingStep>("details");
     const [quantity, setQuantity] = useState(2);
-    const [timeRemaining, setTimeRemaining] = useState(600); // 10 minutes in seconds
+    const [timeRemaining, setTimeRemaining] = useState(600);
     const [formData, setFormData] = useState({
         firstName:
             currentUser?.name?.split(" ")[0] || 'Алексей Founder "Mesto"',
@@ -45,7 +45,6 @@ export default function BookingModal({
         terms: true,
     });
 
-    // Reset form when modal opens/closes
     useEffect(() => {
         if (isOpen) {
             setStep("details");
@@ -159,13 +158,7 @@ export default function BookingModal({
                         className="size-8 flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
                         aria-label="Close"
                     >
-                        <Image
-                            src="/images/icons/closeX.svg"
-                            alt=""
-                            width={20}
-                            height={20}
-                            className="flex-shrink-0"
-                        />
+                        <CloseXIcon className="flex-shrink-0" />
                     </button>
                 </div>
 

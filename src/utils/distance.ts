@@ -1,14 +1,12 @@
 import { LatLngExpression } from "leaflet";
 
-// Calculate distance between two coordinates using Haversine formula
-// Returns distance in kilometers
 export function calculateDistance(
     lat1: number,
     lon1: number,
     lat2: number,
     lon2: number
 ): number {
-    const R = 6371; // Radius of the Earth in kilometers
+    const R = 6371;
     const dLat = toRad(lat2 - lat1);
     const dLon = toRad(lon2 - lon1);
     const a =
@@ -26,24 +24,19 @@ function toRad(degrees: number): number {
     return (degrees * Math.PI) / 180;
 }
 
-// Extract coordinates from LatLngExpression
-// LatLngExpression can be: [number, number] | [number, number, number] | { lat: number; lng: number } | LatLng
 export function getCoordinates(
     location: LatLngExpression | null | undefined
 ): [number, number] | null {
     if (!location) return null;
 
     if (Array.isArray(location)) {
-        // Handle tuple format [lat, lng] or [lat, lng, alt]
         return [location[0], location[1]];
     }
 
     if (typeof location === "object") {
-        // Handle LatLng class instance or LatLngLiteral (both have lat and lng properties)
         if ("lat" in location && "lng" in location) {
             return [location.lat, location.lng];
         }
-        // Handle objects with toArray method (for compatibility with custom LatLng-like objects)
         if ("toArray" in location && typeof (location as unknown as { toArray: () => [number, number] }).toArray === "function") {
             const arr = (location as unknown as { toArray: () => [number, number] }).toArray();
             return [arr[0], arr[1]];

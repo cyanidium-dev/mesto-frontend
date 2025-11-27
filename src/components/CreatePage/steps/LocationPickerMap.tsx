@@ -11,7 +11,6 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-// Fix default marker icon issue
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
 L.Icon.Default.mergeOptions({
     iconRetinaUrl:
@@ -71,7 +70,6 @@ function MapClickHandler({
                     L.latLng(newCenter.lat, newCenter.lng)
                 );
 
-                // Only update if moved significantly (more than 10 meters)
                 if (distance > 10) {
                     const newCenterTuple: [number, number] = [
                         newCenter.lat,

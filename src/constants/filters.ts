@@ -1,5 +1,3 @@
-// Shared constants for filters used across the application
-
 export interface FilterOption {
     key: string;
     label: string;
@@ -14,7 +12,6 @@ export const LANGUAGES: FilterOption[] = [
     { key: "fr", label: "Français" },
 ];
 
-// Short labels for SearchBar (compact display)
 export const LANGUAGES_SHORT: FilterOption[] = [
     { key: "ru", label: "Рус" },
     { key: "en", label: "Англ" },
@@ -34,7 +31,6 @@ export const CATEGORIES: FilterOption[] = [
     { key: "services", label: "Услуги" },
 ];
 
-// Common cities - can be expanded or dynamically populated from data
 export const CITIES: FilterOption[] = [
     { key: "Barcelona", label: "Барселона" },
     { key: "Madrid", label: "Мадрид" },

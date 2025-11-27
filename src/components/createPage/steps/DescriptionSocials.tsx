@@ -12,6 +12,7 @@ import BrokenLinkIcon from "@/components/shared/icons/BrokenLinkIcon";
 import LinkIcon from "@/components/shared/icons/LinkIcon";
 import GlobeIcon from "@/components/shared/icons/GlobeIcon";
 import CheckmarkIcon from "@/components/shared/icons/CheckmarkIcon";
+import SocialIcon from "@/components/shared/icons/SocialIcon";
 
 interface DescriptionSocialsProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;
@@ -22,24 +23,20 @@ type SocialPlatform = "facebook" | "instagram" | "telegram";
 
 interface SocialLinkItem {
     platform: SocialPlatform;
-    icon: string;
     label: string;
 }
 
 const socialLinks: SocialLinkItem[] = [
     {
         platform: "facebook",
-        icon: "/images/icons/facebook.svg",
         label: "Facebook",
     },
     {
         platform: "instagram",
-        icon: "/images/icons/instagram.png",
         label: "Instagram",
     },
     {
         platform: "telegram",
-        icon: "/images/icons/telegram.png",
         label: "Telegram",
     },
 ];
@@ -48,7 +45,6 @@ const isValidUrl = (url: string): boolean => {
     if (!url.trim()) return false;
     try {
         const urlObj = new URL(url);
-        // Require valid protocol and hostname
         const hasValidProtocol =
             urlObj.protocol === "http:" || urlObj.protocol === "https:";
         const hasValidHostname =
@@ -102,7 +98,6 @@ const SocialLinksInput = () => {
             setFieldValue("socialMediaUrls", updated);
             setEditingPlatform(null);
         } else {
-            // If invalid, clear the input
             setInputValues(prev => ({ ...prev, [platform]: "" }));
         }
     };
@@ -115,7 +110,6 @@ const SocialLinksInput = () => {
             handleCheckmarkClick(platform);
         } else if (e.key === "Escape") {
             setEditingPlatform(null);
-            // Reset to saved value on escape
             const linkValue = getLinkValue(platform);
             setInputValues(prev => ({ ...prev, [platform]: linkValue }));
         }
@@ -139,7 +133,7 @@ const SocialLinksInput = () => {
         <div>
             <p className="mb-4 text-[14px]">Социальные сети (необязательно)</p>
             <div className="space-y-3">
-                {socialLinks.map(({ platform, icon, label }) => {
+                {socialLinks.map(({ platform, label }) => {
                     const linkValue = getLinkValue(platform);
                     const inputValue = inputValues[platform];
                     const isEditing = editingPlatform === platform;
@@ -150,11 +144,8 @@ const SocialLinksInput = () => {
                     return (
                         <div key={platform} className="flex items-center gap-3">
                             <div className="flex items-center gap-2 flex-1 min-w-0">
-                                <Image
-                                    src={icon}
-                                    alt={label}
-                                    width={20}
-                                    height={20}
+                                <SocialIcon
+                                    platform={platform}
                                     className="flex-shrink-0"
                                 />
                                 <span className="text-[14px] text-gray-text flex-shrink-0">

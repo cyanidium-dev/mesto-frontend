@@ -13,6 +13,8 @@ import { ItemsList } from "@/components/profilePage/ItemsList";
 import { CATEGORIES } from "@/constants/filters";
 import ShareIcon from "@/components/shared/icons/ShareIcon";
 import GearIcon from "@/components/shared/icons/GearIcon";
+import LinkIcon from "@/components/shared/icons/LinkIcon";
+import SocialIconFromUrl from "@/components/shared/icons/SocialIconFromUrl";
 
 type TabKey = "info" | "events" | "businesses";
 
@@ -108,19 +110,6 @@ export default function ProfilePage() {
         return firstIndividual?.description || "";
     }, [individualBusinesses]);
 
-    const getSocialIcon = (url: string): string | null => {
-        const lowerUrl = url.toLowerCase();
-        if (lowerUrl.includes("facebook.com")) {
-            return "/images/icons/facebook.svg";
-        }
-        if (lowerUrl.includes("instagram.com")) {
-            return "/images/icons/instagram.png";
-        }
-        if (lowerUrl.includes("telegram.org") || lowerUrl.includes("t.me")) {
-            return "/images/icons/telegram.png";
-        }
-        return null;
-    };
 
     if (!currentUser) {
         return (
@@ -237,7 +226,6 @@ export default function ProfilePage() {
                                     <div className="flex flex-wrap gap-2 mt-2">
                                         {individualBusinessSocialLinks.map(
                                             (url, index) => {
-                                                const icon = getSocialIcon(url);
                                                 return (
                                                     <a
                                                         key={index}
@@ -249,15 +237,11 @@ export default function ProfilePage() {
                                                             index + 1
                                                         }`}
                                                     >
-                                                        {icon && (
-                                                            <Image
-                                                                src={icon}
-                                                                alt=""
-                                                                width={20}
-                                                                height={20}
-                                                                className="flex-shrink-0"
-                                                            />
-                                                        )}
+                                                        <SocialIconFromUrl
+                                                            url={url}
+                                                            className="flex-shrink-0"
+                                                            size={20}
+                                                        />
                                                     </a>
                                                 );
                                             }
@@ -272,13 +256,7 @@ export default function ProfilePage() {
                                                     className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
                                                     aria-label="Website link"
                                                 >
-                                                    <Image
-                                                        src="/images/icons/link.svg"
-                                                        alt=""
-                                                        width={20}
-                                                        height={20}
-                                                        className="flex-shrink-0"
-                                                    />
+                                                    <LinkIcon className="flex-shrink-0 w-5 h-5" />
                                                 </a>
                                             )
                                         )}

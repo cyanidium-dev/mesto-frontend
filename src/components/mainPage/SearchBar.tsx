@@ -4,7 +4,7 @@ import { useState, Dispatch, SetStateAction, useEffect } from "react";
 import { Selection } from "@react-types/shared";
 import { Input, Select, SelectItem, Switch } from "@heroui/react";
 import TabMenu from "./TabMenu";
-import Image from "next/image";
+import DandruffIcon from "../shared/icons/DandruffIcon";
 import { LANGUAGES_SHORT, CITIES, CATEGORIES } from "@/constants/filters";
 
 export interface FilterValues {
@@ -71,13 +71,7 @@ export default function SearchBar({
                         radius="full"
                         placeholder="Найти"
                         startContent={
-                            <Image
-                                src="/images/icons/dandruff.svg"
-                                alt="dandruff icon"
-                                width={20}
-                                height={20}
-                                className="mr-1"
-                            />
+                            <DandruffIcon className="mr-1" />
                         }
                         value={searchValue}
                         onValueChange={setSearchValue}

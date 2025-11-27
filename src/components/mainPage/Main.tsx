@@ -60,17 +60,6 @@ export default function Main() {
 
     const allBusinesses = useMemo(() => {
         const combined = [...fakeBusinesses, ...savedBusinesses];
-        console.log("🗺️ Map - Businesses:", combined.length);
-        console.log("🗺️ Saved businesses:", savedBusinesses);
-        console.log(
-            "🗺️ Saved businesses with images:",
-            savedBusinesses.map(b => ({
-                id: b.id,
-                title: b.title,
-                imageUrls: b.imageUrls,
-                imageCount: b.imageUrls?.length || 0,
-            }))
-        );
         return combined;
     }, [fakeBusinesses, savedBusinesses]);
 
@@ -82,18 +71,6 @@ export default function Main() {
         return filterItems(savedEvents, allBusinesses, filters);
     }, [savedEvents, allBusinesses, filters]);
 
-    useEffect(() => {
-        console.log("🗺️ Map - Events:", savedEvents.length);
-        console.log(
-            "🗺️ Saved events with images:",
-            savedEvents.map(e => ({
-                id: e.id,
-                title: e.title,
-                imageUrls: e.imageUrls,
-                imageCount: e.imageUrls?.length || 0,
-            }))
-        );
-    }, [savedEvents]);
 
     useEffect(() => {
         if (initialized.current) return;
@@ -153,7 +130,7 @@ export default function Main() {
 
     useEffect(() => {
         if (isUpdatingFromUrl.current) {
-            return; // Don't update URL if we're updating from URL
+            return;
         }
 
         const viewParam = searchParams.get("view");

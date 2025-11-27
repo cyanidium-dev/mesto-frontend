@@ -104,9 +104,6 @@ export default function BusinessProfilePage() {
 
             <BusinessCalendlyButton
                 onOpen={() => {
-                    console.log(
-                        "BusinessCalendlyButton onOpen called, setting isCalendlyOpen to true"
-                    );
                     setIsCalendlyOpen(true);
                 }}
             />

@@ -1,8 +1,8 @@
 import { ErrorMessage, useFormikContext } from "formik";
-import Image from "next/image";
 import { useState } from "react";
 import { twMerge } from "tailwind-merge";
 import ArrowIcon from "../icons/ArrowIcon";
+import CheckmarkIcon from "../icons/CheckmarkIcon";
 
 interface Option {
     value: string;
@@ -112,12 +112,8 @@ export default function SelectInput({
                             onClick={() => handleOptionClick(option.value)}
                         >
                             {option.label}
-                            <Image
-                                src="/images/icons/check.svg"
-                                alt="arrow icon"
-                                width="24"
-                                height="24"
-                                className={`absolute right-3 bottom-3 opacity-0 group-active:opacity-100 group-focus:opacity-100 laptop:group-hover:opacity-100 
+                            <CheckmarkIcon
+                                className={`absolute right-3 bottom-3 w-6 h-6 opacity-0 group-active:opacity-100 group-focus:opacity-100 laptop:group-hover:opacity-100 
                     transition duration-300 ease-out`}
                             />
                         </li>

@@ -6,6 +6,9 @@ import { Business } from "@/types/business";
 import Image from "next/image";
 import IconButton from "../shared/buttons/IconButton";
 import LocationMapIcon from "../shared/icons/LocationMapIcon";
+import AddProfileIcon from "../shared/icons/AddProfileIcon";
+import ShareIcon from "../shared/icons/ShareIcon";
+import ArrowIcon from "../shared/icons/ArrowIcon";
 
 interface CardProps {
     business: Business;
@@ -18,7 +21,6 @@ export default function Card({ business }: CardProps) {
     const toggleShowMore = () => setIsShownMore(prev => !prev);
 
     const handleShowOnMap = () => {
-        // Switch to map view and center on this business
         router.push(`/main?view=map&focus=${business.id}`);
     };
 
@@ -36,8 +38,6 @@ export default function Card({ business }: CardProps) {
     }, [isShownMore]);
 
     const { title, description, category } = business;
-    // Get first available image from array (user can upload to any of 8 slots)
-    // Also support legacy imageUrl property for fake businesses
     const businessImageUrl =
         business.imageUrls?.find(
             url =>
@@ -60,7 +60,6 @@ export default function Card({ business }: CardProps) {
 
     return (
         <li className="p-2 shadow-md rounded-[16px] bg-white relative">
-            {/* Show on Map Button - Top Right */}
             <button
                 onClick={handleShowOnMap}
                 className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 transition-colors"
@@ -114,28 +113,14 @@ export default function Card({ business }: CardProps) {
                         className="h-8 w-8 flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 transition-colors"
                         aria-label="Message"
                     >
-                        <Image
-                            src="/images/icons/addProfile.svg"
-                            alt="message icon"
-                            width={20}
-                            height={20}
-                        />
+                        <AddProfileIcon className="text-white" />
                     </button>
                     <IconButton>
-                        <Image
-                            src="images/icons/share.svg"
-                            alt="share icon"
-                            width={20}
-                            height={20}
-                        />
+                        <ShareIcon />
                     </IconButton>
                 </div>
                 <IconButton onClick={toggleShowMore}>
-                    <Image
-                        src="images/icons/arrow.svg"
-                        alt="arrow icon"
-                        width={20}
-                        height={20}
+                    <ArrowIcon
                         className={`transition duration-500 ease-in-out ${
                             isShownMore ? "-rotate-180" : "rotate-0"
                         }`}

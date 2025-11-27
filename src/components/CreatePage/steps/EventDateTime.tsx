@@ -29,7 +29,6 @@ export const EventDateTime = ({
     const startTimePickerRef = useRef<HTMLInputElement>(null);
     const endTimePickerRef = useRef<HTMLInputElement>(null);
 
-    // Detect user's locale date format
     const localeFormat = useMemo(() => {
         const formatter = new Intl.DateTimeFormat(navigator.language, {
             year: "numeric",
@@ -42,24 +41,20 @@ export const EventDateTime = ({
         return { separator };
     }, []);
 
-    const dateSeparator = localeFormat.separator; // e.g., "/" or "."
+    const dateSeparator = localeFormat.separator;
 
-    // Parse user's locale date format to YYYY-MM-DD
     const parseDateFromLocale = useMemo(() => {
         return (dateString: string) => {
             if (!dateString) return "";
             try {
-                // Try to parse the date string in the user's locale
                 const date = new Date(dateString);
                 if (isNaN(date.getTime())) {
-                    // If direct parsing fails, try to parse based on format
                     const parts = dateString.split(/\D/);
                     if (parts.length === 3) {
                         let year = "";
                         let month = "";
                         let day = "";
 
-                        // Get format pattern from locale
                         const formatter = new Intl.DateTimeFormat(
                             navigator.language,
                             {
@@ -75,7 +70,6 @@ export const EventDateTime = ({
                             p => p.type !== "literal"
                         );
 
-                        // Map parts based on order
                         orderedParts.forEach((part, i) => {
                             if (part.type === "month")
                                 month = parts[i].padStart(2, "0");
@@ -100,7 +94,6 @@ export const EventDateTime = ({
         };
     }, []);
 
-    // Sync picker values with text inputs
     useEffect(() => {
         if (datePickerRef.current && values.startDate) {
             const dateValue =
@@ -139,7 +132,6 @@ export const EventDateTime = ({
         }
     }, [values.endTime]);
 
-    // Get date format parts order
     const getDateFormatParts = useMemo(() => {
         const formatter = new Intl.DateTimeFormat(navigator.language, {
             year: "numeric",
@@ -150,7 +142,6 @@ export const EventDateTime = ({
         return parts.filter(p => p.type !== "literal");
     }, []);
 
-    // Validate and snap date part values
     const validateAndSnapDate = useCallback(
         (dateString: string): string => {
             if (!dateString) return "";
@@ -162,7 +153,6 @@ export const EventDateTime = ({
             let month = "";
             let day = "";
 
-            // Map parts based on order
             getDateFormatParts.forEach((part, i) => {
                 if (i < parts.length) {
                     if (part.type === "month") month = parts[i];
@@ -171,7 +161,6 @@ export const EventDateTime = ({
                 }
             });
 
-            // Validate and snap month only if it's complete (2 digits)
             if (month && month.length === 2) {
                 const monthNum = parseInt(month, 10);
                 if (!isNaN(monthNum)) {
@@ -181,7 +170,6 @@ export const EventDateTime = ({
                 }
             }
 
-            // Validate and snap year only if it's complete (4 digits)
             if (year && year.length === 4) {
                 const yearNum = parseInt(year, 10);
                 if (!isNaN(yearNum)) {
@@ -191,7 +179,6 @@ export const EventDateTime = ({
                 }
             }
 
-            // Validate and snap day only if it's complete (2 digits) and month is complete
             if (day && day.length === 2 && month && month.length === 2) {
                 const dayNum = parseInt(day, 10);
                 if (!isNaN(dayNum)) {
@@ -211,7 +198,6 @@ export const EventDateTime = ({
                 }
             }
 
-            // Reconstruct date string with validated parts (keep incomplete parts as-is)
             const validatedParts: string[] = [];
             getDateFormatParts.forEach((part, i) => {
                 if (i < parts.length) {
@@ -229,7 +215,6 @@ export const EventDateTime = ({
         [getDateFormatParts, dateSeparator]
     );
 
-    // Validate and snap time part values (only for complete sections)
     const validateAndSnapTime = (timeString: string): string => {
         if (!timeString) return "";
 
@@ -239,7 +224,6 @@ export const EventDateTime = ({
         let hours = parts[0] || "";
         let minutes = parts[1] || "";
 
-        // Validate and snap hours only if it's complete (2 digits)
         if (hours && hours.length === 2) {
             const hoursNum = parseInt(hours, 10);
             if (!isNaN(hoursNum)) {
@@ -249,7 +233,6 @@ export const EventDateTime = ({
             }
         }
 
-        // Validate and snap minutes only if it's complete (2 digits)
         if (minutes && minutes.length === 2) {
             const minutesNum = parseInt(minutes, 10);
             if (!isNaN(minutesNum)) {
@@ -259,13 +242,11 @@ export const EventDateTime = ({
             }
         }
 
-        // Reconstruct time string
         if (hours && minutes) return `${hours}:${minutes}`;
         if (hours) return `${hours}:`;
         return "";
     };
 
-    // Format date from YYYY-MM-DD to user's locale format
     const formatDateForDisplay = (dateString: string | undefined) => {
         if (!dateString) return "";
         try {
@@ -282,7 +263,6 @@ export const EventDateTime = ({
         }
     };
 
-    // Apply date mask based on user's locale format with validation
     const applyDateMask = useMemo(() => {
         return (value: string) => {
             const digits = value.replace(/\D/g, "");
@@ -291,7 +271,6 @@ export const EventDateTime = ({
             let masked = "";
             let digitIndex = 0;
 
-            // Apply mask based on the order of parts
             for (
                 let i = 0;
                 i < getDateFormatParts.length && digitIndex < digits.length;
@@ -300,7 +279,6 @@ export const EventDateTime = ({
                 const part = getDateFormatParts[i];
 
                 if (part.type === "month" || part.type === "day") {
-                    // Month or day: 2 digits
                     if (digitIndex < digits.length) {
                         masked += digits[digitIndex++];
                         if (digitIndex < digits.length) {
@@ -308,13 +286,11 @@ export const EventDateTime = ({
                         }
                     }
                 } else if (part.type === "year") {
-                    // Year: 4 digits
                     for (let j = 0; j < 4 && digitIndex < digits.length; j++) {
                         masked += digits[digitIndex++];
                     }
                 }
 
-                // Add separator after each part except the last
                 if (
                     i < getDateFormatParts.length - 1 &&
                     digitIndex < digits.length
@@ -323,12 +299,10 @@ export const EventDateTime = ({
                 }
             }
 
-            // Validate and snap values
             return validateAndSnapDate(masked);
         };
     }, [dateSeparator, getDateFormatParts, validateAndSnapDate]);
 
-    // Apply time mask (HH:MM) with validation
     const applyTimeMask = (value: string) => {
         const digits = value.replace(/\D/g, "");
         let masked = "";
@@ -339,7 +313,6 @@ export const EventDateTime = ({
             masked += digits[i];
         }
 
-        // Validate and snap values
         return validateAndSnapTime(masked);
     };
 
@@ -349,7 +322,6 @@ export const EventDateTime = ({
                 <SectionTitle className="mb-6">Дата и время</SectionTitle>
                 <p className="mb-6">Уточните когда будет ваше событие:</p>
 
-                {/* Date section */}
                 <div className="mb-4">
                     <label className="text-[14px] font-medium">
                         Установите дату
@@ -372,10 +344,8 @@ export const EventDateTime = ({
                                         );
                                         e.target.value = masked;
 
-                                        // Always set the masked value (validation is done in applyDateMask)
                                         setFieldValue("startDate", masked);
 
-                                        // Update picker if we have a complete valid date
                                         if (masked) {
                                             const isoDate =
                                                 parseDateFromLocale(masked);
@@ -463,10 +433,8 @@ export const EventDateTime = ({
                                             );
                                             e.target.value = masked;
 
-                                            // Always set the masked value (validation is done in applyDateMask)
                                             setFieldValue("endDate", masked);
 
-                                            // Update picker if we have a complete valid date
                                             if (masked) {
                                                 const isoDate =
                                                     parseDateFromLocale(masked);
@@ -552,8 +520,6 @@ export const EventDateTime = ({
                     </label>
                 </div>
 
-                {/* Time section */}
-
                 <div className="mb-4">
                     <label className="text-[14px] font-medium">
                         Установите время
@@ -577,10 +543,8 @@ export const EventDateTime = ({
                                         );
                                         e.target.value = masked;
 
-                                        // Always set the masked value (validation is done in applyTimeMask)
                                         setFieldValue("startTime", masked);
 
-                                        // Update picker if we have a complete valid time
                                         if (
                                             masked &&
                                             masked.length === 5 &&
@@ -661,10 +625,8 @@ export const EventDateTime = ({
                                             );
                                             e.target.value = masked;
 
-                                            // Always set the masked value (validation is done in applyTimeMask)
                                             setFieldValue("endTime", masked);
 
-                                            // Update picker if we have a complete valid time
                                             if (
                                                 masked &&
                                                 masked.length === 5 &&

@@ -89,23 +89,18 @@ export default function Map({ center, onCenterChange, markers, events = [], sele
   const [selectedItem, setSelectedItem] = useState<Business | Event | null>(null);
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
-  // Handle selected item from props (e.g., from "show on map" button or marker click)
-  // This is the single source of truth for opening/closing the bottom sheet
   useEffect(() => {
     if (selectedItemId) {
       const allItems = [...markers, ...events];
       const item = allItems.find(i => i.id === selectedItemId);
       if (item) {
-        // Always set the item and open the sheet when selectedItemId is set
         setSelectedItem(item);
         setIsBottomSheetOpen(true);
       } else {
-        // Item not found, clear state
         setSelectedItem(null);
         setIsBottomSheetOpen(false);
       }
     } else {
-      // If selectedItemId is cleared, close the bottom sheet
       setSelectedItem(null);
       setIsBottomSheetOpen(false);
     }
@@ -122,7 +117,6 @@ export default function Map({ center, onCenterChange, markers, events = [], sele
           onCenterChange(position);
         },
         (error) => {
-          console.error("Geolocation error:", error);
           alert("Не вдалося визначити вашу позицію.");
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
@@ -131,7 +125,6 @@ export default function Map({ center, onCenterChange, markers, events = [], sele
   };
 
   const handleMarkerClick = (item: Business | Event) => {
-    // Update URL to include focus parameter - let useEffect handle state
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.set("focus", item.id);
     if (!newParams.has("view")) {
@@ -143,7 +136,6 @@ export default function Map({ center, onCenterChange, markers, events = [], sele
   const handleCloseBottomSheet = () => {
     setIsBottomSheetOpen(false);
     setSelectedItem(null);
-    // Clear the focus parameter from URL when closing
     const newParams = new URLSearchParams(searchParams.toString());
     newParams.delete("focus");
     router.push(`/main?${newParams.toString()}`, { scroll: false });
@@ -203,7 +195,6 @@ export default function Map({ center, onCenterChange, markers, events = [], sele
           }}
         >
           {markers.map((business) => {
-            // Get first available image from array (user can upload to any of 8 slots)
             const businessImageUrl = business.imageUrls?.find(url => 
               url && (url.startsWith("http") || url.startsWith("data:") || url.startsWith("/"))
             );
@@ -213,17 +204,6 @@ export default function Map({ center, onCenterChange, markers, events = [], sele
                businessImageUrl.startsWith("/"));
             const imageUrl = hasValidImage ? businessImageUrl : "/images/mockedData/girl.jpg";
             
-            // Debug logging
-            if (business.id.startsWith("business-")) {
-              console.log(`🗺️ Business ${business.id}:`, {
-                imageUrls: business.imageUrls,
-                foundUrl: businessImageUrl?.substring(0, 50) + "...",
-                usingUrl: imageUrl.substring(0, 50) + "...",
-                isDataUrl: imageUrl.startsWith("data:")
-              });
-            }
-            
-            // Escape image URL for use in HTML/SVG
             const escapedImageUrl = imageUrl.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
             const patternId = `pattern-business-${business.id}`;
             
@@ -260,7 +240,6 @@ export default function Map({ center, onCenterChange, markers, events = [], sele
             );
           })}
           {events.map((event) => {
-            // Get first available image from array (user can upload to any of 8 slots)
             const eventImageUrl = event.imageUrls?.find(url => 
               url && (url.startsWith("http") || url.startsWith("data:") || url.startsWith("/"))
             );
@@ -270,15 +249,6 @@ export default function Map({ center, onCenterChange, markers, events = [], sele
                eventImageUrl.startsWith("/"));
             const imageUrl = hasValidImage ? eventImageUrl : "/images/mockedData/girl.jpg";
             
-            // Debug logging
-            console.log(`🗺️ Event ${event.id}:`, {
-              imageUrls: event.imageUrls,
-              foundUrl: eventImageUrl?.substring(0, 50) + "...",
-              usingUrl: imageUrl.substring(0, 50) + "...",
-              isDataUrl: imageUrl.startsWith("data:")
-            });
-            
-            // Escape image URL for use in HTML/SVG
             const escapedImageUrl = imageUrl.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
             const patternId = `pattern-event-${event.id}`;
             
@@ -332,7 +302,6 @@ export default function Map({ center, onCenterChange, markers, events = [], sele
         <LocateIcon />
       </button>
 
-      {/* Bottom Sheet */}
       <MapBottomSheet
         item={selectedItem}
         isOpen={isBottomSheetOpen}

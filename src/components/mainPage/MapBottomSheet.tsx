@@ -9,6 +9,7 @@ import ShareIcon from "@/components/shared/icons/ShareIcon";
 import DotsIcon from "@/components/shared/icons/DotsIcon";
 import MainButton from "@/components/shared/buttons/MainButton";
 import ArrowDiagonalIcon from "@/components/shared/icons/ArrowDiagonalIcon";
+import AddProfileIcon from "@/components/shared/icons/AddProfileIcon";
 
 interface MapBottomSheetProps {
     item: Business | Event | null;
@@ -28,8 +29,8 @@ export default function MapBottomSheet({
     const [isNavigating, setIsNavigating] = useState(false);
     const sheetRef = useRef<HTMLDivElement>(null);
     const startYRef = useRef(0);
-    const DRAG_THRESHOLD = 100; // Minimum drag distance to open profile
-    const EXPAND_THRESHOLD = 50; // Minimum drag distance to expand sheet
+    const DRAG_THRESHOLD = 100;
+    const EXPAND_THRESHOLD = 50;
 
     const isEvent = item && "startDate" in item;
     const isBusiness = item && !isEvent;
@@ -166,7 +167,6 @@ export default function MapBottomSheet({
         handleCloseBottomSheet,
     ]);
 
-    // Add document-level mouse event listeners for dragging
     useEffect(() => {
         if (isDragging) {
             document.addEventListener("mousemove", handleDocumentMouseMove);
@@ -314,12 +314,7 @@ export default function MapBottomSheet({
                                 onClick={() => {}}
                             >
                                 <div className="flex items-center justify-center gap-2">
-                                    <Image
-                                        src="/images/icons/addProfile.svg"
-                                        alt="remember icon"
-                                        width={20}
-                                        height={20}
-                                    />
+                                    <AddProfileIcon className="text-white" />
                                     Запомнить
                                 </div>
                             </MainButton>

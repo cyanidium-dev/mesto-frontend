@@ -1,11 +1,11 @@
 "use client";
 import { Event } from "@/types/event";
 import { getCoordinates } from "@/utils/distance";
-import Image from "next/image";
 import CalendarIcon from "@/components/shared/icons/CalendarIcon";
 import UsersGroupIcon from "@/components/shared/icons/UsersGroupIcon";
 import GlobeIcon from "@/components/shared/icons/GlobeIcon";
 import ArrowRefreshIcon from "@/components/shared/icons/ArrowRefreshIcon";
+import MapPointIcon from "@/components/shared/icons/MapPointIcon";
 
 const LANGUAGE_NAMES_RU: Record<string, string> = {
     ru: "Русский",
@@ -99,13 +99,7 @@ export default function EventOverviewTab({
         <div className="space-y-6 mt-4">
             {eventCoords && (
                 <div className="flex items-start gap-2">
-                    <Image
-                        src="/images/icons/mapPoint.svg"
-                        alt="Location"
-                        width={20}
-                        height={20}
-                        className="text-gray-placeholder shrink-0 size-5"
-                    />
+                    <MapPointIcon className="text-gray-placeholder shrink-0 size-5" />
                     <div className="flex-1">
                         <p className="text-[14px] font-semibold">
                             {cityAndCountry || "Местоположение"}

@@ -1,10 +1,11 @@
 import { Dispatch, SetStateAction } from "react";
 import { FormikProps } from "formik";
-import Image from "next/image";
 import { ValuesSignUpFormType } from "./SignUpForm";
 import SectionTitle from "../shared/titles/SectionTitle";
 import CustomizedInput from "../shared/formComponents/CustomizedInput";
 import MainButton from "../shared/buttons/MainButton";
+import GoogleIcon from "../shared/icons/GoogleIcon";
+import FacebookIcon from "../shared/icons/FacebookIcon";
 
 interface StepOneProps {
   setCurrentStep: Dispatch<SetStateAction<number>>;
@@ -33,21 +34,11 @@ export default function StepOne({ setCurrentStep, formProps }: StepOneProps) {
             Или зарегистрироваться с помощью:
           </p>
           <MainButton variant="bordered" className="h-10">
-            <Image
-              src="/images/icons/google.svg"
-              alt="google icon"
-              width={20}
-              height={20}
-            />
+            <GoogleIcon />
             &nbsp; Войти через Google
           </MainButton>
           <MainButton variant="bordered" className="h-10">
-            <Image
-              src="/images/icons/facebook.svg"
-              alt="google icon"
-              width={20}
-              height={20}
-            />
+            <FacebookIcon />
             &nbsp; Войти через Facebook
           </MainButton>
         </div>

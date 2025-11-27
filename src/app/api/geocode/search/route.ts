@@ -33,7 +33,6 @@ export async function GET(request: NextRequest) {
         const data = await response.json();
         return NextResponse.json(data);
     } catch (error) {
-        console.error("Geocoding error:", error);
         return NextResponse.json(
             { error: "Internal server error" },
             { status: 500 }

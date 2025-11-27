@@ -132,7 +132,6 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                 setSearchResults([]);
             }
         } catch (error) {
-            console.error("Geocoding error:", error);
             setSearchResults([]);
         } finally {
             setIsSearching(false);
@@ -185,7 +184,6 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                 setSearchQuery("");
             }
         } catch (error) {
-            console.error("Reverse geocoding error:", error);
             setSelectedLocationName("");
             setSearchQuery("");
         }
@@ -218,9 +216,7 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                         setSelectedLocationName(locationName);
                         setSearchQuery(prev => prev || locationName);
                     })
-                    .catch(err =>
-                        console.error("Reverse geocoding error:", err)
-                    );
+                    .catch(() => {});
             }
         }
     }, [values.position, selectedLocationName]);

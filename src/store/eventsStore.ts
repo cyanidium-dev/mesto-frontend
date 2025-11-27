@@ -54,7 +54,6 @@ export const useEventsStore = create<EventsStore>((set, get) => ({
             events: state.events.map(event => {
                 if (event.id === eventId) {
                     const newAttendees = [...event.attendees];
-                    // Add user to attendees based on quantity
                     for (let i = 0; i < quantity; i++) {
                         if (!newAttendees.includes(userId)) {
                             newAttendees.push(userId);
