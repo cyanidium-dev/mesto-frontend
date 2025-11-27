@@ -1,5 +1,5 @@
 "use client";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useEventsStore } from "@/store/eventsStore";
 import { useUserStore } from "@/store/userStore";
@@ -25,7 +25,6 @@ type TabKey = "overview" | "description" | "participants";
 export default function EventProfilePage() {
     const params = useParams();
     const router = useRouter();
-    const searchParams = useSearchParams();
     const eventId = params.id as string;
     const getEvent = useEventsStore(s => s.getEvent);
     const getUser = useUserStore(s => s.getUser);
@@ -83,12 +82,7 @@ export default function EventProfilePage() {
     }, [eventId, getEvent, getUser]);
 
     const handleBack = () => {
-        const from = searchParams.get("from");
-        if (from === "profile") {
-            router.replace("/profile");
-        } else {
-            router.back();
-        }
+        router.back();
     };
 
     const allImageUrls =

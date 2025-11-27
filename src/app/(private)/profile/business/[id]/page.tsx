@@ -1,5 +1,5 @@
 "use client";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useBusinessStore } from "@/store/businessStore";
 import { useUserStore } from "@/store/userStore";
@@ -26,7 +26,6 @@ const DEFAULT_CALENDLY_URL = "https://calendly.com/shade09876";
 export default function BusinessProfilePage() {
     const params = useParams();
     const router = useRouter();
-    const searchParams = useSearchParams();
     const businessId = params.id as string;
     const getBusiness = useBusinessStore(s => s.getBusiness);
     const getUser = useUserStore(s => s.getUser);
@@ -49,12 +48,7 @@ export default function BusinessProfilePage() {
     }, [businessId, getBusiness, getUser]);
 
     const handleBack = () => {
-        const from = searchParams.get("from");
-        if (from === "profile") {
-            router.replace("/profile");
-        } else {
-            router.back();
-        }
+        router.back();
     };
 
     if (!business) {

@@ -1,5 +1,5 @@
 "use client";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import NavigationButton from "@/components/shared/buttons/NavigationButton";
 import ArrowIcon from "@/components/shared/icons/ArrowIcon";
 import { Business } from "@/types/business";
@@ -10,15 +10,9 @@ interface BusinessHeaderProps {
 
 export default function BusinessHeader({ business }: BusinessHeaderProps) {
     const router = useRouter();
-    const searchParams = useSearchParams();
-    const from = searchParams.get("from");
 
     const handleBack = () => {
-        if (from === "profile") {
-            router.replace("/profile");
-        } else {
-            router.back();
-        }
+        router.back();
     };
 
     return (
