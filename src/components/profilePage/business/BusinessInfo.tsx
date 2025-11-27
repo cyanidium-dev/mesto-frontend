@@ -8,11 +8,13 @@ import { CATEGORIES } from "@/constants/filters";
 interface BusinessInfoProps {
     business: Business;
     imageUrl: string;
+    onBlockUser?: () => void;
 }
 
 export default function BusinessInfo({
     business,
     imageUrl,
+    onBlockUser,
 }: BusinessInfoProps) {
     const categoryLabel = business.category
         ? CATEGORIES.find(cat => cat.key === business.category)?.label ||
@@ -48,7 +50,11 @@ export default function BusinessInfo({
                 <button className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light">
                     <ShareIcon className="w-5 h-5" />
                 </button>
-                <button className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light">
+                <button
+                    onClick={onBlockUser}
+                    className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light"
+                    aria-label="More options"
+                >
                     <DotsIcon className="w-5 h-5" />
                 </button>
             </div>

@@ -1,5 +1,5 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useEventsStore } from "@/store/eventsStore";
 import { useUserStore } from "@/store/userStore";
@@ -18,14 +18,18 @@ import EventOverviewTab from "@/components/profilePage/event/EventOverviewTab";
 import EventDescriptionTab from "@/components/profilePage/event/EventDescriptionTab";
 import EventParticipantsTab from "@/components/profilePage/event/EventParticipantsTab";
 import EventBottomBar from "@/components/profilePage/event/EventBottomBar";
+import clsx from "clsx";
 
 type TabKey = "overview" | "description" | "participants";
 
 export default function EventProfilePage() {
     const params = useParams();
+    const router = useRouter();
+    const searchParams = useSearchParams();
     const eventId = params.id as string;
     const getEvent = useEventsStore(s => s.getEvent);
     const getUser = useUserStore(s => s.getUser);
+    const currentUser = useUserStore(s => s.currentUser);
     const [event, setEvent] = useState<Event | null>(null);
     const [organizers, setOrganizers] = useState<User[]>([]);
     const [attendees, setAttendees] = useState<User[]>([]);
@@ -33,6 +37,9 @@ export default function EventProfilePage() {
     const [locationAddress, setLocationAddress] = useState<string>("");
     const [locationCity, setLocationCity] = useState<string>("");
     const [locationCountry, setLocationCountry] = useState<string>("");
+
+    const isCurrentUserCreator =
+        currentUser && event && currentUser.id === event.creatorId;
 
     useEffect(() => {
         const eventData = getEvent(eventId);
@@ -75,6 +82,15 @@ export default function EventProfilePage() {
         }
     }, [eventId, getEvent, getUser]);
 
+    const handleBack = () => {
+        const from = searchParams.get("from");
+        if (from === "profile") {
+            router.replace("/profile");
+        } else {
+            router.back();
+        }
+    };
+
     const allImageUrls =
         event?.imageUrls?.filter(
             url =>
@@ -87,10 +103,7 @@ export default function EventProfilePage() {
     if (!event) {
         return (
             <Container>
-                <NavigationButton
-                    onClick={() => window.history.back()}
-                    className="mb-2"
-                >
+                <NavigationButton onClick={handleBack} className="mb-2">
                     <ArrowIcon />
                     Назад
                 </NavigationButton>
@@ -106,7 +119,13 @@ export default function EventProfilePage() {
                     <EventHeader />
                 </Container>
             </div>
-            <Container className="pt-4 pb-24 flex-1 overflow-y-auto">
+
+            <Container
+                className={clsx(
+                    "pt-4 flex-1 overflow-y-auto",
+                    isCurrentUserCreator ? "pb-4" : "pb-24"
+                )}
+            >
                 <EventImageGallery
                     imageUrls={allImageUrls}
                     eventTitle={event.title}
@@ -187,7 +206,7 @@ export default function EventProfilePage() {
                 </Tabs>
             </Container>
 
-            <EventBottomBar event={event} />
+            {!isCurrentUserCreator && <EventBottomBar event={event} />}
         </div>
     );
 }

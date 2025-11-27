@@ -43,38 +43,46 @@ export default function CreatePage() {
     };
 
     return (
-        <Container className="flex flex-col min-h-screen pt-2 pb-14">
-            <div className="flex justify-between items-center mb-2">
-                <NavigationButton
-                    onClick={
-                        currentStep === 0 || currentStep === 1
-                            ? () => router.back()
-                            : () => setCurrentStep(prev => prev - 1)
-                    }
-                >
-                    <ArrowIcon />
-                    Назад
-                </NavigationButton>
-                <NavigationButton
-                    onClick={() => setCurrentStep(prev => prev + 1)}
-                    className={shouldHideSkip ? "hidden" : ""}
-                >
-                    Пропустить
-                    <ArrowIcon className="rotate-180" />
-                </NavigationButton>
+        <div className="flex flex-col h-screen overflow-hidden">
+            <div className="sticky top-0 z-50 bg-white">
+                <Container className="pt-2 pb-2">
+                    <div className="flex justify-between items-center mb-2">
+                        <NavigationButton
+                            onClick={
+                                currentStep === 0 || currentStep === 1
+                                    ? () => router.back()
+                                    : () => setCurrentStep(prev => prev - 1)
+                            }
+                        >
+                            <ArrowIcon />
+                            Назад
+                        </NavigationButton>
+                        <NavigationButton
+                            onClick={() => setCurrentStep(prev => prev + 1)}
+                            className={shouldHideSkip ? "hidden" : ""}
+                        >
+                            Пропустить
+                            <ArrowIcon className="rotate-180" />
+                        </NavigationButton>
+                    </div>
+                    <ProgressBar
+                        stepsQty={getTotalSteps()}
+                        currentStep={currentStep + 1}
+                        className="mb-2"
+                    />
+                </Container>
             </div>
-            <ProgressBar
-                stepsQty={getTotalSteps()}
-                currentStep={currentStep + 1}
-                className="mb-6"
-            />
-            <Suspense fallback={<div>Loading...</div>}>
-                <CreateForm
-                    currentStep={currentStep}
-                    setCurrentStep={setCurrentStep}
-                    onCreateTypeChange={setCreateType}
-                />
-            </Suspense>
-        </Container>
+            <div className="flex-1 overflow-y-auto h-full">
+                <Container className="pt-4 pb-14 h-full">
+                    <Suspense fallback={<div>Loading...</div>}>
+                        <CreateForm
+                            currentStep={currentStep}
+                            setCurrentStep={setCurrentStep}
+                            onCreateTypeChange={setCreateType}
+                        />
+                    </Suspense>
+                </Container>
+            </div>
+        </div>
     );
 }

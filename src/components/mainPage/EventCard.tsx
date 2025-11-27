@@ -7,6 +7,9 @@ import Image from "next/image";
 import MainButton from "../shared/buttons/MainButton";
 import IconButton from "../shared/buttons/IconButton";
 import LocationMapIcon from "../shared/icons/LocationMapIcon";
+import HandUpIcon from "../shared/icons/HandUpIcon";
+import ShareIcon from "../shared/icons/ShareIcon";
+import ArrowIcon from "../shared/icons/ArrowIcon";
 
 interface EventCardProps {
     event: Event;

@@ -9,9 +9,9 @@ import { useEventsStore } from "@/store/eventsStore";
 import { CATEGORIES } from "@/constants/filters";
 import Image from "next/image";
 import ConfirmModal from "@/components/shared/modal/ConfirmModal";
-import ArrowIcon from "@/components/shared/icons/ArrowIcon";
 import GearIcon from "@/components/shared/icons/GearIcon";
 import TrashIcon from "@/components/shared/icons/TrashIcon";
+import ArrowDiagonalIcon from "../shared/icons/ArrowDiagonalIcon";
 
 interface ListItemProps {
     item: Event | Business;
@@ -33,9 +33,9 @@ export const ListItem = ({ item }: ListItemProps) => {
 
     const handleOpen = () => {
         if (isEvent) {
-            router.push(`/profile/event/${item.id}`);
+            router.push(`/profile/event/${item.id}?from=profile`);
         } else {
-            router.push(`/profile/business/${item.id}`);
+            router.push(`/profile/business/${item.id}?from=profile`);
         }
     };
 
@@ -64,22 +64,23 @@ export const ListItem = ({ item }: ListItemProps) => {
     return (
         <div className="flex items-center justify-between w-full">
             <div className="flex items-center">
-                <div className="relative w-[60px] h-[60px] rounded-full overflow-hidden mr-2 shrink-0">
+                <div className="relative size-10 rounded-full overflow-hidden mr-2 shrink-0">
                     <Image
                         src={
                             item.imageUrls?.[0] ||
                             "/images/icons/classical-building.png"
                         }
                         alt={title || ""}
-                        width={60}
-                        height={60}
+                        fill
                         className="object-cover"
                     />
                 </div>
                 <div>
-                    <h2 className="text-2xl font-semibold mb-[4px]">{title}</h2>
+                    <h2 className="text-[14px] font-medium mb-[4px]">
+                        {title}
+                    </h2>
                     {categoryLabel && (
-                        <p className="text-sm text-gray-placeholder">
+                        <p className="text-[10px] font-medium text-gray-placeholder">
                             {categoryLabel}
                         </p>
                     )}
@@ -91,7 +92,7 @@ export const ListItem = ({ item }: ListItemProps) => {
                     className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light"
                     aria-label="open"
                 >
-                    <ArrowIcon className="w-5 h-5" />
+                    <ArrowDiagonalIcon className="w-5 h-5" />
                 </button>
                 <button
                     onClick={handleEdit}

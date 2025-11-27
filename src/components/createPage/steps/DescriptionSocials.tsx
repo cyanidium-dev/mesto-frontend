@@ -130,7 +130,7 @@ const SocialLinksInput = () => {
     };
 
     return (
-        <div>
+        <div className="mb-6">
             <p className="mb-4 text-[14px]">Социальные сети (необязательно)</p>
             <div className="space-y-3">
                 {socialLinks.map(({ platform, label }) => {
@@ -515,7 +515,7 @@ export const DescriptionSocials = ({
     };
 
     return (
-        <div className="flex flex-col flex-1 justify-between h-full">
+        <div className="flex flex-col flex-1 justify-between h-full pb-6">
             <div>
                 <SectionTitle className="mb-6">
                     {description[type].title}
@@ -595,7 +595,7 @@ export const DescriptionSocials = ({
             <MainButton
                 onClick={() => setCurrentStep(prev => prev + 1)}
                 variant="primary"
-                className="h-12"
+                className="h-12 shrink-0"
             >
                 Продолжить
             </MainButton>

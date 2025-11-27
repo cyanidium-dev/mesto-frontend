@@ -8,13 +8,13 @@ import { Tabs, Tab } from "@heroui/react";
 import Container from "@/components/shared/container/Container";
 import NavigationButton from "@/components/shared/buttons/NavigationButton";
 import ArrowIcon from "@/components/shared/icons/ArrowIcon";
-import Image from "next/image";
 import { ItemsList } from "@/components/profilePage/ItemsList";
 import { CATEGORIES } from "@/constants/filters";
-import ShareIcon from "@/components/shared/icons/ShareIcon";
-import GearIcon from "@/components/shared/icons/GearIcon";
-import LinkIcon from "@/components/shared/icons/LinkIcon";
-import SocialIconFromUrl from "@/components/shared/icons/SocialIconFromUrl";
+import ProfileHeader from "@/components/profilePage/user/ProfileHeader";
+import ProfileImageGallery from "@/components/profilePage/user/ProfileImageGallery";
+import ProfileSocialLinks from "@/components/profilePage/user/ProfileSocialLinks";
+import ProfileTags from "@/components/profilePage/user/ProfileTags";
+import ProfileDescription from "@/components/profilePage/user/ProfileDescription";
 
 type TabKey = "info" | "events" | "businesses";
 
@@ -110,7 +110,6 @@ export default function ProfilePage() {
         return firstIndividual?.description || "";
     }, [individualBusinesses]);
 
-
     if (!currentUser) {
         return (
             <Container>
@@ -127,202 +126,119 @@ export default function ProfilePage() {
     }
 
     return (
-        <div className="flex flex-col h-screen">
-            <div className="sticky top-0 z-10 bg-white">
-                <Container className="pt-4 pb-4">
-                    <NavigationButton
-                        onClick={() => router.back()}
-                        className="mb-4"
-                    >
-                        <ArrowIcon />
-                        Назад
-                    </NavigationButton>
-
-                    <div className="flex items-center justify-between w-full mb-3">
-                        <div className="flex items-center ">
-                            <div className="relative w-[60px] h-[60px] rounded-full overflow-hidden mr-2">
-                                <Image
-                                    src={
-                                        currentUser.photoUrl ||
-                                        "/images/mockedData/girl.jpg"
-                                    }
-                                    alt={currentUser.name}
-                                    fill
-                                    className="object-cover"
-                                    unoptimized
+        <div className="flex flex-col h-screen overflow-hidden">
+            <div className="sticky top-0 z-10 bg-white shrink-0">
+                <Container className="pt-4">
+                    <ProfileHeader
+                        user={currentUser}
+                        categoryLabel={individualBusinessCategory}
+                    />
+                </Container>
+            </div>
+            <div className="flex flex-col flex-1 min-h-0">
+                <div className="sticky top-0 z-10 bg-white border-b border-gray-light shrink-0">
+                    <Container className="pt-4 pb-2">
+                        <Tabs
+                            selectedKey={selectedTab}
+                            onSelectionChange={key =>
+                                setSelectedTab(key as TabKey)
+                            }
+                            classNames={{
+                                base: "w-full",
+                                tabList: "gap-0 w-full rounded-full p-0",
+                                cursor: "bg-primary rounded-full",
+                                tab: "text-sm data-[selected=true]:!text-white rounded-full",
+                                tabContent: "text-sm",
+                            }}
+                        >
+                            <Tab
+                                key="info"
+                                title={
+                                    <span
+                                        className={
+                                            selectedTab === "info"
+                                                ? "text-white"
+                                                : ""
+                                        }
+                                    >
+                                        Профиль
+                                    </span>
+                                }
+                            />
+                            <Tab
+                                key="businesses"
+                                title={
+                                    <span
+                                        className={
+                                            selectedTab === "businesses"
+                                                ? "text-white"
+                                                : ""
+                                        }
+                                    >
+                                        Бизнесы
+                                    </span>
+                                }
+                            />
+                            <Tab
+                                key="events"
+                                title={
+                                    <span
+                                        className={
+                                            selectedTab === "events"
+                                                ? "text-white"
+                                                : ""
+                                        }
+                                    >
+                                        События
+                                    </span>
+                                }
+                            />
+                        </Tabs>
+                    </Container>
+                </div>
+                <div className="flex-1 overflow-y-auto">
+                    <Container className="pt-4 pb-24">
+                        {selectedTab === "info" && (
+                            <div className="w-full">
+                                <ProfileImageGallery
+                                    imageUrls={individualBusinessImages}
+                                    userName={currentUser.name}
+                                />
+                                <ProfileSocialLinks
+                                    socialLinks={individualBusinessSocialLinks}
+                                    siteLinks={individualBusinessSiteLinks}
+                                />
+                                <ProfileTags tags={individualBusinessTags} />
+                                <ProfileDescription
+                                    description={individualBusinessDescription}
                                 />
                             </div>
-                            <div className="text-center">
-                                <h1 className="text-2xl font-semibold mb-[4px]">
-                                    {currentUser.name}
-                                </h1>
-                                {(individualBusinessCategory ||
-                                    currentUser.title) && (
-                                    <p className="text-sm text-gray-placeholder">
-                                        {individualBusinessCategory ||
-                                            currentUser.title}
+                        )}
+                        {selectedTab === "events" && (
+                            <div className="mt-4">
+                                {userEvents.length > 0 ? (
+                                    <ItemsList items={userEvents} />
+                                ) : (
+                                    <p className="text-center text-gray-placeholder py-8">
+                                        Нет созданных событий
                                     </p>
                                 )}
                             </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <button className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light">
-                                <ShareIcon className="w-5 h-5" />
-                            </button>
-                            <button className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light">
-                                <GearIcon className="w-5 h-5" />
-                            </button>
-                        </div>
-                    </div>
-                </Container>
+                        )}
+                        {selectedTab === "businesses" && (
+                            <div className="mt-4">
+                                {userBusinesses.length > 0 ? (
+                                    <ItemsList items={userBusinesses} />
+                                ) : (
+                                    <p className="text-center text-gray-placeholder py-8">
+                                        Нет созданных бизнесов
+                                    </p>
+                                )}
+                            </div>
+                        )}
+                    </Container>
+                </div>
             </div>
-            <Container className="pb-8 flex-1 overflow-y-auto">
-                <Tabs
-                    selectedKey={selectedTab}
-                    onSelectionChange={key => setSelectedTab(key as TabKey)}
-                    classNames={{
-                        base: "w-full",
-                        tabList: "w-full",
-                        cursor: "bg-primary",
-                        tab: "text-sm",
-                    }}
-                >
-                    <Tab key="info" title="Профиль">
-                        <div className="w-full space-y-3 mt-4">
-                            {individualBusinessImages.length > 0 && (
-                                <div>
-                                    <p className="text-sm text-gray-placeholder mb-2">
-                                        Фото
-                                    </p>
-                                    <div className="grid grid-cols-2 gap-2">
-                                        {individualBusinessImages.map(
-                                            (imageUrl, index) => (
-                                                <div
-                                                    key={index}
-                                                    className="relative w-full aspect-square rounded-[16px] overflow-hidden"
-                                                >
-                                                    <Image
-                                                        src={imageUrl}
-                                                        alt={`Image ${
-                                                            index + 1
-                                                        }`}
-                                                        fill
-                                                        className="object-cover"
-                                                        unoptimized
-                                                    />
-                                                </div>
-                                            )
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-
-                            {(individualBusinessSocialLinks.length > 0 ||
-                                individualBusinessSiteLinks.length > 0) && (
-                                <div>
-                                    <p className="text-sm text-gray-placeholder mb-2">
-                                        Социальные сети
-                                    </p>
-                                    <div className="flex flex-wrap gap-2 mt-2">
-                                        {individualBusinessSocialLinks.map(
-                                            (url, index) => {
-                                                return (
-                                                    <a
-                                                        key={index}
-                                                        href={url}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
-                                                        aria-label={`Social media link ${
-                                                            index + 1
-                                                        }`}
-                                                    >
-                                                        <SocialIconFromUrl
-                                                            url={url}
-                                                            className="flex-shrink-0"
-                                                            size={20}
-                                                        />
-                                                    </a>
-                                                );
-                                            }
-                                        )}
-                                        {individualBusinessSiteLinks.map(
-                                            (url, index) => (
-                                                <a
-                                                    key={`site-${index}`}
-                                                    href={url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
-                                                    aria-label="Website link"
-                                                >
-                                                    <LinkIcon className="flex-shrink-0 w-5 h-5" />
-                                                </a>
-                                            )
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-
-                            {individualBusinessTags.length > 0 && (
-                                <div>
-                                    <p className="text-sm text-gray-placeholder mb-2">
-                                        Теги
-                                    </p>
-                                    <div className="flex flex-wrap gap-2 mt-2">
-                                        {individualBusinessTags.map(
-                                            (tag, index) => (
-                                                <span
-                                                    key={index}
-                                                    className="px-3 py-1 bg-gray-ultra-light rounded-full text-sm"
-                                                >
-                                                    {tag}
-                                                </span>
-                                            )
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-
-                            {individualBusinessDescription && (
-                                <div>
-                                    <p className="text-sm text-gray-placeholder">
-                                        Описание
-                                    </p>
-                                    <p className="text-base whitespace-pre-wrap">
-                                        {individualBusinessDescription}
-                                    </p>
-                                </div>
-                            )}
-                        </div>
-                    </Tab>
-                    <Tab key="events" title={`События (${userEvents.length})`}>
-                        <div className="mt-4">
-                            {userEvents.length > 0 ? (
-                                <ItemsList items={userEvents} />
-                            ) : (
-                                <p className="text-center text-gray-placeholder py-8">
-                                    Нет созданных событий
-                                </p>
-                            )}
-                        </div>
-                    </Tab>
-                    <Tab
-                        key="businesses"
-                        title={`Бизнесы (${userBusinesses.length})`}
-                    >
-                        <div className="mt-4">
-                            {userBusinesses.length > 0 ? (
-                                <ItemsList items={userBusinesses} />
-                            ) : (
-                                <p className="text-center text-gray-placeholder py-8">
-                                    Нет созданных бизнесов
-                                </p>
-                            )}
-                        </div>
-                    </Tab>
-                </Tabs>
-            </Container>
         </div>
     );
 }
