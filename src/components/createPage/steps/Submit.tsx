@@ -13,7 +13,7 @@ import { Business } from "@/types/business";
 import CheckCircleIcon from "@/components/shared/icons/CheckCircleIcon";
 
 // Default Calendly URL for testing
-const DEFAULT_CALENDLY_URL = "https://calendly.com/demo";
+const DEFAULT_CALENDLY_URL = "https://calendly.com/shade09876";
 
 interface SubmitProps {
     setCurrentStep: Dispatch<SetStateAction<number>>;

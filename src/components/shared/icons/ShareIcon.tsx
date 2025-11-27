@@ -11,7 +11,7 @@ export default function ShareIcon({ className = "" }: ShareIconProps) {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
             className={className}
-            aria-label="share icon"
+            aria-hidden="true"
         >
             <path
                 fillRule="evenodd"
@@ -22,4 +22,3 @@ export default function ShareIcon({ className = "" }: ShareIconProps) {
         </svg>
     );
 }
-

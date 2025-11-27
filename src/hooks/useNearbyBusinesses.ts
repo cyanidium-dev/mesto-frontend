@@ -57,7 +57,7 @@ const generateFakeBusinesses = (lat: number, lng: number): Business[] => {
     ];
 
     // Default Calendly URL for testing
-    const DEFAULT_CALENDLY_URL = "https://calendly.com/demo";
+    const DEFAULT_CALENDLY_URL = "https://calendly.com/shade09876";
 
     return Array.from({ length: 20 }, (_, i) => {
         const latOffset = (Math.random() - 0.5) * 0.01;

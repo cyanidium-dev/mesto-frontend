@@ -1,7 +1,7 @@
 import { Business } from "@/types/business";
 
 // Default Calendly URL for testing
-const DEFAULT_CALENDLY_URL = "https://calendly.com/demo";
+const DEFAULT_CALENDLY_URL = "https://calendly.com/shade09876";
 
 // Helper function to generate evenly distributed coordinates across a rectangular area
 const generateCoordinates = (

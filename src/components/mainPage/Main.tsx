@@ -12,7 +12,8 @@ import { useBusinessStore } from "@/store/businessStore";
 import { useUserStore } from "@/store/userStore";
 import { Business } from "@/types/business";
 import { Event } from "@/types/event";
-import { calculateDistance, getCoordinates } from "@/utils/distance";
+import { getCoordinates } from "@/utils/distance";
+import { isItemOpenNow } from "@/utils/openNow";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
@@ -25,7 +26,7 @@ export default function Main() {
         languages: [],
         cities: [],
         categories: [],
-        distance: null,
+        openNow: false,
     });
 
     const userLocation = useLocationStore(s => s.userLocation);
@@ -77,22 +78,12 @@ export default function Main() {
 
     // Filter businesses and events based on filters
     const businesses = useMemo(() => {
-        return filterItems(
-            allBusinesses,
-            savedEvents,
-            filters,
-            userLocation || mapCenter
-        );
-    }, [allBusinesses, savedEvents, filters, userLocation, mapCenter]);
+        return filterItems(allBusinesses, savedEvents, filters);
+    }, [allBusinesses, savedEvents, filters]);
 
     const events = useMemo(() => {
-        return filterItems(
-            savedEvents,
-            allBusinesses,
-            filters,
-            userLocation || mapCenter
-        );
-    }, [savedEvents, allBusinesses, filters, userLocation, mapCenter]);
+        return filterItems(savedEvents, allBusinesses, filters);
+    }, [savedEvents, allBusinesses, filters]);
 
     useEffect(() => {
         console.log("🗺️ Map - Events:", savedEvents.length);
@@ -173,7 +164,7 @@ export default function Main() {
         if (isUpdatingFromUrl.current) {
             return; // Don't update URL if we're updating from URL
         }
-        
+
         const viewParam = searchParams.get("view");
         // Only update URL if viewMode doesn't match URL param
         if (viewMode !== viewParam) {
@@ -191,13 +182,13 @@ export default function Main() {
     // Handle "show on map" from query params (focus parameter)
     useEffect(() => {
         const focusId = searchParams.get("focus");
-        
+
         if (focusId && viewMode === "map") {
             // Find the item and center map on it
             const event = getEvent(focusId);
             const business = getBusiness(focusId);
             const item = event || business;
-            
+
             if (item) {
                 const coords = getCoordinates(item.location);
                 if (coords) {
@@ -233,8 +224,7 @@ export default function Main() {
 function filterItems<T extends Business | Event>(
     items: T[],
     otherItems: (Business | Event)[],
-    filters: FilterValues,
-    centerLocation: [number, number]
+    filters: FilterValues
 ): T[] {
     return items.filter(item => {
         // Search filter - check title and description
@@ -268,22 +258,10 @@ function filterItems<T extends Business | Event>(
             }
         }
 
-        // Distance filter
-        if (filters.distance) {
-            const itemCoords = getCoordinates(item.location);
-            if (itemCoords) {
-                const distance = calculateDistance(
-                    centerLocation[0],
-                    centerLocation[1],
-                    itemCoords[0],
-                    itemCoords[1]
-                );
-                const maxDistance = parseFloat(filters.distance);
-                if (distance > maxDistance) {
-                    return false;
-                }
-            } else {
-                return false; // If we can't get coordinates, exclude the item
+        // Open now filter
+        if (filters.openNow) {
+            if (!isItemOpenNow(item)) {
+                return false;
             }
         }
 

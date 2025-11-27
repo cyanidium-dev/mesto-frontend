@@ -8,7 +8,7 @@ import { User } from "@/types/user";
 import Container from "@/components/shared/container/Container";
 import NavigationButton from "@/components/shared/buttons/NavigationButton";
 import ArrowIcon from "@/components/shared/icons/ArrowIcon";
-import CalendlyModal from "@/components/shared/modal/CalendlyModal";
+import CalendlyEventTypesModal from "@/components/shared/modal/CalendlyEventTypesModal";
 import BusinessHeader from "@/components/profilePage/business/BusinessHeader";
 import BusinessInfo from "@/components/profilePage/business/BusinessInfo";
 import BusinessImageGallery from "@/components/profilePage/business/BusinessImageGallery";
@@ -18,7 +18,7 @@ import BusinessDescription from "@/components/profilePage/business/BusinessDescr
 import BusinessCalendlyButton from "@/components/profilePage/business/BusinessCalendlyButton";
 
 // Default Calendly URL for testing when business doesn't have one configured
-const DEFAULT_CALENDLY_URL = "https://calendly.com/demo";
+const DEFAULT_CALENDLY_URL = "https://calendly.com/shade09876";
 
 export default function BusinessProfilePage() {
     const params = useParams();
@@ -74,13 +74,14 @@ export default function BusinessProfilePage() {
         : "/images/mockedData/girl.jpg";
 
     // Get all valid image URLs
-    const allImageUrls = business.imageUrls?.filter(
-        url =>
-            url &&
-            (url.startsWith("http") ||
-                url.startsWith("data:") ||
-                url.startsWith("/"))
-    ) || [];
+    const allImageUrls =
+        business.imageUrls?.filter(
+            url =>
+                url &&
+                (url.startsWith("http") ||
+                    url.startsWith("data:") ||
+                    url.startsWith("/"))
+        ) || [];
 
     return (
         <div className="flex flex-col h-screen">
@@ -89,23 +90,35 @@ export default function BusinessProfilePage() {
                 <BusinessInfo business={business} imageUrl={imageUrl} />
 
                 <div className="w-full space-y-3">
-                    <BusinessImageGallery imageUrls={allImageUrls} businessTitle={business.title} />
+                    <BusinessImageGallery
+                        imageUrls={allImageUrls}
+                        businessTitle={business.title}
+                    />
                     <BusinessSocialLinks business={business} />
                     <BusinessTags business={business} />
                     <BusinessDescription business={business} />
                 </div>
             </Container>
 
-            <BusinessCalendlyButton onOpen={() => setIsCalendlyOpen(true)} />
+            <BusinessCalendlyButton
+                onOpen={() => {
+                    console.log(
+                        "BusinessCalendlyButton onOpen called, setting isCalendlyOpen to true"
+                    );
+                    setIsCalendlyOpen(true);
+                }}
+            />
 
-            {/* Calendly Modal */}
+            {/* Calendly Event Types Modal */}
             {business && (
-                <CalendlyModal
+                <CalendlyEventTypesModal
                     isOpen={isCalendlyOpen}
                     onClose={() => setIsCalendlyOpen(false)}
                     calendlyUrl={business.calendlyUrl || DEFAULT_CALENDLY_URL}
                     userName={creator?.name || business.title || "User"}
-                    userPhotoUrl={creator?.photoUrl || creator?.profilePictureUrl}
+                    userPhotoUrl={
+                        creator?.photoUrl || creator?.profilePictureUrl
+                    }
                 />
             )}
         </div>

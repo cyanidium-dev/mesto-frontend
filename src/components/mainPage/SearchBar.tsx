@@ -2,22 +2,17 @@
 
 import { useState, Dispatch, SetStateAction, useEffect } from "react";
 import { Selection } from "@react-types/shared";
-import { Input, Select, SelectItem } from "@heroui/react";
+import { Input, Select, SelectItem, Switch } from "@heroui/react";
 import TabMenu from "./TabMenu";
 import Image from "next/image";
-import {
-    LANGUAGES_SHORT,
-    CITIES,
-    CATEGORIES,
-    DISTANCES,
-} from "@/constants/filters";
+import { LANGUAGES_SHORT, CITIES, CATEGORIES } from "@/constants/filters";
 
 export interface FilterValues {
     search: string;
     languages: string[];
     cities: string[];
     categories: string[];
-    distance: string | null;
+    openNow: boolean;
 }
 
 interface SearchBarProps {
@@ -35,7 +30,7 @@ export default function SearchBar({
     const [langValue, setLangValue] = useState<Selection>(new Set([]));
     const [cityValue, setCityValue] = useState<Selection>(new Set([]));
     const [categoryValue, setCategoryValue] = useState<Selection>(new Set([]));
-    const [distanceValue, setDistanceValue] = useState<Selection>(new Set([]));
+    const [openNowValue, setOpenNowValue] = useState(false);
 
     // Notify parent of filter changes
     useEffect(() => {
@@ -54,12 +49,7 @@ export default function SearchBar({
                     categoryValue === "all"
                         ? []
                         : (Array.from(categoryValue) as string[]),
-                distance:
-                    distanceValue === "all" ||
-                    !(distanceValue instanceof Set) ||
-                    distanceValue.size === 0
-                        ? null
-                        : (Array.from(distanceValue)[0] as string),
+                openNow: openNowValue,
             };
             onFiltersChange(filters);
         }
@@ -68,7 +58,7 @@ export default function SearchBar({
         langValue,
         cityValue,
         categoryValue,
-        distanceValue,
+        openNowValue,
         onFiltersChange,
     ]);
 
@@ -199,37 +189,27 @@ export default function SearchBar({
                             </SelectItem>
                         ))}
                     </Select>
-                    <Select
-                        radius="full"
-                        placeholder="Км"
-                        aria-label="select input"
-                        selectedKeys={distanceValue}
-                        onSelectionChange={setDistanceValue}
-                        classNames={{
-                            base: "w-fit",
-                            mainWrapper: "w-fit",
-                            trigger: `px-2 h-8 min-h-8 w-fit pr-5 min-w-[62px] ${
-                                viewMode === "map"
-                                    ? "bg-white"
-                                    : "bg-gray-ultra-light"
-                            }`,
-                            innerWrapper: "w-fit pr-3",
-                            value: "text-[12px]",
-                            popoverContent: "w-fit min-w-[62px]",
-                            selectorIcon: "end-1.5",
-                        }}
+                    <div
+                        className={`flex items-center gap-2 px-2 h-8 min-h-8 rounded-full ${
+                            viewMode === "map"
+                                ? "bg-white"
+                                : "bg-gray-ultra-light"
+                        }`}
                     >
-                        {DISTANCES.map(distance => (
-                            <SelectItem
-                                key={distance.key}
-                                classNames={{
-                                    base: "data-focus:bg-blue/20! data-selected:bg-blue/20! data-hover:bg-blue/20! data-pressed:bg-blue/20!",
-                                }}
-                            >
-                                {distance.label}
-                            </SelectItem>
-                        ))}
-                    </Select>
+                        <Switch
+                            size="sm"
+                            isSelected={openNowValue}
+                            onValueChange={setOpenNowValue}
+                            classNames={{
+                                base: "max-w-fit",
+                                wrapper: "p-0 h-4 w-8",
+                                thumb: "w-3 h-3",
+                            }}
+                        />
+                        <span className="text-[12px] text-gray-700 whitespace-nowrap">
+                            Открыто сейчас
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
