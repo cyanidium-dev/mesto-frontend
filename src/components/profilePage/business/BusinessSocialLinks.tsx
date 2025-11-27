@@ -6,8 +6,12 @@ interface BusinessSocialLinksProps {
     business: Business;
 }
 
-export default function BusinessSocialLinks({ business }: BusinessSocialLinksProps) {
-    const hasSocialLinks = (business.socialMediaUrls && business.socialMediaUrls.length > 0) || business.siteLink;
+export default function BusinessSocialLinks({
+    business,
+}: BusinessSocialLinksProps) {
+    const hasSocialLinks =
+        (business.socialMediaUrls && business.socialMediaUrls.length > 0) ||
+        business.siteLink;
 
     if (!hasSocialLinks) return null;
 
@@ -26,12 +30,9 @@ export default function BusinessSocialLinks({ business }: BusinessSocialLinksPro
     };
 
     return (
-        <div>
-            <p className="text-sm text-gray-placeholder mb-2">
-                Социальные сети
-            </p>
+        <div className="mb-3">
+            <p className="text-[14px] font-semibold mb-2">Социальные сети</p>
             <div className="flex flex-wrap gap-2">
-                {/* Site Link */}
                 {business.siteLink && (
                     <a
                         href={business.siteLink}
@@ -43,13 +44,12 @@ export default function BusinessSocialLinks({ business }: BusinessSocialLinksPro
                         <Image
                             src="/images/icons/globe.svg"
                             alt=""
-                            width={20}
-                            height={20}
+                            width={32}
+                            height={32}
                             className="flex-shrink-0"
                         />
                     </a>
                 )}
-                {/* Social Media Links */}
                 {business.socialMediaUrls?.map((url, index) => {
                     const icon = getSocialIcon(url);
                     return (
@@ -58,15 +58,15 @@ export default function BusinessSocialLinks({ business }: BusinessSocialLinksPro
                             href={url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
+                            className="w-[32px] h-[32px] rounded-full flex items-center justify-center bg-gray-ultra-light hover:bg-gray-light transition-colors"
                             aria-label={`Social media link ${index + 1}`}
                         >
                             {icon && (
                                 <Image
                                     src={icon}
                                     alt=""
-                                    width={20}
-                                    height={20}
+                                    width={32}
+                                    height={32}
                                     className="flex-shrink-0"
                                 />
                             )}
@@ -77,4 +77,3 @@ export default function BusinessSocialLinks({ business }: BusinessSocialLinksPro
         </div>
     );
 }
-

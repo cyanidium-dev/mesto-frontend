@@ -8,22 +8,24 @@ interface BusinessTagsProps {
 export default function BusinessTags({ business }: BusinessTagsProps) {
     if (!business.tags || business.tags.length === 0) return null;
 
+    const capitalizeFirstLetter = (str: string): string => {
+        if (!str) return str;
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    };
+
     return (
-        <div>
-            <p className="text-sm text-gray-placeholder mb-2">
-                Теги
-            </p>
+        <div className="mb-3">
+            <p className="text-[14px] font-semibold mb-2">Теги</p>
             <div className="flex flex-wrap gap-2">
                 {business.tags.map((tag, index) => (
                     <span
                         key={index}
-                        className="px-3 py-1 bg-transparent border-2 border-primary text-primary rounded-full text-sm"
+                        className="px-3 py-1 bg-transparent border-1 border-primary text-primary rounded-full text-[12px]"
                     >
-                        {tag}
+                        {capitalizeFirstLetter(tag)}
                     </span>
                 ))}
             </div>
         </div>
     );
 }
-

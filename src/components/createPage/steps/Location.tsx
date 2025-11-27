@@ -55,7 +55,6 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
         type = "event";
     }
 
-    // Convert position to tuple format if needed
     const getPositionAsTuple = (): [number, number] | null => {
         if (values.position) {
             if (Array.isArray(values.position)) {
@@ -65,7 +64,6 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                 "lat" in values.position &&
                 "lng" in values.position
             ) {
-                // Handle LatLngLiteral or LatLng class case
                 const pos = values.position as { lat: number; lng: number };
                 return [pos.lat, pos.lng];
             }
@@ -91,7 +89,6 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
     const [mapCenterState, setMapCenterState] =
         useState<[number, number]>(initialCenter);
 
-    // Close search results when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -115,7 +112,6 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
         }
     }, [selectedPosition, setFieldValue]);
 
-    // Debounced search function
     const searchLocation = useCallback(async (query: string) => {
         if (!query.trim()) {
             setSearchResults([]);
@@ -163,7 +159,6 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
         setSearchQuery(result.display_name);
         setShowResults(false);
         lastReverseGeocodedPosition.current = position;
-        // Open map if not already open
         if (!isMapOpen) {
             setIsMapOpen(true);
         }
@@ -175,7 +170,6 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
         setMapCenterState(position);
         lastReverseGeocodedPosition.current = position;
 
-        // Reverse geocode to get location name
         try {
             const response = await fetch(
                 `/api/geocode/reverse?lat=${position[0]}&lon=${position[1]}`
@@ -202,14 +196,12 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
         setMapCenterState(center);
     };
 
-    // Sync input value with map position when position changes
     useEffect(() => {
         if (values.position && Array.isArray(values.position)) {
             const position = values.position as [number, number];
             setSelectedPosition(position);
             setMapCenterState(position);
 
-            // Check if we need to reverse geocode (only if position changed and we don't have a name)
             const positionChanged =
                 !lastReverseGeocodedPosition.current ||
                 lastReverseGeocodedPosition.current[0] !== position[0] ||
@@ -240,7 +232,6 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                 <p className="text-[14px] text-gray-text mb-6">
                     {description[type]}
                 </p>
-                {/* Search Input */}
                 <div className="relative mb-4" ref={searchContainerRef}>
                     <label
                         htmlFor="location"
@@ -272,7 +263,6 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                         )}
                     </div>
 
-                    {/* Search Results Dropdown */}
                     {showResults && searchResults.length > 0 && (
                         <div className="absolute z-50 w-full mt-2 bg-white border border-gray-light rounded-[16px] shadow-lg max-h-[200px] overflow-y-auto">
                             {searchResults.map(result => (

@@ -8,17 +8,21 @@ interface EventTagsProps {
 export default function EventTags({ event }: EventTagsProps) {
     if (!event.tags || event.tags.length === 0) return null;
 
+    const capitalizeFirstLetter = (str: string): string => {
+        if (!str) return str;
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    };
+
     return (
         <div className="flex flex-wrap gap-2 mb-4">
             {event.tags.map((tag, index) => (
                 <span
                     key={index}
-                    className="px-3 py-1 bg-transparent border-2 border-primary text-primary rounded-full text-sm"
+                    className="px-3 py-1 bg-transparent border-1 border-primary rounded-full text-[12px]"
                 >
-                    {tag}
+                    {capitalizeFirstLetter(tag)}
                 </span>
             ))}
         </div>
     );
 }
-

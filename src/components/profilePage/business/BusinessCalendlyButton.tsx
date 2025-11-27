@@ -15,7 +15,7 @@ export default function BusinessCalendlyButton({
     };
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-ultra-light px-4 py-4 z-[60]">
+        <div className="fixed bottom-0 left-0 right-0 bg-gray-ultra-light px-4 py-6 z-[60]">
             <MainButton
                 variant="bordered"
                 className="flex items-center justify-center gap-2 h-12 w-full"

@@ -6,8 +6,9 @@ import Image from "next/image";
 import { Business } from "@/types/business";
 import { Event } from "@/types/event";
 import ShareIcon from "@/components/shared/icons/ShareIcon";
-import GearIcon from "@/components/shared/icons/GearIcon";
+import DotsIcon from "@/components/shared/icons/DotsIcon";
 import MainButton from "@/components/shared/buttons/MainButton";
+import ArrowDiagonalIcon from "@/components/shared/icons/ArrowDiagonalIcon";
 
 interface MapBottomSheetProps {
     item: Business | Event | null;
@@ -33,26 +34,23 @@ export default function MapBottomSheet({
     const isEvent = item && "startDate" in item;
     const isBusiness = item && !isEvent;
 
-    // Get type label
     const getTypeLabel = () => {
         if (!item) return "";
         if (isEvent) return "Событие";
         if (isBusiness) {
             const business = item as Business;
-            if (business.userType === "individual") return "Индивидуал";
+            if (business.userType === "individual") return "Пользователь";
             if (business.userType === "business") return "Бизнес";
         }
         return "";
     };
 
-    // Get title
     const getTitle = () => {
         if (!item) return "";
         if (isEvent) return (item as Event).title;
         return (item as Business).title || "Бизнес";
     };
 
-    // Get profile image
     const getProfileImage = () => {
         if (!item) return "/images/mockedData/girl.jpg";
         const imageUrls = item.imageUrls || [];
@@ -66,7 +64,6 @@ export default function MapBottomSheet({
         return firstImage || "/images/mockedData/girl.jpg";
     };
 
-    // Get gallery images (all images except the first one)
     const getGalleryImages = () => {
         if (!item || !item.imageUrls) return [];
         const imageUrls = item.imageUrls.filter(
@@ -76,11 +73,9 @@ export default function MapBottomSheet({
                     url.startsWith("data:") ||
                     url.startsWith("/"))
         );
-        // Return all images except the first one (which is the profile image)
         return imageUrls.slice(1);
     };
 
-    // Handle drag start
     const handleTouchStart = (e: React.TouchEvent) => {
         e.stopPropagation();
         startYRef.current = e.touches[0].clientY;
@@ -93,60 +88,51 @@ export default function MapBottomSheet({
         setIsDragging(true);
     };
 
-    // Handle drag move
     const handleTouchMove = (e: React.TouchEvent) => {
         if (!isDragging) return;
         e.preventDefault();
         e.stopPropagation();
         const currentY = e.touches[0].clientY;
-        const deltaY = startYRef.current - currentY; // Positive when dragging up, negative when dragging down
+        const deltaY = startYRef.current - currentY;
         setDragY(deltaY);
     };
 
-    // Document-level mouse move handler
-    const handleDocumentMouseMove = useCallback((e: MouseEvent) => {
-        if (!isDragging) return;
-        e.preventDefault();
-        const currentY = e.clientY;
-        const deltaY = startYRef.current - currentY; // Positive when dragging up, negative when dragging down
-        setDragY(deltaY);
-    }, [isDragging]);
+    const handleDocumentMouseMove = useCallback(
+        (e: MouseEvent) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const currentY = e.clientY;
+            const deltaY = startYRef.current - currentY;
+            setDragY(deltaY);
+        },
+        [isDragging]
+    );
 
     const handleCloseBottomSheet = useCallback(() => {
         onClose();
     }, [onClose]);
 
-    // Navigate to profile page with smooth transition
     const navigateToProfile = useCallback(() => {
         if (!item) return;
-        
+
         setIsNavigating(true);
         setIsExpanded(true);
-        
-        // Wait for full-screen expansion animation to complete
+
         setTimeout(() => {
-            // Navigate to profile page
-            // Don't call onClose() here - the navigation will unmount this component
-            // and the sheet will naturally close. Calling onClose() would update the URL
-            // back to /main, causing a redirect back.
             if (isEvent) {
                 router.push(`/profile/event/${item.id}`);
             } else {
                 router.push(`/profile/business/${item.id}`);
             }
-        }, 400); // Animation duration for expansion
+        }, 400);
     }, [item, isEvent, router]);
 
-    // Handle drag end (touch)
     const handleTouchEnd = () => {
         if (dragY >= DRAG_THRESHOLD && item && !isNavigating) {
-            // Start smooth transition to profile page
             navigateToProfile();
         } else if (dragY >= EXPAND_THRESHOLD && !isNavigating) {
-            // Expand sheet when dragged up moderately
             setIsExpanded(true);
         } else if (dragY <= -50 && !isNavigating) {
-            // Close sheet when dragged down enough
             if (isExpanded) {
                 setIsExpanded(false);
             } else {
@@ -157,16 +143,12 @@ export default function MapBottomSheet({
         setDragY(0);
     };
 
-    // Document-level mouse up handler
     const handleDocumentMouseUp = useCallback(() => {
         if (dragY >= DRAG_THRESHOLD && item && !isNavigating) {
-            // Start smooth transition to profile page
             navigateToProfile();
         } else if (dragY >= EXPAND_THRESHOLD && !isNavigating) {
-            // Expand sheet when dragged up moderately
             setIsExpanded(true);
         } else if (dragY <= -50 && !isNavigating) {
-            // Close sheet when dragged down enough
             if (isExpanded) {
                 setIsExpanded(false);
             } else {
@@ -175,21 +157,30 @@ export default function MapBottomSheet({
         }
         setIsDragging(false);
         setDragY(0);
-    }, [dragY, item, isExpanded, isNavigating, navigateToProfile, handleCloseBottomSheet]);
+    }, [
+        dragY,
+        item,
+        isExpanded,
+        isNavigating,
+        navigateToProfile,
+        handleCloseBottomSheet,
+    ]);
 
     // Add document-level mouse event listeners for dragging
     useEffect(() => {
         if (isDragging) {
-            document.addEventListener('mousemove', handleDocumentMouseMove);
-            document.addEventListener('mouseup', handleDocumentMouseUp);
+            document.addEventListener("mousemove", handleDocumentMouseMove);
+            document.addEventListener("mouseup", handleDocumentMouseUp);
             return () => {
-                document.removeEventListener('mousemove', handleDocumentMouseMove);
-                document.removeEventListener('mouseup', handleDocumentMouseUp);
+                document.removeEventListener(
+                    "mousemove",
+                    handleDocumentMouseMove
+                );
+                document.removeEventListener("mouseup", handleDocumentMouseUp);
             };
         }
     }, [isDragging, handleDocumentMouseMove, handleDocumentMouseUp]);
 
-    // Reset drag when sheet closes
     useEffect(() => {
         if (!isOpen) {
             setDragY(0);
@@ -208,7 +199,6 @@ export default function MapBottomSheet({
 
     return (
         <>
-            {/* Backdrop */}
             <div
                 className="fixed inset-0 bg-black/30 z-[100] transition-opacity duration-300"
                 onClick={onClose}
@@ -218,26 +208,24 @@ export default function MapBottomSheet({
                 }}
             />
 
-            {/* Bottom Sheet */}
             <div
                 ref={sheetRef}
                 className={`fixed bottom-0 left-0 right-0 max-w-[440px] mx-auto bg-white rounded-t-[24px] z-[101] transition-all ease-out flex flex-col ${
-                    isNavigating 
-                        ? "max-h-[100vh] h-[100vh]" 
-                        : isExpanded 
-                        ? "max-h-[85vh]" 
+                    isNavigating
+                        ? "max-h-[100vh] h-[100vh]"
+                        : isExpanded
+                        ? "max-h-[85vh]"
                         : "max-h-[60vh]"
                 }`}
                 style={{
-                    transform: isNavigating 
-                        ? `translateY(0)` 
+                    transform: isNavigating
+                        ? `translateY(0)`
                         : `translateY(${Math.min(0, -dragY)}px)`,
                     touchAction: isDragging ? "none" : "pan-y",
                     transitionDuration: isNavigating ? "400ms" : "300ms",
                 }}
             >
-                {/* Drag Handle - Make it draggable */}
-                <div 
+                <div
                     className="drag-handle-area flex justify-center pt-3 pb-3 cursor-grab active:cursor-grabbing flex-shrink-0 select-none"
                     onTouchStart={handleTouchStart}
                     onTouchMove={handleTouchMove}
@@ -247,21 +235,19 @@ export default function MapBottomSheet({
                 >
                     <div className="w-12 h-1.5 bg-gray-300 rounded-full pointer-events-none" />
                 </div>
-                
-                {/* Scrollable Content */}
-                <div 
-                    className="overflow-y-auto flex-1" 
-                    style={{ 
+
+                <div
+                    className="overflow-y-auto flex-1"
+                    style={{
                         touchAction: isDragging ? "none" : "pan-y",
                     }}
-                    onTouchStart={(e) => {
-                        // Allow dragging if at top of scroll
+                    onTouchStart={e => {
                         const scrollContainer = e.currentTarget;
                         if (scrollContainer.scrollTop <= 5) {
                             handleTouchStart(e);
                         }
                     }}
-                    onTouchMove={(e) => {
+                    onTouchMove={e => {
                         if (isDragging) {
                             handleTouchMove(e);
                         }
@@ -271,123 +257,123 @@ export default function MapBottomSheet({
                             handleTouchEnd();
                         }
                     }}
-                    onMouseDown={(e) => {
+                    onMouseDown={e => {
                         const scrollContainer = e.currentTarget;
                         if (scrollContainer.scrollTop <= 5) {
-                            handleMouseDown(e as React.MouseEvent<HTMLDivElement>);
+                            handleMouseDown(
+                                e as React.MouseEvent<HTMLDivElement>
+                            );
                         }
                     }}
                 >
+                    <div className="px-4 pb-6">
+                        <p className="text-center mb-2 text-[16px] font-bold">
+                            {typeLabel}
+                        </p>
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3 flex-1">
+                                <div className="relative w-13 h-13 rounded-full overflow-hidden shrink-0">
+                                    <Image
+                                        src={profileImage}
+                                        alt={title}
+                                        fill
+                                        className="object-cover"
+                                        unoptimized
+                                    />
+                                </div>
 
-                {/* Content */}
-                <div className="px-4 pb-6">
-                    {/* Header */}
-                    <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3 flex-1">
-                            {/* Profile Image */}
-                            <div className="relative w-16 h-16 rounded-full overflow-hidden shrink-0">
-                                <Image
-                                    src={profileImage}
-                                    alt={title}
-                                    fill
-                                    className="object-cover"
-                                    unoptimized
-                                />
+                                <div className="flex-1 min-w-0">
+                                    <h2 className="text-[14px] font-medium line-clamp-2 mb-1">
+                                        {title}
+                                    </h2>
+                                    <p className="text-[12px] text-gray-placeholder">
+                                        {typeLabel}
+                                    </p>
+                                </div>
                             </div>
 
-                            {/* Title and Type */}
-                            <div className="flex-1 min-w-0">
-                                <p className="text-xs text-gray-placeholder mb-1">
-                                    {typeLabel}
-                                </p>
-                                <h2 className="text-lg font-semibold line-clamp-2">
-                                    {title}
-                                </h2>
+                            <div className="flex items-center gap-3 shrink-0 ml-2">
+                                <button
+                                    className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
+                                    aria-label="Share"
+                                >
+                                    <ShareIcon className="w-5 h-5" />
+                                </button>
+                                <button
+                                    className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
+                                    aria-label="More options"
+                                >
+                                    <DotsIcon className="w-5 h-5 rotate-90" />
+                                </button>
                             </div>
                         </div>
-
-                        {/* Action Icons */}
-                        <div className="flex items-center gap-2 shrink-0 ml-2">
-                            <button
-                                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
-                                aria-label="Share"
+                        <div className="flex gap-2 mb-4">
+                            <MainButton
+                                variant="primary"
+                                className="flex-1 h-10 text-sm"
+                                onClick={() => {}}
                             >
-                                <ShareIcon className="w-5 h-5" />
-                            </button>
-                            <button
-                                className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
-                                aria-label="More options"
+                                <div className="flex items-center justify-center gap-2">
+                                    <Image
+                                        src="/images/icons/addProfile.svg"
+                                        alt="remember icon"
+                                        width={20}
+                                        height={20}
+                                    />
+                                    Запомнить
+                                </div>
+                            </MainButton>
+                            <MainButton
+                                variant="primary"
+                                className="flex-1 h-10 text-sm"
+                                onClick={() => {}}
                             >
-                                <GearIcon className="w-5 h-5" />
-                            </button>
+                                <div className="flex items-center justify-center gap-2">
+                                    <ArrowDiagonalIcon className="brightness-0 invert w-5 h-5" />
+                                    В путь
+                                </div>
+                            </MainButton>
                         </div>
-                    </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex gap-2 mb-4">
-                        <MainButton
-                            variant="primary"
-                            className="flex-1 h-10 text-sm"
-                            onClick={() => {
-                                // Remember functionality - to be implemented
-                            }}
-                        >
-                            <div className="flex items-center justify-center gap-2">
-                                <Image
-                                    src="/images/navbar/user.svg"
-                                    alt="remember icon"
-                                    width={16}
-                                    height={16}
-                                />
-                                Запомнить
-                            </div>
-                        </MainButton>
-                        <MainButton
-                            variant="primary"
-                            className="flex-1 h-10 text-sm"
-                            onClick={() => {
-                                // Move to functionality - to be implemented
-                            }}
-                        >
-                            <div className="flex items-center justify-center gap-2">
-                                <Image
-                                    src="/images/icons/arrowDiagonal.svg"
-                                    alt="move to icon"
-                                    width={16}
-                                    height={16}
-                                    className="brightness-0 invert"
-                                />
-                                В путь
-                            </div>
-                        </MainButton>
-                    </div>
-
-                    {/* Gallery Images */}
-                    {galleryImages.length > 0 && (
-                        <div>
-                            <div className="grid grid-cols-4 gap-2">
-                                {galleryImages.slice(0, 8).map((imageUrl, index) => (
-                                    <div
-                                        key={index}
-                                        className="relative w-full aspect-square rounded-[12px] overflow-hidden"
-                                    >
+                        {galleryImages.length > 0 && (
+                            <div className="h-[168px] w-full">
+                                <div className="grid grid-cols-2 gap-2 h-full">
+                                    <div className="relative w-full h-full rounded-[12px] overflow-hidden">
                                         <Image
-                                            src={imageUrl}
-                                            alt={`Gallery ${index + 1}`}
+                                            src={galleryImages[0]}
+                                            alt="Gallery 1"
                                             fill
                                             className="object-cover"
                                             unoptimized
                                         />
                                     </div>
-                                ))}
+                                    <div className="grid grid-cols-2 grid-rows-2 gap-2 h-full">
+                                        {galleryImages
+                                            .slice(1, 5)
+                                            .map((imageUrl, index) => (
+                                                <div
+                                                    key={index + 1}
+                                                    className="relative w-full h-full rounded-[12px] overflow-hidden"
+                                                >
+                                                    <Image
+                                                        src={imageUrl}
+                                                        alt={`Gallery ${
+                                                            index + 2
+                                                        }`}
+                                                        fill
+                                                        className="object-cover"
+                                                        unoptimized
+                                                    />
+                                                </div>
+                                            ))}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    )}
-                </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
-            {/* White Backdrop - appears when dragging to cover area below card */}
             {dragY > 0 && (
                 <div
                     className="fixed bottom-0 left-0 right-0 max-w-[440px] mx-auto bg-white z-[100] rounded-t-[24px]"
@@ -399,4 +385,3 @@ export default function MapBottomSheet({
         </>
     );
 }
-

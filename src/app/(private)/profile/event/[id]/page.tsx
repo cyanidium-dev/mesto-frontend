@@ -27,18 +27,30 @@ export default function EventProfilePage() {
     const getEvent = useEventsStore(s => s.getEvent);
     const getUser = useUserStore(s => s.getUser);
     const [event, setEvent] = useState<Event | null>(null);
-    const [creator, setCreator] = useState<User | null>(null);
+    const [organizers, setOrganizers] = useState<User[]>([]);
+    const [attendees, setAttendees] = useState<User[]>([]);
     const [selectedTab, setSelectedTab] = useState<TabKey>("overview");
     const [locationAddress, setLocationAddress] = useState<string>("");
+    const [locationCity, setLocationCity] = useState<string>("");
+    const [locationCountry, setLocationCountry] = useState<string>("");
 
     useEffect(() => {
         const eventData = getEvent(eventId);
         if (eventData) {
+            console.log(eventData);
             setEvent(eventData);
             const creatorData = getUser(eventData.creatorId);
-            setCreator(creatorData);
+            if (creatorData) {
+                setOrganizers([creatorData]);
+            }
 
-            // Get location address
+            const attendeesData = eventData.attendees.map(attendeeId =>
+                getUser(attendeeId)
+            );
+            if (attendeesData) {
+                setAttendees(attendeesData.filter(user => user !== null));
+            }
+
             const coords = getCoordinates(eventData.location);
             if (coords) {
                 fetch(`/api/geocode/reverse?lat=${coords[0]}&lon=${coords[1]}`)
@@ -47,20 +59,31 @@ export default function EventProfilePage() {
                         if (data.display_name) {
                             setLocationAddress(data.display_name);
                         }
+                        if (data.address) {
+                            const city =
+                                data.address.city ||
+                                data.address.town ||
+                                data.address.village ||
+                                data.address.municipality ||
+                                "";
+                            const country = data.address.country || "";
+                            setLocationCity(city);
+                            setLocationCountry(country);
+                        }
                     })
                     .catch(() => {});
             }
         }
     }, [eventId, getEvent, getUser]);
 
-    // Get all valid image URLs
-    const allImageUrls = event?.imageUrls?.filter(
-        url =>
-            url &&
-            (url.startsWith("http") ||
-                url.startsWith("data:") ||
-                url.startsWith("/"))
-    ) || [];
+    const allImageUrls =
+        event?.imageUrls?.filter(
+            url =>
+                url &&
+                (url.startsWith("http") ||
+                    url.startsWith("data:") ||
+                    url.startsWith("/"))
+        ) || [];
 
     if (!event) {
         return (
@@ -77,48 +100,90 @@ export default function EventProfilePage() {
         );
     }
 
-    // Get participants (for now, using attendees array length)
-    const participantsCount = event.attendees?.length || 0;
-
     return (
         <div className="flex flex-col h-screen">
+            <div className="sticky top-0 z-10 bg-white">
+                <Container className="pt-4">
+                    <EventHeader />
+                </Container>
+            </div>
             <Container className="pt-4 pb-24 flex-1 overflow-y-auto">
-                <EventHeader />
-                <EventImageGallery imageUrls={allImageUrls} eventTitle={event.title} />
+                <EventImageGallery
+                    imageUrls={allImageUrls}
+                    eventTitle={event.title}
+                />
                 <EventTitle event={event} />
                 <EventTags event={event} />
 
-                {/* Tabs */}
                 <Tabs
                     selectedKey={selectedTab}
-                    onSelectionChange={(key) => setSelectedTab(key as TabKey)}
+                    onSelectionChange={key => setSelectedTab(key as TabKey)}
                     classNames={{
                         base: "w-full",
-                        tabList: "gap-0 w-full",
-                        cursor: "bg-primary",
-                        tab: "text-sm data-[selected=true]:!text-white",
+                        tabList: "gap-0 w-full rounded-full p-0",
+                        cursor: "bg-primary rounded-full",
+                        tab: "text-sm data-[selected=true]:!text-white rounded-full",
                         tabContent: "text-sm",
                     }}
                 >
-                    <Tab 
-                        key="overview" 
-                        title={<span className={selectedTab === "overview" ? "text-white" : ""}>Обзор</span>}
+                    <Tab
+                        key="overview"
+                        title={
+                            <span
+                                className={
+                                    selectedTab === "overview"
+                                        ? "text-white"
+                                        : ""
+                                }
+                            >
+                                Обзор
+                            </span>
+                        }
                     >
-                        <EventOverviewTab event={event} locationAddress={locationAddress} />
+                        <EventOverviewTab
+                            event={event}
+                            locationAddress={locationAddress}
+                            locationCity={locationCity}
+                            locationCountry={locationCountry}
+                        />
                     </Tab>
 
-                    <Tab 
-                        key="description" 
-                        title={<span className={selectedTab === "description" ? "text-white" : ""}>Описание</span>}
+                    <Tab
+                        key="description"
+                        title={
+                            <span
+                                className={
+                                    selectedTab === "description"
+                                        ? "text-white"
+                                        : ""
+                                }
+                            >
+                                Описание
+                            </span>
+                        }
                     >
                         <EventDescriptionTab event={event} />
                     </Tab>
 
-                    <Tab 
-                        key="participants" 
-                        title={<span className={selectedTab === "participants" ? "text-white" : ""}>Участники</span>}
+                    <Tab
+                        key="participants"
+                        title={
+                            <span
+                                className={
+                                    selectedTab === "participants"
+                                        ? "text-white"
+                                        : ""
+                                }
+                            >
+                                Участники
+                            </span>
+                        }
                     >
-                        <EventParticipantsTab event={event} creator={creator} participantsCount={participantsCount} />
+                        <EventParticipantsTab
+                            event={event}
+                            organizers={organizers}
+                            attendees={attendees}
+                        />
                     </Tab>
                 </Tabs>
             </Container>

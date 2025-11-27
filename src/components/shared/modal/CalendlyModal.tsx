@@ -3,10 +3,7 @@
 import { useState, useEffect } from "react";
 import Script from "next/script";
 import ArrowIcon from "../icons/ArrowIcon";
-import Image from "next/image";
-import ShareIcon from "../icons/ShareIcon";
 
-// Declare Calendly type for TypeScript
 declare global {
     interface Window {
         Calendly?: {
@@ -44,7 +41,6 @@ export default function CalendlyModal({
     const [copiedLink, setCopiedLink] = useState<string | null>(null);
     const [calendlyLoaded, setCalendlyLoaded] = useState(false);
 
-    // Extract Calendly username from URL
     const getCalendlyUsername = (url: string): string => {
         try {
             const match = url.match(/calendly\.com\/([^/?]+)/);
@@ -57,7 +53,6 @@ export default function CalendlyModal({
     const calendlyUsername = getCalendlyUsername(calendlyUrl);
     const calendlyLink = `calendly.com/${calendlyUsername}`;
 
-    // Normalize the Calendly URL - ensure it's a full URL
     let fullCalendlyUrl: string;
     if (
         calendlyUrl.startsWith("http://") ||
@@ -67,18 +62,14 @@ export default function CalendlyModal({
     } else if (calendlyUrl.startsWith("calendly.com/")) {
         fullCalendlyUrl = `https://${calendlyUrl}`;
     } else if (calendlyUrl.includes("/")) {
-        // If it has a path, assume it's a full path
         fullCalendlyUrl = `https://calendly.com/${calendlyUrl}`;
     } else {
-        // Just username, use default event type or landing page
         fullCalendlyUrl = `https://calendly.com/${calendlyUrl}`;
     }
 
-    // Prepare Calendly URL with parameters (add params if not already present)
     let calendlyUrlWithParams: string;
     try {
         const urlObj = new URL(fullCalendlyUrl);
-        // Only add params if they don't already exist
         if (!urlObj.searchParams.has("hide_landing_page_details")) {
             urlObj.searchParams.set("hide_landing_page_details", "1");
         }
@@ -96,12 +87,10 @@ export default function CalendlyModal({
             "URL:",
             fullCalendlyUrl
         );
-        // Fallback if URL parsing fails
         const separator = fullCalendlyUrl.includes("?") ? "&" : "?";
         calendlyUrlWithParams = `${fullCalendlyUrl}${separator}hide_landing_page_details=1&hide_gdpr_banner=1&text_color=0022ff`;
     }
 
-    // Get user initial for profile icon
     const getUserInitial = (name: string): string => {
         return name.charAt(0).toUpperCase();
     };
@@ -126,11 +115,9 @@ export default function CalendlyModal({
                     url: fullCalendlyUrl,
                 });
             } catch {
-                // User cancelled or error occurred
                 console.log("Share cancelled");
             }
         } else {
-            // Fallback: copy to clipboard
             handleCopyLink("regular");
         }
     };
@@ -139,7 +126,6 @@ export default function CalendlyModal({
         window.open(fullCalendlyUrl, "_blank", "noopener,noreferrer");
     };
 
-    // Add Calendly CSS link to head when modal opens
     useEffect(() => {
         if (isOpen) {
             const link = document.createElement("link");
@@ -148,7 +134,6 @@ export default function CalendlyModal({
             link.rel = "stylesheet";
             document.head.appendChild(link);
 
-            // Add custom styles to ensure Calendly iframe fills container
             const style = document.createElement("style");
             style.textContent = `
                 #calendly-inline-widget {
@@ -164,7 +149,6 @@ export default function CalendlyModal({
             document.head.appendChild(style);
 
             return () => {
-                // Cleanup: remove link and style when modal closes
                 const existingLink = document.querySelector(
                     'link[href="https://assets.calendly.com/assets/external/widget.css"]'
                 );
@@ -177,7 +161,6 @@ export default function CalendlyModal({
                 if (existingStyle) {
                     document.head.removeChild(existingStyle);
                 } else {
-                    // Fallback: remove the style we just added
                     const styles = document.querySelectorAll("style");
                     styles.forEach(s => {
                         if (s.textContent?.includes("calendly-inline-widget")) {
@@ -189,7 +172,6 @@ export default function CalendlyModal({
         }
     }, [isOpen]);
 
-    // Initialize Calendly inline widget when modal opens and script is loaded
     useEffect(() => {
         if (isOpen && calendlyLoaded && window.Calendly) {
             const calendlyContainer = document.getElementById(
@@ -200,10 +182,8 @@ export default function CalendlyModal({
                     "Initializing Calendly widget with URL:",
                     calendlyUrlWithParams
                 );
-                // Clear any existing widget
                 calendlyContainer.innerHTML = "";
 
-                // Set up error handler for iframe load errors
                 const handleIframeError = () => {
                     console.error("Calendly iframe failed to load");
                     calendlyContainer.innerHTML = `
@@ -221,13 +201,11 @@ export default function CalendlyModal({
                 };
 
                 try {
-                    // Initialize inline widget
                     window.Calendly.initInlineWidget({
                         url: calendlyUrlWithParams,
                         parentElement: calendlyContainer,
                     });
 
-                    // Listen for iframe load and check for errors
                     setTimeout(() => {
                         const iframe =
                             calendlyContainer.querySelector("iframe");
@@ -238,11 +216,8 @@ export default function CalendlyModal({
                                 console.log(
                                     "Calendly iframe loaded successfully"
                                 );
-                                // Check if the iframe content shows an error page
                                 setTimeout(() => {
                                     try {
-                                        // Try to access iframe content to check for errors
-                                        // Note: This might fail due to CORS, but we can try
                                         const iframeDoc =
                                             iframe.contentDocument ||
                                             iframe.contentWindow?.document;
@@ -266,7 +241,6 @@ export default function CalendlyModal({
                                             }
                                         }
                                     } catch (e) {
-                                        // CORS error is expected, ignore
                                         console.log(
                                             "Cannot access iframe content (CORS), assuming it loaded correctly"
                                         );
@@ -274,7 +248,6 @@ export default function CalendlyModal({
                                 }, 2000);
                             };
 
-                            // Also listen for postMessage errors from Calendly
                             window.addEventListener("message", event => {
                                 if (
                                     event.data &&
@@ -290,7 +263,6 @@ export default function CalendlyModal({
                             });
                         } else {
                             console.warn("No iframe found after 1 second");
-                            // If no iframe after 3 seconds, show error
                             setTimeout(() => {
                                 if (
                                     !calendlyContainer.querySelector("iframe")
@@ -317,7 +289,6 @@ export default function CalendlyModal({
         }
     };
 
-    // Debug: log when modal state changes
     useEffect(() => {
         console.log(
             "CalendlyModal isOpen:",
@@ -341,7 +312,6 @@ export default function CalendlyModal({
 
     return (
         <>
-            {/* Calendly Script - Load always, not just when modal is open */}
             <Script
                 src="https://assets.calendly.com/assets/external/widget.js"
                 type="text/javascript"
@@ -361,7 +331,6 @@ export default function CalendlyModal({
                     onClick={handleBackdropClick}
                 >
                     <div className="flex flex-col h-full max-w-[440px] mx-auto bg-white">
-                        {/* Header */}
                         <div className="flex items-center justify-between p-4 border-b border-gray-ultra-light">
                             <div className="flex items-center gap-2">
                                 <button
@@ -377,7 +346,6 @@ export default function CalendlyModal({
                             </div>
                         </div>
 
-                        {/* Content */}
                         <div className="flex-1 overflow-hidden flex flex-col">
                             {!calendlyLoaded ? (
                                 <div className="flex items-center justify-center flex-1">
@@ -389,7 +357,6 @@ export default function CalendlyModal({
                                     </div>
                                 </div>
                             ) : (
-                                /* Calendly Inline Widget */
                                 <div
                                     id="calendly-inline-widget"
                                     className="calendly-inline-widget w-full flex-1"

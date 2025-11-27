@@ -3,83 +3,112 @@ import Image from "next/image";
 import { Event } from "@/types/event";
 import { User } from "@/types/user";
 import { CATEGORIES } from "@/constants/filters";
+import ArrowDiagonalIcon from "@/components/shared/icons/ArrowDiagonalIcon";
 
 interface EventParticipantsTabProps {
     event: Event;
-    creator: User | null;
-    participantsCount: number;
+    organizers: User[];
+    attendees: User[];
 }
 
-export default function EventParticipantsTab({ event, creator, participantsCount }: EventParticipantsTabProps) {
+export default function EventParticipantsTab({
+    event,
+    organizers,
+    attendees,
+}: EventParticipantsTabProps) {
     return (
         <div className="space-y-4 mt-4">
-            {/* Organizer Block */}
             <div>
-                <p className="text-sm text-gray-placeholder mb-2">
-                    Организатор
+                <p className="text-[12px] font-semibold mb-2">
+                    Организатор ({organizers.length})
                 </p>
-                {creator ? (
-                    <div className="flex items-center gap-3 p-3 rounded-[12px] hover:bg-gray-ultra-light transition-colors cursor-pointer">
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
-                            <Image
-                                src={creator.photoUrl || "/images/mockedData/girl.jpg"}
-                                alt={creator.name}
-                                fill
-                                className="object-cover"
-                                unoptimized
-                            />
+                {organizers.length > 0 ? (
+                    organizers.map(organizer => (
+                        <div
+                            key={organizer.id}
+                            className="flex items-center gap-3 p-3 rounded-[12px]"
+                        >
+                            <div className="relative size-10 rounded-full overflow-hidden shrink-0">
+                                <Image
+                                    src={
+                                        organizer.photoUrl ||
+                                        organizer.profilePictureUrl ||
+                                        "/images/mockedData/girl.jpg"
+                                    }
+                                    alt={organizer.name}
+                                    fill
+                                    className="object-cover"
+                                    unoptimized
+                                />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-[14px] font-medium">
+                                    {organizer.name}
+                                </p>
+                                <p className="text-[10px] font-medium text-gray-placeholder">
+                                    {CATEGORIES.find(
+                                        cat => cat.key === event.category
+                                    )?.label || event.category}
+                                </p>
+                            </div>
+                            <div className="flex items-center justify-center size-8 rounded-full bg-gray-ultra-light">
+                                <ArrowDiagonalIcon className="text-black shrink-0 w-5 h-5" />
+                            </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-base font-semibold">
-                                {creator.name}
-                            </p>
-                            <p className="text-sm text-gray-placeholder">
-                                {CATEGORIES.find(cat => cat.key === event.category)?.label || event.category}
-                            </p>
-                        </div>
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-gray-placeholder shrink-0">
-                            <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
-                    </div>
+                    ))
                 ) : (
                     <div className="p-3 rounded-[12px] bg-gray-ultra-light">
-                        <p className="text-sm text-gray-placeholder">Организатор не указан</p>
+                        <p className="text-[12px] font-light text-gray-placeholder">
+                            Организатор не указан
+                        </p>
                     </div>
                 )}
             </div>
 
-            {/* Participants */}
             <div>
-                <p className="text-sm text-gray-placeholder mb-2">
-                    Участники ({participantsCount.toLocaleString("ru-RU")})
+                <p className="text-[12px] font-semibold mb-2">
+                    Участники ({attendees.length})
                 </p>
-                {/* For now, show creator as participant (in real app, would show actual participants) */}
-                {creator && (
-                    <div className="flex items-center gap-3 p-3 rounded-[12px] hover:bg-gray-ultra-light transition-colors cursor-pointer">
-                        <div className="relative w-12 h-12 rounded-full overflow-hidden shrink-0">
-                            <Image
-                                src={creator.photoUrl || "/images/mockedData/girl.jpg"}
-                                alt={creator.name}
-                                fill
-                                className="object-cover"
-                                unoptimized
-                            />
+                {attendees.length > 0 ? (
+                    attendees.map(attendee => (
+                        <div
+                            key={attendee.id}
+                            className="flex items-center gap-3 p-3 rounded-[12px]"
+                        >
+                            <div className="relative size-10 rounded-full overflow-hidden shrink-0">
+                                <Image
+                                    src={
+                                        attendee.photoUrl ||
+                                        attendee.profilePictureUrl ||
+                                        "/images/mockedData/girl.jpg"
+                                    }
+                                    alt={attendee.name}
+                                    fill
+                                    className="object-cover"
+                                    unoptimized
+                                />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-[14px] font-medium">
+                                    {attendee.name}
+                                </p>
+                                <p className="text-[10px] font-medium text-gray-placeholder">
+                                    Персональный аккаунт
+                                </p>
+                            </div>
+                            <div className="flex items-center justify-center size-8 rounded-full bg-gray-ultra-light">
+                                <ArrowDiagonalIcon className="text-black shrink-0 w-5 h-5" />
+                            </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                            <p className="text-base font-semibold">
-                                {creator.name}
-                            </p>
-                            <p className="text-sm text-gray-placeholder">
-                                Персональный аккаунт
-                            </p>
-                        </div>
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="text-gray-placeholder shrink-0">
-                            <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                        </svg>
+                    ))
+                ) : (
+                    <div className="p-3 rounded-[12px] bg-gray-ultra-light">
+                        <p className="text-[12px] font-light text-gray-placeholder">
+                            Пока нет участников
+                        </p>
                     </div>
                 )}
             </div>
         </div>
     );
 }
-

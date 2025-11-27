@@ -24,7 +24,6 @@ export default function CalendlyEventTypesModal({
     const [copiedLink, setCopiedLink] = useState<string | null>(null);
     const [isCalendlyWidgetOpen, setIsCalendlyWidgetOpen] = useState(false);
 
-    // Extract Calendly username from URL
     const getCalendlyUsername = (url: string): string => {
         try {
             const match = url.match(/calendly\.com\/([^/?]+)/);
@@ -40,7 +39,6 @@ export default function CalendlyEventTypesModal({
         ? calendlyUrl
         : `https://${calendlyUrl}`;
 
-    // Get user initial for profile icon
     const getUserInitial = (name: string): string => {
         return name.charAt(0).toUpperCase();
     };
@@ -65,11 +63,9 @@ export default function CalendlyEventTypesModal({
                     url: fullCalendlyUrl,
                 });
             } catch {
-                // User cancelled or error occurred
                 console.log("Share cancelled");
             }
         } else {
-            // Fallback: copy to clipboard
             handleCopyLink("regular");
         }
     };
@@ -93,7 +89,6 @@ export default function CalendlyEventTypesModal({
                 onClick={handleBackdropClick}
             >
                 <div className="flex flex-col h-full max-w-[440px] mx-auto bg-white">
-                    {/* Header */}
                     <div className="flex items-center justify-between p-4 border-b border-gray-ultra-light">
                         <div className="flex items-center gap-2">
                             <button
@@ -109,9 +104,7 @@ export default function CalendlyEventTypesModal({
                         </div>
                     </div>
 
-                    {/* Content */}
                     <div className="flex-1 overflow-y-auto px-4 py-4">
-                        {/* User Profile Section */}
                         <div className="flex items-center gap-3 mb-6">
                             <div className="relative w-12 h-12 rounded-full bg-gray-ultra-light flex items-center justify-center shrink-0">
                                 {userPhotoUrl ? (
@@ -160,7 +153,6 @@ export default function CalendlyEventTypesModal({
                             </div>
                         </div>
 
-                        {/* Event Type Card */}
                         <div
                             className="bg-white border border-gray-light rounded-[16px] p-4 mb-4 relative cursor-pointer hover:border-primary transition-colors"
                             onClick={handleViewBookingPage}
@@ -174,7 +166,6 @@ export default function CalendlyEventTypesModal({
                                 }
                             }}
                         >
-                            {/* Purple top border */}
                             <div className="absolute top-0 left-0 right-0 h-1 bg-[#6B46C1] rounded-t-[16px]"></div>
 
                             <div className="mt-2">
@@ -237,7 +228,6 @@ export default function CalendlyEventTypesModal({
                             </div>
                         </div>
 
-                        {/* Action Buttons */}
                         <div className="flex items-center border-t border-b border-gray-ultra-light">
                             <button
                                 onClick={() => handleCopyLink("regular")}
@@ -286,7 +276,6 @@ export default function CalendlyEventTypesModal({
                 </div>
             </div>
 
-            {/* Calendly Widget Modal - Opens when "View booking page" is clicked */}
             <CalendlyModal
                 isOpen={isCalendlyWidgetOpen}
                 onClose={() => setIsCalendlyWidgetOpen(false)}

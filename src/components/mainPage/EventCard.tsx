@@ -19,7 +19,6 @@ export default function EventCard({ event }: EventCardProps) {
     const toggleShowMore = () => setIsShownMore(prev => !prev);
 
     const handleShowOnMap = () => {
-        // Switch to map view and center on this event
         router.push(`/main?view=map&focus=${event.id}`);
     };
 
@@ -36,7 +35,6 @@ export default function EventCard({ event }: EventCardProps) {
 
     const { imageUrls, title, description, category, startDate, startTime } =
         event;
-    // Get first available image from array (user can upload to any of 8 slots)
     const eventImageUrl = imageUrls?.find(
         url =>
             url &&
@@ -59,7 +57,6 @@ export default function EventCard({ event }: EventCardProps) {
 
     return (
         <li className="p-2 shadow-md rounded-[16px] bg-white relative">
-            {/* Show on Map Button - Top Right */}
             <button
                 onClick={handleShowOnMap}
                 className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-primary hover:bg-primary/90 transition-colors"

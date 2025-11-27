@@ -23,7 +23,6 @@ export default function ProfilePage() {
     const allEvents = useEventsStore(s => s.getAllEvents());
     const [selectedTab, setSelectedTab] = useState<TabKey>("info");
 
-    // Filter businesses and events by creatorId
     const userBusinesses = useMemo(() => {
         if (!currentUser) return [];
         return allBusinesses.filter(
@@ -36,7 +35,6 @@ export default function ProfilePage() {
         return allEvents.filter(event => event.creatorId === currentUser.id);
     }, [allEvents, currentUser]);
 
-    // Get individual businesses for the user
     const individualBusinesses = useMemo(() => {
         if (!currentUser) return [];
         return userBusinesses.filter(
@@ -44,7 +42,6 @@ export default function ProfilePage() {
         );
     }, [userBusinesses, currentUser]);
 
-    // Collect all images from individual businesses
     const individualBusinessImages = useMemo(() => {
         const images: string[] = [];
         individualBusinesses.forEach(business => {
@@ -59,7 +56,6 @@ export default function ProfilePage() {
         return images;
     }, [individualBusinesses]);
 
-    // Collect all social links from individual businesses
     const individualBusinessSocialLinks = useMemo(() => {
         const links: string[] = [];
         individualBusinesses.forEach(business => {
@@ -74,7 +70,6 @@ export default function ProfilePage() {
         return links;
     }, [individualBusinesses]);
 
-    // Collect all site links from individual businesses
     const individualBusinessSiteLinks = useMemo(() => {
         const links: string[] = [];
         individualBusinesses.forEach(business => {
@@ -85,7 +80,6 @@ export default function ProfilePage() {
         return links;
     }, [individualBusinesses]);
 
-    // Collect all tags from individual businesses
     const individualBusinessTags = useMemo(() => {
         const tags: string[] = [];
         individualBusinesses.forEach(business => {
@@ -100,24 +94,20 @@ export default function ProfilePage() {
         return tags;
     }, [individualBusinesses]);
 
-    // Get category from individual businesses (use first one)
     const individualBusinessCategory = useMemo(() => {
         const firstIndividual = individualBusinesses[0];
         if (!firstIndividual?.category) return "";
-        // Find the label for the category value
         const categoryOption = CATEGORIES.find(
             cat => cat.key === firstIndividual.category
         );
         return categoryOption?.label || firstIndividual.category;
     }, [individualBusinesses]);
 
-    // Get description from individual businesses (use first one or combine)
     const individualBusinessDescription = useMemo(() => {
         const firstIndividual = individualBusinesses[0];
         return firstIndividual?.description || "";
     }, [individualBusinesses]);
 
-    // Helper function to detect social media platform from URL
     const getSocialIcon = (url: string): string | null => {
         const lowerUrl = url.toLowerCase();
         if (lowerUrl.includes("facebook.com")) {
@@ -148,208 +138,213 @@ export default function ProfilePage() {
     }
 
     return (
-        <Container className="pt-4 pb-8">
-            <NavigationButton onClick={() => router.back()} className="mb-4">
-                <ArrowIcon />
-                Назад
-            </NavigationButton>
+        <div className="flex flex-col h-screen">
+            <div className="sticky top-0 z-10 bg-white">
+                <Container className="pt-4 pb-4">
+                    <NavigationButton
+                        onClick={() => router.back()}
+                        className="mb-4"
+                    >
+                        <ArrowIcon />
+                        Назад
+                    </NavigationButton>
 
-            {/* Static Header - PFP, Name, Title */}
-            <div className="flex items-center justify-between w-full mb-3">
-                <div className="flex items-center ">
-                    <div className="relative w-[60px] h-[60px] rounded-full overflow-hidden mr-2">
-                        <Image
-                            src={
-                                currentUser.photoUrl ||
-                                "/images/mockedData/girl.jpg"
-                            }
-                            alt={currentUser.name}
-                            fill
-                            className="object-cover"
-                            unoptimized
-                        />
-                    </div>
-                    <div className="text-center">
-                        <h1 className="text-2xl font-semibold mb-[4px]">
-                            {currentUser.name}
-                        </h1>
-                        {(individualBusinessCategory || currentUser.title) && (
-                            <p className="text-sm text-gray-placeholder">
-                                {individualBusinessCategory ||
-                                    currentUser.title}
-                            </p>
-                        )}
-                    </div>
-                </div>
-                <div className="flex items-center gap-2">
-                    <button className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light">
-                        <ShareIcon className="w-5 h-5" />
-                    </button>
-                    <button className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light">
-                        <GearIcon className="w-5 h-5" />
-                    </button>
-                </div>
-            </div>
-
-            {/* Tabs */}
-            <Tabs
-                selectedKey={selectedTab}
-                onSelectionChange={key => setSelectedTab(key as TabKey)}
-                classNames={{
-                    base: "w-full",
-                    tabList: "w-full",
-                    cursor: "bg-primary",
-                    tab: "text-sm",
-                }}
-            >
-                <Tab key="info" title="Профиль">
-                    <div className="w-full space-y-3 mt-4">
-                        {/* Images from individual businesses */}
-                        {individualBusinessImages.length > 0 && (
-                            <div>
-                                <p className="text-sm text-gray-placeholder mb-2">
-                                    Фото
-                                </p>
-                                <div className="grid grid-cols-2 gap-2">
-                                    {individualBusinessImages.map(
-                                        (imageUrl, index) => (
-                                            <div
-                                                key={index}
-                                                className="relative w-full aspect-square rounded-[16px] overflow-hidden"
-                                            >
-                                                <Image
-                                                    src={imageUrl}
-                                                    alt={`Image ${index + 1}`}
-                                                    fill
-                                                    className="object-cover"
-                                                    unoptimized
-                                                />
-                                            </div>
-                                        )
-                                    )}
-                                </div>
+                    <div className="flex items-center justify-between w-full mb-3">
+                        <div className="flex items-center ">
+                            <div className="relative w-[60px] h-[60px] rounded-full overflow-hidden mr-2">
+                                <Image
+                                    src={
+                                        currentUser.photoUrl ||
+                                        "/images/mockedData/girl.jpg"
+                                    }
+                                    alt={currentUser.name}
+                                    fill
+                                    className="object-cover"
+                                    unoptimized
+                                />
                             </div>
-                        )}
-
-                        {/* Social links from individual businesses */}
-                        {(individualBusinessSocialLinks.length > 0 ||
-                            individualBusinessSiteLinks.length > 0) && (
-                            <div>
-                                <p className="text-sm text-gray-placeholder mb-2">
-                                    Социальные сети
-                                </p>
-                                <div className="flex flex-wrap gap-2 mt-2">
-                                    {individualBusinessSocialLinks.map(
-                                        (url, index) => {
-                                            const icon = getSocialIcon(url);
-                                            return (
-                                                <a
+                            <div className="text-center">
+                                <h1 className="text-2xl font-semibold mb-[4px]">
+                                    {currentUser.name}
+                                </h1>
+                                {(individualBusinessCategory ||
+                                    currentUser.title) && (
+                                    <p className="text-sm text-gray-placeholder">
+                                        {individualBusinessCategory ||
+                                            currentUser.title}
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <button className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light">
+                                <ShareIcon className="w-5 h-5" />
+                            </button>
+                            <button className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light">
+                                <GearIcon className="w-5 h-5" />
+                            </button>
+                        </div>
+                    </div>
+                </Container>
+            </div>
+            <Container className="pb-8 flex-1 overflow-y-auto">
+                <Tabs
+                    selectedKey={selectedTab}
+                    onSelectionChange={key => setSelectedTab(key as TabKey)}
+                    classNames={{
+                        base: "w-full",
+                        tabList: "w-full",
+                        cursor: "bg-primary",
+                        tab: "text-sm",
+                    }}
+                >
+                    <Tab key="info" title="Профиль">
+                        <div className="w-full space-y-3 mt-4">
+                            {individualBusinessImages.length > 0 && (
+                                <div>
+                                    <p className="text-sm text-gray-placeholder mb-2">
+                                        Фото
+                                    </p>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {individualBusinessImages.map(
+                                            (imageUrl, index) => (
+                                                <div
                                                     key={index}
+                                                    className="relative w-full aspect-square rounded-[16px] overflow-hidden"
+                                                >
+                                                    <Image
+                                                        src={imageUrl}
+                                                        alt={`Image ${
+                                                            index + 1
+                                                        }`}
+                                                        fill
+                                                        className="object-cover"
+                                                        unoptimized
+                                                    />
+                                                </div>
+                                            )
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {(individualBusinessSocialLinks.length > 0 ||
+                                individualBusinessSiteLinks.length > 0) && (
+                                <div>
+                                    <p className="text-sm text-gray-placeholder mb-2">
+                                        Социальные сети
+                                    </p>
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                        {individualBusinessSocialLinks.map(
+                                            (url, index) => {
+                                                const icon = getSocialIcon(url);
+                                                return (
+                                                    <a
+                                                        key={index}
+                                                        href={url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
+                                                        aria-label={`Social media link ${
+                                                            index + 1
+                                                        }`}
+                                                    >
+                                                        {icon && (
+                                                            <Image
+                                                                src={icon}
+                                                                alt=""
+                                                                width={20}
+                                                                height={20}
+                                                                className="flex-shrink-0"
+                                                            />
+                                                        )}
+                                                    </a>
+                                                );
+                                            }
+                                        )}
+                                        {individualBusinessSiteLinks.map(
+                                            (url, index) => (
+                                                <a
+                                                    key={`site-${index}`}
                                                     href={url}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
-                                                    aria-label={`Social media link ${
-                                                        index + 1
-                                                    }`}
+                                                    aria-label="Website link"
                                                 >
-                                                    {icon && (
-                                                        <Image
-                                                            src={icon}
-                                                            alt=""
-                                                            width={20}
-                                                            height={20}
-                                                            className="flex-shrink-0"
-                                                        />
-                                                    )}
+                                                    <Image
+                                                        src="/images/icons/link.svg"
+                                                        alt=""
+                                                        width={20}
+                                                        height={20}
+                                                        className="flex-shrink-0"
+                                                    />
                                                 </a>
-                                            );
-                                        }
-                                    )}
-                                    {individualBusinessSiteLinks.map(
-                                        (url, index) => (
-                                            <a
-                                                key={`site-${index}`}
-                                                href={url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
-                                                aria-label="Website link"
-                                            >
-                                                <Image
-                                                    src="/images/icons/link.svg"
-                                                    alt=""
-                                                    width={20}
-                                                    height={20}
-                                                    className="flex-shrink-0"
-                                                />
-                                            </a>
-                                        )
-                                    )}
+                                            )
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        {/* Tags from individual businesses */}
-                        {individualBusinessTags.length > 0 && (
-                            <div>
-                                <p className="text-sm text-gray-placeholder mb-2">
-                                    Теги
-                                </p>
-                                <div className="flex flex-wrap gap-2 mt-2">
-                                    {individualBusinessTags.map(
-                                        (tag, index) => (
-                                            <span
-                                                key={index}
-                                                className="px-3 py-1 bg-gray-ultra-light rounded-full text-sm"
-                                            >
-                                                {tag}
-                                            </span>
-                                        )
-                                    )}
+                            {individualBusinessTags.length > 0 && (
+                                <div>
+                                    <p className="text-sm text-gray-placeholder mb-2">
+                                        Теги
+                                    </p>
+                                    <div className="flex flex-wrap gap-2 mt-2">
+                                        {individualBusinessTags.map(
+                                            (tag, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="px-3 py-1 bg-gray-ultra-light rounded-full text-sm"
+                                                >
+                                                    {tag}
+                                                </span>
+                                            )
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
 
-                        {/* Description from individual businesses */}
-                        {individualBusinessDescription && (
-                            <div>
-                                <p className="text-sm text-gray-placeholder">
-                                    Описание
+                            {individualBusinessDescription && (
+                                <div>
+                                    <p className="text-sm text-gray-placeholder">
+                                        Описание
+                                    </p>
+                                    <p className="text-base whitespace-pre-wrap">
+                                        {individualBusinessDescription}
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    </Tab>
+                    <Tab key="events" title={`События (${userEvents.length})`}>
+                        <div className="mt-4">
+                            {userEvents.length > 0 ? (
+                                <ItemsList items={userEvents} />
+                            ) : (
+                                <p className="text-center text-gray-placeholder py-8">
+                                    Нет созданных событий
                                 </p>
-                                <p className="text-base whitespace-pre-wrap">
-                                    {individualBusinessDescription}
+                            )}
+                        </div>
+                    </Tab>
+                    <Tab
+                        key="businesses"
+                        title={`Бизнесы (${userBusinesses.length})`}
+                    >
+                        <div className="mt-4">
+                            {userBusinesses.length > 0 ? (
+                                <ItemsList items={userBusinesses} />
+                            ) : (
+                                <p className="text-center text-gray-placeholder py-8">
+                                    Нет созданных бизнесов
                                 </p>
-                            </div>
-                        )}
-                    </div>
-                </Tab>
-                <Tab key="events" title={`События (${userEvents.length})`}>
-                    <div className="mt-4">
-                        {userEvents.length > 0 ? (
-                            <ItemsList items={userEvents} />
-                        ) : (
-                            <p className="text-center text-gray-placeholder py-8">
-                                Нет созданных событий
-                            </p>
-                        )}
-                    </div>
-                </Tab>
-                <Tab
-                    key="businesses"
-                    title={`Бизнесы (${userBusinesses.length})`}
-                >
-                    <div className="mt-4">
-                        {userBusinesses.length > 0 ? (
-                            <ItemsList items={userBusinesses} />
-                        ) : (
-                            <p className="text-center text-gray-placeholder py-8">
-                                Нет созданных бизнесов
-                            </p>
-                        )}
-                    </div>
-                </Tab>
-            </Tabs>
-        </Container>
+                            )}
+                        </div>
+                    </Tab>
+                </Tabs>
+            </Container>
+        </div>
     );
 }

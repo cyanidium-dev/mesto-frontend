@@ -1,34 +1,27 @@
 import { Business } from "@/types/business";
 
-// Default Calendly URL for testing
 const DEFAULT_CALENDLY_URL = "https://calendly.com/shade09876";
 
-// Helper function to generate evenly distributed coordinates across a rectangular area
 const generateCoordinates = (
     centerLat: number,
     centerLng: number,
     index: number,
     total: number,
-    areaSize: number = 0.03 // Size of the area in degrees (approximately 3km)
+    areaSize: number = 0.03
 ): [number, number] => {
-    // Calculate grid dimensions for even distribution
     const cols = Math.ceil(Math.sqrt(total));
     const rows = Math.ceil(total / cols);
 
-    // Calculate position in grid
     const col = index % cols;
     const row = Math.floor(index / cols);
 
-    // Calculate spacing
     const latSpacing = areaSize / (rows + 1);
     const lngSpacing = areaSize / (cols + 1);
 
-    // Add some variation to avoid perfect grid (deterministic based on index)
-    const variation = (index * 0.1) % 1; // Deterministic variation
+    const variation = (index * 0.1) % 1;
     const randomLat = (variation - 0.5) * latSpacing * 0.3;
     const randomLng = (((variation * 1.7) % 1) - 0.5) * lngSpacing * 0.3;
 
-    // Calculate offsets from center
     const latOffset = (row + 1) * latSpacing - areaSize / 2 + randomLat;
     const lngOffset = (col + 1) * lngSpacing - areaSize / 2 + randomLng;
 
@@ -38,7 +31,6 @@ const generateCoordinates = (
 const centerLat = 50.0755;
 const centerLng = 14.4378;
 
-// Available mock images
 const mockImages = [
     "/images/mockedData/businessPfp.png",
     "/images/mockedData/businessGalleryItem.png",
@@ -50,7 +42,6 @@ const mockImages = [
     "/images/mockedData/businessGalleryItem.png",
 ];
 
-// Helper function to generate 8 gallery images
 const generateGalleryImages = (index: number): string[] => {
     return Array.from({ length: 8 }, (_, i) => {
         const imageIndex = (index * 8 + i) % mockImages.length;
@@ -64,7 +55,7 @@ export const mockBusinesses: Business[] = [
         userType: "business",
         title: "Кафе 'Уютное место'",
         description:
-            "Уютное кафе с отличным кофе и домашней выпечкой. Работаем ежедневно с 8:00 до 22:00.",
+            "Уютное кафе с отличным кофе и домашней выпечкой. Работаем ежедневно с 8:00 до 22:00. Уютное кафе с отличным кофе и домашней выпечкой. Работаем ежедневно с 8:00 до 22:00. Уютное кафе с отличным кофе и домашней выпечкой. Работаем ежедневно с 8:00 до 22:00.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 0, 15) as [
             number,
@@ -95,7 +86,7 @@ export const mockBusinesses: Business[] = [
         id: "business-2",
         userType: "individual",
         description:
-            "Частный репетитор по математике. Индивидуальные занятия для школьников и студентов.",
+            "Частный репетитор по математике. Индивидуальные занятия для школьников и студентов. Частный репетитор по математике. Индивидуальные занятия для школьников и студентов. Частный репетитор по математике. Индивидуальные занятия для школьников и студентов.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 1, 15) as [
             number,
@@ -122,7 +113,7 @@ export const mockBusinesses: Business[] = [
         userType: "business",
         title: "Спортивный клуб 'Фитнес'",
         description:
-            "Современный фитнес-клуб с профессиональным оборудованием и опытными тренерами.",
+            "Современный фитнес-клуб с профессиональным оборудованием и опытными тренерами. Современный фитнес-клуб с профессиональным оборудованием и опытными тренерами. Современный фитнес-клуб с профессиональным оборудованием и опытными тренерами.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 2, 15) as [
             number,
@@ -158,7 +149,7 @@ export const mockBusinesses: Business[] = [
         userType: "business",
         title: "Ресторан 'Итальянская кухня'",
         description:
-            "Аутентичная итальянская кухня в центре города. Свежие пасты, пицца из дровяной печи и отличное вино.",
+            "Аутентичная итальянская кухня в центре города. Свежие пасты, пицца из дровяной печи и отличное вино. Аутентичная итальянская кухня в центре города. Свежие пасты, пицца из дровяной печи и отличное вино. Аутентичная итальянская кухня в центре города. Свежие пасты, пицца из дровяной печи и отличное вино.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 3, 15) as [
             number,
@@ -189,7 +180,7 @@ export const mockBusinesses: Business[] = [
         userType: "business",
         title: "Салон красоты 'Элегант'",
         description:
-            "Полный спектр услуг красоты: стрижки, окрашивание, маникюр, педикюр, макияж.",
+            "Полный спектр услуг красоты: стрижки, окрашивание, маникюр, педикюр, макияж. Полный спектр услуг красоты: стрижки, окрашивание, маникюр, педикюр, макияж. Полный спектр услуг красоты: стрижки, окрашивание, маникюр, педикюр, макияж.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 4, 15) as [
             number,
@@ -217,7 +208,7 @@ export const mockBusinesses: Business[] = [
         userType: "business",
         title: "Книжный магазин 'Читай-город'",
         description:
-            "Большой выбор книг на разных языках. Художественная литература, научные издания, детские книги.",
+            "Большой выбор книг на разных языках. Художественная литература, научные издания, детские книги. Большой выбор книг на разных языках. Художественная литература, научные издания, детские книги. Большой выбор книг на разных языках. Художественная литература, научные издания, детские книги.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 5, 15) as [
             number,
@@ -245,7 +236,7 @@ export const mockBusinesses: Business[] = [
         userType: "business",
         title: "Ветеринарная клиника 'Друг'",
         description:
-            "Профессиональная ветеринарная помощь. Консультации, вакцинация, хирургия, стоматология для животных.",
+            "Профессиональная ветеринарная помощь. Консультации, вакцинация, хирургия, стоматология для животных. Профессиональная ветеринарная помощь. Консультации, вакцинация, хирургия, стоматология для животных. Профессиональная ветеринарная помощь. Консультации, вакцинация, хирургия, стоматология для животных.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 6, 15) as [
             number,
@@ -282,7 +273,7 @@ export const mockBusinesses: Business[] = [
         userType: "business",
         title: "Магазин электроники 'Техно'",
         description:
-            "Широкий ассортимент электроники: смартфоны, ноутбуки, планшеты, аксессуары. Гарантия и сервис.",
+            "Широкий ассортимент электроники: смартфоны, ноутбуки, планшеты, аксессуары. Гарантия и сервис. Широкий ассортимент электроники: смартфоны, ноутбуки, планшеты, аксессуары. Гарантия и сервис. Широкий ассортимент электроники: смартфоны, ноутбуки, планшеты, аксессуары. Гарантия и сервис.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 7, 15) as [
             number,
@@ -313,7 +304,7 @@ export const mockBusinesses: Business[] = [
         userType: "business",
         title: "Йога-студия 'Гармония'",
         description:
-            "Занятия йогой для всех уровней. Хатха, виньяса, аштанга. Утренние и вечерние группы.",
+            "Занятия йогой для всех уровней. Хатха, виньяса, аштанга. Утренние и вечерние группы. Занятия йогой для всех уровней. Хатха, виньяса, аштанга. Утренние и вечерние группы. Занятия йогой для всех уровней. Хатха, виньяса, аштанга. Утренние и вечерние группы.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 8, 15) as [
             number,
@@ -346,7 +337,7 @@ export const mockBusinesses: Business[] = [
         userType: "business",
         title: "Пиццерия 'Мама Миа'",
         description:
-            "Настоящая итальянская пицца, приготовленная в дровяной печи. Свежие ингредиенты и быстрая доставка.",
+            "Настоящая итальянская пицца, приготовленная в дровяной печи. Свежие ингредиенты и быстрая доставка. Настоящая итальянская пицца, приготовленная в дровяной печи. Свежие ингредиенты и быстрая доставка. Настоящая итальянская пицца, приготовленная в дровяной печи. Свежие ингредиенты и быстрая доставка.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 9, 15) as [
             number,
@@ -377,7 +368,7 @@ export const mockBusinesses: Business[] = [
         userType: "business",
         title: "Студия танцев 'Ритм'",
         description:
-            "Обучение различным стилям танцев: латина, сальса, бачата, хип-хоп, современные танцы.",
+            "Обучение различным стилям танцев: латина, сальса, бачата, хип-хоп, современные танцы. Обучение различным стилям танцев: латина, сальса, бачата, хип-хоп, современные танцы. Обучение различным стилям танцев: латина, сальса, бачата, хип-хоп, современные танцы.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 10, 15) as [
             number,
@@ -410,7 +401,7 @@ export const mockBusinesses: Business[] = [
         userType: "business",
         title: "Кофейня 'Аромат'",
         description:
-            "Специализированная кофейня с обжаркой собственного производства. Эспрессо, капучино, альтернативные методы заваривания.",
+            "Специализированная кофейня с обжаркой собственного производства. Эспрессо, капучино, альтернативные методы заваривания. Специализированная кофейня с обжаркой собственного производства. Эспрессо, капучино, альтернативные методы заваривания. Специализированная кофейня с обжаркой собственного производства. Эспрессо, капучино, альтернативные методы заваривания.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 11, 15) as [
             number,
@@ -441,7 +432,7 @@ export const mockBusinesses: Business[] = [
         userType: "business",
         title: "Фотостудия 'Момент'",
         description:
-            "Профессиональная фотосъемка: портреты, свадьбы, корпоративы, семейные фотосессии. Студия и выездная съемка.",
+            "Профессиональная фотосъемка: портреты, свадьбы, корпоративы, семейные фотосессии. Студия и выездная съемка. Профессиональная фотосъемка: портреты, свадьбы, корпоративы, семейные фотосессии. Студия и выездная съемка. Профессиональная фотосъемка: портреты, свадьбы, корпоративы, семейные фотосессии. Студия и выездная съемка.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 12, 15) as [
             number,
@@ -475,7 +466,7 @@ export const mockBusinesses: Business[] = [
         id: "business-individual-1",
         userType: "individual",
         description:
-            "Профессиональный фотограф. Специализируюсь на портретной и свадебной фотографии. Более 5 лет опыта.",
+            "Профессиональный фотограф. Специализируюсь на портретной и свадебной фотографии. Более 5 лет опыта. Профессиональный фотограф. Специализируюсь на портретной и свадебной фотографии. Более 5 лет опыта. Профессиональный фотограф. Специализируюсь на портретной и свадебной фотографии. Более 5 лет опыта.",
         imageUrls: generateGalleryImages(13),
         location: generateCoordinates(centerLat, centerLng, 13, 15) as [
             number,
@@ -504,7 +495,7 @@ export const mockBusinesses: Business[] = [
         id: "business-individual-2",
         userType: "individual",
         description:
-            "Частный преподаватель английского языка. Индивидуальные и групповые занятия. Подготовка к экзаменам IELTS, TOEFL.",
+            "Частный преподаватель английского языка. Индивидуальные и групповые занятия. Подготовка к экзаменам IELTS, TOEFL. Частный преподаватель английского языка. Индивидуальные и групповые занятия. Подготовка к экзаменам IELTS, TOEFL. Частный преподаватель английского языка. Индивидуальные и групповые занятия. Подготовка к экзаменам IELTS, TOEFL.",
         imageUrls: generateGalleryImages(14),
         location: generateCoordinates(centerLat, centerLng, 14, 15) as [
             number,

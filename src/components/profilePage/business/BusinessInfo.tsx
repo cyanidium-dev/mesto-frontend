@@ -10,16 +10,20 @@ interface BusinessInfoProps {
     imageUrl: string;
 }
 
-export default function BusinessInfo({ business, imageUrl }: BusinessInfoProps) {
+export default function BusinessInfo({
+    business,
+    imageUrl,
+}: BusinessInfoProps) {
     const categoryLabel = business.category
-        ? CATEGORIES.find(cat => cat.key === business.category)?.label || business.category
+        ? CATEGORIES.find(cat => cat.key === business.category)?.label ||
+          business.category
         : business.userType === "business"
         ? "Бизнес"
         : "Индивидуал";
 
     return (
-        <div className="flex items-center justify-between w-full mb-4">
-            <div className="flex items-center gap-3 flex-1">
+        <div className="flex items-center justify-between w-full mb-3">
+            <div className="flex items-center gap-2 flex-1">
                 <div className="relative w-[60px] h-[60px] rounded-full overflow-hidden shrink-0">
                     <Image
                         src={imageUrl}
@@ -30,11 +34,11 @@ export default function BusinessInfo({ business, imageUrl }: BusinessInfoProps) 
                     />
                 </div>
                 <div className="flex-1 min-w-0">
-                    <h2 className="text-lg font-semibold mb-1">
+                    <h2 className="text-[14px] font-medium mb-1">
                         {business.title || "Бизнес"}
                     </h2>
                     {categoryLabel && (
-                        <p className="text-sm text-gray-placeholder">
+                        <p className="text-[12px] text-gray-placeholder">
                             {categoryLabel}
                         </p>
                     )}
@@ -51,4 +55,3 @@ export default function BusinessInfo({ business, imageUrl }: BusinessInfoProps) 
         </div>
     );
 }
-

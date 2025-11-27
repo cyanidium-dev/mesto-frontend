@@ -12,7 +12,6 @@ import { Event } from "@/types/event";
 import { Business } from "@/types/business";
 import CheckCircleIcon from "@/components/shared/icons/CheckCircleIcon";
 
-// Default Calendly URL for testing
 const DEFAULT_CALENDLY_URL = "https://calendly.com/shade09876";
 
 interface SubmitProps {
@@ -65,7 +64,6 @@ export const Submit = ({ formProps }: SubmitProps) => {
             if (isEventForm(values)) {
                 itemId = `event-${Date.now()}`;
 
-                // Generate maxAttendees based on event category or use default
                 const getDefaultMaxAttendees = (category: string): number => {
                     const categoryDefaults: Record<string, number> = {
                         sport: 30,

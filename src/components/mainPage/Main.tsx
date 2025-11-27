@@ -48,7 +48,6 @@ export default function Main() {
     const initializeEventsMockData = useEventsStore(s => s.initializeMockData);
     const initializeUserMockData = useUserStore(s => s.initializeMockData);
 
-    // Initialize mock data on mount
     useEffect(() => {
         initializeBusinessMockData();
         initializeEventsMockData();
@@ -59,7 +58,6 @@ export default function Main() {
         initializeUserMockData,
     ]);
 
-    // Combine fake businesses with saved businesses
     const allBusinesses = useMemo(() => {
         const combined = [...fakeBusinesses, ...savedBusinesses];
         console.log("🗺️ Map - Businesses:", combined.length);
@@ -76,7 +74,6 @@ export default function Main() {
         return combined;
     }, [fakeBusinesses, savedBusinesses]);
 
-    // Filter businesses and events based on filters
     const businesses = useMemo(() => {
         return filterItems(allBusinesses, savedEvents, filters);
     }, [allBusinesses, savedEvents, filters]);
@@ -102,7 +99,6 @@ export default function Main() {
         if (initialized.current) return;
         initialized.current = true;
 
-        // Якщо вже маємо userLocation — ставимо його як центр
         if (
             mapCenter[0] === 50.0755 &&
             mapCenter[1] === 14.4378 &&
@@ -116,7 +112,6 @@ export default function Main() {
             mapCenter[1] === 14.4378 &&
             !userLocation
         ) {
-            // Отримуємо геолокацію
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     pos => {
@@ -128,7 +123,6 @@ export default function Main() {
                         setMapCenter(coords);
                     },
                     () => {
-                        // Якщо не вдалося — ставимо Прагу
                         setMapCenter([50.0755, 14.4378]);
                     },
                     {
@@ -138,13 +132,11 @@ export default function Main() {
                     }
                 );
             } else {
-                // Якщо браузер не підтримує геолокацію — теж ставимо Прагу
                 setMapCenter([50.0755, 14.4378]);
             }
         }
     }, [userLocation, mapCenter, setMapCenter, setUserLocation]);
 
-    // Sync viewMode with URL changes (e.g., "view on map" button)
     useEffect(() => {
         const viewParam = searchParams.get("view");
         if (viewParam === "map" || viewParam === "list") {
@@ -159,32 +151,27 @@ export default function Main() {
         }
     }, [searchParams]);
 
-    // Update URL when viewMode changes from user action (not from URL)
     useEffect(() => {
         if (isUpdatingFromUrl.current) {
             return; // Don't update URL if we're updating from URL
         }
 
         const viewParam = searchParams.get("view");
-        // Only update URL if viewMode doesn't match URL param
         if (viewMode !== viewParam) {
             const newParams = new URLSearchParams(searchParams.toString());
             if (viewMode === "map") {
                 newParams.set("view", "map");
             } else {
-                // Remove view param for list view
                 newParams.delete("view");
             }
             router.push(`/main?${newParams.toString()}`, { scroll: false });
         }
     }, [viewMode, router, searchParams]);
 
-    // Handle "show on map" from query params (focus parameter)
     useEffect(() => {
         const focusId = searchParams.get("focus");
 
         if (focusId && viewMode === "map") {
-            // Find the item and center map on it
             const event = getEvent(focusId);
             const business = getBusiness(focusId);
             const item = event || business;
@@ -220,14 +207,12 @@ export default function Main() {
     );
 }
 
-// Filter function for businesses and events
 function filterItems<T extends Business | Event>(
     items: T[],
     otherItems: (Business | Event)[],
     filters: FilterValues
 ): T[] {
     return items.filter(item => {
-        // Search filter - check title and description
         if (filters.search) {
             const searchLower = filters.search.toLowerCase();
             const titleMatch = (item.title || "")
@@ -241,7 +226,6 @@ function filterItems<T extends Business | Event>(
             }
         }
 
-        // Language filter
         if (filters.languages.length > 0) {
             const hasMatchingLanguage = filters.languages.some(lang =>
                 item.languages.includes(lang)
@@ -251,25 +235,17 @@ function filterItems<T extends Business | Event>(
             }
         }
 
-        // Category filter
         if (filters.categories.length > 0) {
             if (!filters.categories.includes(item.category)) {
                 return false;
             }
         }
 
-        // Open now filter
         if (filters.openNow) {
             if (!isItemOpenNow(item)) {
                 return false;
             }
         }
-
-        // City filter - for now, we'll skip this as it requires reverse geocoding
-        // which would be expensive. This can be implemented later with caching.
-        // if (filters.cities.length > 0) {
-        //   // Would need to reverse geocode to get city name
-        // }
 
         return true;
     });

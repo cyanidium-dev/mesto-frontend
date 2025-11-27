@@ -1,31 +1,25 @@
 import { Event } from "@/types/event";
 
-// Helper function to generate evenly distributed coordinates across a rectangular area
 const generateCoordinates = (
     centerLat: number,
     centerLng: number,
     index: number,
     total: number,
-    areaSize: number = 0.03 // Size of the area in degrees (approximately 3km)
+    areaSize: number = 0.03
 ): [number, number] => {
-    // Calculate grid dimensions for even distribution
     const cols = Math.ceil(Math.sqrt(total));
     const rows = Math.ceil(total / cols);
 
-    // Calculate position in grid
     const col = index % cols;
     const row = Math.floor(index / cols);
 
-    // Calculate spacing
     const latSpacing = areaSize / (rows + 1);
     const lngSpacing = areaSize / (cols + 1);
 
-    // Add some variation to avoid perfect grid (deterministic based on index)
-    const variation = (index * 0.1) % 1; // Deterministic variation
+    const variation = (index * 0.1) % 1;
     const randomLat = (variation - 0.5) * latSpacing * 0.3;
     const randomLng = (((variation * 1.7) % 1) - 0.5) * lngSpacing * 0.3;
 
-    // Calculate offsets from center
     const latOffset = (row + 1) * latSpacing - areaSize / 2 + randomLat;
     const lngOffset = (col + 1) * lngSpacing - areaSize / 2 + randomLng;
 
@@ -35,7 +29,6 @@ const generateCoordinates = (
 const centerLat = 50.0755;
 const centerLng = 14.4378;
 
-// Available mock images
 const mockImages = [
     "/images/mockedData/businessPfp.png",
     "/images/mockedData/businessGalleryItem.png",
@@ -47,7 +40,6 @@ const mockImages = [
     "/images/mockedData/businessGalleryItem.png",
 ];
 
-// Helper function to generate 8 gallery images
 const generateGalleryImages = (index: number): string[] => {
     return Array.from({ length: 8 }, (_, i) => {
         const imageIndex = (index * 8 + i) % mockImages.length;
@@ -55,14 +47,12 @@ const generateGalleryImages = (index: number): string[] => {
     });
 };
 
-// Organizer mapping by category grouping
-// Events in the same category share the same organizer
 const categoryOrganizers: Record<string, string> = {
-    sport: "user-1", // Sport events organized by user-1
-    music: "user-2", // Music events organized by user-2
-    art: "user-3", // Art events organized by user-3
-    food: "user-4", // Food events organized by user-4
-    education: "user-7", // Education events organized by user-7
+    sport: "user-1",
+    music: "user-2",
+    art: "user-3",
+    food: "user-4",
+    education: "user-7",
 };
 
 export const mockEvents: Event[] = [
@@ -73,7 +63,7 @@ export const mockEvents: Event[] = [
         tags: ["футбол", "спорт"],
         title: "Футбольный матч в парке",
         description:
-            "Присоединяйтесь к нам на дружеский футбольный матч в центральном парке. Приветствуются игроки всех уровней!",
+            "Присоединяйтесь к нам на дружеский футбольный матч в центральном парке. Приветствуются игроки всех уровней! Присоединяйтесь к нам на дружеский футбольный матч в центральном парке. Приветствуются игроки всех уровней! Присоединяйтесь к нам на дружеский футбольный матч в центральном парке. Приветствуются игроки всех уровней!",
         imageUrls: generateGalleryImages(0),
         socialMediaUrls: ["https://facebook.com/event1"],
         location: generateCoordinates(centerLat, centerLng, 0, 13) as [
@@ -85,7 +75,7 @@ export const mockEvents: Event[] = [
         endDate: new Date(2024, 11, 25),
         endTime: "20:00",
         creatorId: categoryOrganizers.sport,
-        attendees: [],
+        attendees: ["user-2", "user-3", "user-5", "user-6"],
         maxAttendees: 20,
         siteLink: "https://example.com/event1",
     },
@@ -96,7 +86,7 @@ export const mockEvents: Event[] = [
         tags: ["концерт", "рок"],
         title: "Рок концерт под открытым небом",
         description:
-            "Живая музыка, отличная атмосфера и незабываемые эмоции. Приходите со своими друзьями!",
+            "Живая музыка, отличная атмосфера и незабываемые эмоции. Приходите со своими друзьями! Живая музыка, отличная атмосфера и незабываемые эмоции. Приходите со своими друзьями! Живая музыка, отличная атмосфера и незабываемые эмоции. Приходите со своими друзьями!",
         imageUrls: generateGalleryImages(0),
         socialMediaUrls: ["https://instagram.com/event2"],
         location: generateCoordinates(centerLat, centerLng, 1, 13) as [
@@ -106,7 +96,7 @@ export const mockEvents: Event[] = [
         startDate: new Date(2024, 11, 28),
         startTime: "19:30",
         creatorId: categoryOrganizers.music,
-        attendees: [],
+        attendees: ["user-1", "user-3", "user-4", "user-5", "user-6", "user-7"],
         maxAttendees: 100,
         siteLink: "https://example.com/event2",
     },
@@ -117,7 +107,7 @@ export const mockEvents: Event[] = [
         tags: ["выставка", "живопись"],
         title: "Выставка современного искусства",
         description:
-            "Экспозиция работ местных художников. Открытие состоится в пятницу вечером.",
+            "Экспозиция работ местных художников. Открытие состоится в пятницу вечером. Экспозиция работ местных художников. Открытие состоится в пятницу вечером. Экспозиция работ местных художников. Открытие состоится в пятницу вечером.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 2, 13) as [
             number,
@@ -127,7 +117,7 @@ export const mockEvents: Event[] = [
         startTime: "17:00",
         endDate: new Date(2025, 0, 15),
         creatorId: categoryOrganizers.art,
-        attendees: [],
+        attendees: ["user-1", "user-2", "user-4"],
         maxAttendees: 50,
         isRepetitive: true,
         repeatedTimes: 3,
@@ -139,7 +129,7 @@ export const mockEvents: Event[] = [
         tags: ["кулинария", "мастер-класс"],
         title: "Мастер-класс по итальянской кухне",
         description:
-            "Учимся готовить настоящую пасту и пиццу. Все ингредиенты включены. Приходите с друзьями!",
+            "Учимся готовить настоящую пасту и пиццу. Все ингредиенты включены. Приходите с друзьями! Учимся готовить настоящую пасту и пиццу. Все ингредиенты включены. Приходите с друзьями! Учимся готовить настоящую пасту и пиццу. Все ингредиенты включены. Приходите с друзьями!",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 3, 13) as [
             number,
@@ -150,7 +140,7 @@ export const mockEvents: Event[] = [
         endDate: new Date(2024, 11, 26),
         endTime: "21:00",
         creatorId: categoryOrganizers.food,
-        attendees: [],
+        attendees: ["user-2", "user-3", "user-5"],
         maxAttendees: 15,
         siteLink: "https://example.com/cooking",
     },
@@ -161,7 +151,7 @@ export const mockEvents: Event[] = [
         tags: ["бег", "марафон"],
         title: "Городской марафон",
         description:
-            "Ежегодный городской марафон. Дистанции: 5км, 10км, 21км, 42км. Регистрация обязательна.",
+            "Ежегодный городской марафон. Дистанции: 5км, 10км, 21км, 42км. Регистрация обязательна. Ежегодный городской марафон. Дистанции: 5км, 10км, 21км, 42км. Регистрация обязательна. Ежегодный городской марафон. Дистанции: 5км, 10км, 21км, 42км. Регистрация обязательна.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 4, 13) as [
             number,
@@ -181,7 +171,7 @@ export const mockEvents: Event[] = [
         tags: ["джаз", "концерт"],
         title: "Джазовый вечер",
         description:
-            "Живая джазовая музыка в уютной атмосфере. Выступление местных музыкантов.",
+            "Живая джазовая музыка в уютной атмосфере. Выступление местных музыкантов. Живая джазовая музыка в уютной атмосфере. Выступление местных музыкантов. Живая джазовая музыка в уютной атмосфере. Выступление местных музыкантов.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 5, 13) as [
             number,
@@ -203,7 +193,7 @@ export const mockEvents: Event[] = [
         tags: ["лекция", "наука"],
         title: "Лекция о космосе",
         description:
-            "Увлекательная лекция о последних открытиях в астрономии. Для всех возрастов.",
+            "Увлекательная лекция о последних открытиях в астрономии. Для всех возрастов. Увлекательная лекция о последних открытиях в астрономии. Для всех возрастов. Увлекательная лекция о последних открытиях в астрономии. Для всех возрастов.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 6, 13) as [
             number,
@@ -214,7 +204,7 @@ export const mockEvents: Event[] = [
         endDate: new Date(2024, 11, 29),
         endTime: "21:00",
         creatorId: categoryOrganizers.education,
-        attendees: [],
+        attendees: ["user-1", "user-2", "user-3", "user-4", "user-5"],
         maxAttendees: 100,
         siteLink: "https://example.com/space",
     },
@@ -225,7 +215,7 @@ export const mockEvents: Event[] = [
         tags: ["театр", "спектакль"],
         title: "Театральная постановка 'Гамлет'",
         description:
-            "Классическая постановка Шекспира на современный лад. Английский язык с субтитрами.",
+            "Классическая постановка Шекспира на современный лад. Английский язык с субтитрами. Классическая постановка Шекспира на современный лад. Английский язык с субтитрами. Классическая постановка Шекспира на современный лад. Английский язык с субтитрами.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 7, 13) as [
             number,
@@ -247,7 +237,7 @@ export const mockEvents: Event[] = [
         tags: ["йога", "медитация"],
         title: "Йога на рассвете",
         description:
-            "Утренняя практика йоги в парке. Встречаем рассвет вместе. Принесите коврик!",
+            "Утренняя практика йоги в парке. Встречаем рассвет вместе. Принесите коврик! Утренняя практика йоги в парке. Встречаем рассвет вместе. Принесите коврик! Утренняя практика йоги в парке. Встречаем рассвет вместе. Принесите коврик!",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 9, 13) as [
             number,
@@ -269,7 +259,7 @@ export const mockEvents: Event[] = [
         tags: ["дегустация", "вино"],
         title: "Дегустация вин",
         description:
-            "Знакомство с винами из разных регионов. Профессиональный сомелье расскажет о каждом сорте.",
+            "Знакомство с винами из разных регионов. Профессиональный сомелье расскажет о каждом сорте. Знакомство с винами из разных регионов. Профессиональный сомелье расскажет о каждом сорте. Знакомство с винами из разных регионов. Профессиональный сомелье расскажет о каждом сорте.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 10, 13) as [
             number,
@@ -291,7 +281,7 @@ export const mockEvents: Event[] = [
         tags: ["танцы", "вечеринка"],
         title: "Сальса вечеринка",
         description:
-            "Танцевальная вечеринка в стиле сальса. Урок для начинающих в 20:00, затем свободные танцы.",
+            "Танцевальная вечеринка в стиле сальса. Урок для начинающих в 20:00, затем свободные танцы. Танцевальная вечеринка в стиле сальса. Урок для начинающих в 20:00, затем свободные танцы. Танцевальная вечеринка в стиле сальса. Урок для начинающих в 20:00, затем свободные танцы.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 11, 13) as [
             number,
@@ -313,7 +303,7 @@ export const mockEvents: Event[] = [
         tags: ["воркшоп", "технологии"],
         title: "Воркшоп по программированию",
         description:
-            "Практический воркшоп для начинающих программистов. Изучаем основы JavaScript.",
+            "Практический воркшоп для начинающих программистов. Изучаем основы JavaScript. Практический воркшоп для начинающих программистов. Изучаем основы JavaScript. Практический воркшоп для начинающих программистов. Изучаем основы JavaScript.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 12, 13) as [
             number,
@@ -335,7 +325,7 @@ export const mockEvents: Event[] = [
         tags: ["классика", "концерт"],
         title: "Классический концерт",
         description:
-            "Произведения Моцарта и Бетховена в исполнении камерного оркестра.",
+            "Произведения Моцарта и Бетховена в исполнении камерного оркестра. Произведения Моцарта и Бетховена в исполнении камерного оркестра. Произведения Моцарта и Бетховена в исполнении камерного оркестра.",
         imageUrls: generateGalleryImages(0),
         location: generateCoordinates(centerLat, centerLng, 12, 13) as [
             number,

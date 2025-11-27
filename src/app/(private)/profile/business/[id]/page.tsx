@@ -17,7 +17,6 @@ import BusinessTags from "@/components/profilePage/business/BusinessTags";
 import BusinessDescription from "@/components/profilePage/business/BusinessDescription";
 import BusinessCalendlyButton from "@/components/profilePage/business/BusinessCalendlyButton";
 
-// Default Calendly URL for testing when business doesn't have one configured
 const DEFAULT_CALENDLY_URL = "https://calendly.com/shade09876";
 
 export default function BusinessProfilePage() {
@@ -73,7 +72,6 @@ export default function BusinessProfilePage() {
         ? businessImageUrl
         : "/images/mockedData/girl.jpg";
 
-    // Get all valid image URLs
     const allImageUrls =
         business.imageUrls?.filter(
             url =>
@@ -85,11 +83,15 @@ export default function BusinessProfilePage() {
 
     return (
         <div className="flex flex-col h-screen">
+            <div className="sticky top-0 z-10 bg-white">
+                <Container className="pt-4">
+                    <BusinessHeader business={business} />
+                </Container>
+            </div>
             <Container className="pt-4 pb-24 flex-1 overflow-y-auto">
-                <BusinessHeader business={business} />
                 <BusinessInfo business={business} imageUrl={imageUrl} />
 
-                <div className="w-full space-y-3">
+                <div className="w-full">
                     <BusinessImageGallery
                         imageUrls={allImageUrls}
                         businessTitle={business.title}
@@ -109,7 +111,6 @@ export default function BusinessProfilePage() {
                 }}
             />
 
-            {/* Calendly Event Types Modal */}
             {business && (
                 <CalendlyEventTypesModal
                     isOpen={isCalendlyOpen}

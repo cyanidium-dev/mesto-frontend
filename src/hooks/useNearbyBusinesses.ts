@@ -4,7 +4,6 @@ import { useMemo } from "react";
 import { useLocationStore } from "@/store/locationStore";
 import { Business } from "@/types/business";
 
-// Available mock images
 const mockImages = [
     "/images/mockedData/businessPfp.png",
     "/images/mockedData/businessGalleryItem.png",
@@ -16,7 +15,6 @@ const mockImages = [
     "/images/mockedData/businessGalleryItem.png",
 ];
 
-// Helper function to generate 8 gallery images
 const generateGalleryImages = (index: number): string[] => {
     return Array.from({ length: 8 }, (_, i) => {
         const imageIndex = (index * 8 + i) % mockImages.length;
@@ -56,7 +54,6 @@ const generateFakeBusinesses = (lat: number, lng: number): Business[] => {
         },
     ];
 
-    // Default Calendly URL for testing
     const DEFAULT_CALENDLY_URL = "https://calendly.com/shade09876";
 
     return Array.from({ length: 20 }, (_, i) => {

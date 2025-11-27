@@ -6,10 +6,5 @@ interface EventTitleProps {
 }
 
 export default function EventTitle({ event }: EventTitleProps) {
-    return (
-        <h2 className="text-xl font-semibold mb-3">
-            {event.title}
-        </h2>
-    );
+    return <h2 className="text-[20px] font-bold mb-2">{event.title}</h2>;
 }
-

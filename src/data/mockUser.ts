@@ -1,6 +1,5 @@
 import { User } from "@/types/user";
 
-// Helper function to generate user profile picture
 const getUserProfilePicture = (index: number): string => {
     const profilePictures = [
         "/images/mockedData/individualPfp.png",
@@ -20,7 +19,6 @@ const getUserProfilePicture = (index: number): string => {
     return profilePictures[index % profilePictures.length];
 };
 
-// Generate user names
 const userNames = [
     'Алексей Founder "Mesto"',
     "Мария Организатор",
@@ -86,7 +84,6 @@ const allInterests = [
     ["Фотография", "Искусство", "Портреты"],
 ];
 
-// Generate mock users
 export const mockUsers: User[] = Array.from({ length: 13 }, (_, i) => ({
     id: `user-${i + 1}`,
     email: userEmails[i],
@@ -99,5 +96,4 @@ export const mockUsers: User[] = Array.from({ length: 13 }, (_, i) => ({
     profilePictureUrl: getUserProfilePicture(i),
 }));
 
-// Export the first user as mockUser for backward compatibility
 export const mockUser: User = mockUsers[0];

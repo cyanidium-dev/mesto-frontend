@@ -32,7 +32,6 @@ export default function SearchBar({
     const [categoryValue, setCategoryValue] = useState<Selection>(new Set([]));
     const [openNowValue, setOpenNowValue] = useState(false);
 
-    // Notify parent of filter changes
     useEffect(() => {
         if (onFiltersChange) {
             const filters: FilterValues = {
