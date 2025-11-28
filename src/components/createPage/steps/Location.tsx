@@ -155,7 +155,7 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
         setFieldValue("position", position);
         setMapCenterState(position);
         setSelectedLocationName(result.display_name);
-        setSearchQuery("");
+        setSearchQuery(result.display_name);
         setShowResults(false);
         lastReverseGeocodedPosition.current = position;
         if (!isMapOpen) {
@@ -178,11 +178,14 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                 const data = await response.json();
                 const locationName = data.display_name || "";
                 setSelectedLocationName(locationName);
+                setSearchQuery(locationName);
             } else {
                 setSelectedLocationName("");
+                setSearchQuery("");
             }
         } catch {
             setSelectedLocationName("");
+            setSearchQuery("");
         }
     };
 
@@ -196,26 +199,9 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
             const position = values.position as [number, number];
             setSelectedPosition(position);
             setMapCenterState(position);
-
-            const positionChanged =
-                !lastReverseGeocodedPosition.current ||
-                lastReverseGeocodedPosition.current[0] !== position[0] ||
-                lastReverseGeocodedPosition.current[1] !== position[1];
-
-            if (positionChanged && !selectedLocationName) {
-                lastReverseGeocodedPosition.current = position;
-                fetch(
-                    `/api/geocode/reverse?lat=${position[0]}&lon=${position[1]}`
-                )
-                    .then(res => res.json())
-                    .then(data => {
-                        const locationName = data.display_name || "";
-                        setSelectedLocationName(locationName);
-                    })
-                    .catch(() => {});
-            }
+            lastReverseGeocodedPosition.current = position;
         }
-    }, [values.position, selectedLocationName]);
+    }, [values.position]);
 
     return (
         <div className="flex flex-col flex-1 justify-between h-full">
@@ -227,11 +213,11 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                 <div className="relative mb-4" ref={searchContainerRef}>
                     <label
                         htmlFor="location"
-                        className="text-[14px] text-gray-text mb-2"
+                        className="text-[14px] text-gray-text"
                     >
                         Локация
                     </label>
-                    <div className="relative">
+                    <div className="relative mt-3">
                         <input
                             id="location"
                             type="text"
@@ -311,7 +297,7 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                             </div>
                         )}
 
-                        <div className="h-[168px] w-[343px] rounded-[16px] overflow-hidden mb-4 relative">
+                        <div className="h-[168px] w-full rounded-[16px] overflow-hidden mb-4 relative">
                             <LocationPickerMap
                                 center={mapCenterState}
                                 selectedPosition={selectedPosition}
