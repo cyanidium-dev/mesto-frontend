@@ -46,7 +46,10 @@ export default function EventProfilePage() {
 
     useEffect(() => {
         const tabParam = searchParams.get("tab");
-        if (tabParam && ["overview", "description", "participants"].includes(tabParam)) {
+        if (
+            tabParam &&
+            ["overview", "description", "participants"].includes(tabParam)
+        ) {
             setSelectedTab(tabParam as TabKey);
         }
     }, [searchParams]);

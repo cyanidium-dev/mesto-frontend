@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Event } from "@/types/event";
 import { User } from "@/types/user";
 import { CATEGORIES } from "@/constants/filters";
+import { useBusinessStore } from "@/store/businessStore";
 import ArrowDiagonalIcon from "@/components/shared/icons/ArrowDiagonalIcon";
 
 interface EventParticipantsTabProps {
@@ -18,9 +19,21 @@ export default function EventParticipantsTab({
     attendees,
 }: EventParticipantsTabProps) {
     const router = useRouter();
+    const getAllBusinesses = useBusinessStore(s => s.getAllBusinesses);
 
     const handleUserClick = (userId: string) => {
-        router.push(`/profile?userId=${userId}&tab=events`);
+        const allBusinesses = getAllBusinesses();
+        const individualBusiness = allBusinesses.find(
+            business =>
+                business.creatorId === userId &&
+                business.userType === "individual"
+        );
+
+        if (individualBusiness) {
+            router.push(`/profile/business/${individualBusiness.id}`);
+        } else {
+            router.push(`/profile?tab=events`);
+        }
     };
 
     return (
