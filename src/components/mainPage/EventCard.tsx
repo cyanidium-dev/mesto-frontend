@@ -62,8 +62,17 @@ export default function EventCard({ event }: EventCardProps) {
     const imageUrl = hasValidImage
         ? eventImageUrl
         : "/images/mockedData/girl.jpg";
-    const eventDate = startDate
-        ? new Date(startDate).toLocaleDateString("ru-RU")
+
+    const parseDate = (dateInput: Date | string | undefined): Date | null => {
+        if (!dateInput) return null;
+        const date =
+            dateInput instanceof Date ? dateInput : new Date(dateInput);
+        return isNaN(date.getTime()) ? null : date;
+    };
+
+    const parsedStartDate = parseDate(startDate);
+    const eventDate = parsedStartDate
+        ? parsedStartDate.toLocaleDateString("ru-RU")
         : "";
     const eventTime = startTime || "";
 

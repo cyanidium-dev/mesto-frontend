@@ -30,7 +30,15 @@ export default function EventOverviewTab({
     locationCountry,
 }: EventOverviewTabProps) {
     const eventCoords = getCoordinates(event.location);
-    const startDate = new Date(event.startDate);
+
+    const parseDate = (dateInput: Date | string | undefined): Date | null => {
+        if (!dateInput) return null;
+        const date =
+            dateInput instanceof Date ? dateInput : new Date(dateInput);
+        return isNaN(date.getTime()) ? null : date;
+    };
+
+    const startDate = parseDate(event.startDate);
     const daysOfWeek = ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"];
     const months = [
         "янв",
@@ -47,7 +55,8 @@ export default function EventOverviewTab({
         "дек",
     ];
 
-    const formatDate = (date: Date): string => {
+    const formatDate = (date: Date | null): string => {
+        if (!date || isNaN(date.getTime())) return "Дата не указана";
         const dayOfWeek = daysOfWeek[date.getDay()];
         const day = date.getDate();
         const month = months[date.getMonth()];
@@ -55,7 +64,8 @@ export default function EventOverviewTab({
         return `${dayOfWeek}, ${day} ${month} ${year}`;
     };
 
-    const getDaysUntil = (date: Date): number => {
+    const getDaysUntil = (date: Date | null): number | null => {
+        if (!date || isNaN(date.getTime())) return null;
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const eventDate = new Date(date);
@@ -68,7 +78,9 @@ export default function EventOverviewTab({
 
     const daysUntil = getDaysUntil(startDate);
     const daysUntilText =
-        daysUntil === 0
+        daysUntil === null
+            ? ""
+            : daysUntil === 0
             ? "сегодня"
             : daysUntil === 1
             ? "завтра"
@@ -136,7 +148,8 @@ export default function EventOverviewTab({
                 <CalendarIcon className="text-black shrink-0 size-5" />
                 <div className="flex-1">
                     <p className="text-[14px] font-semibold mb-1">
-                        {formatDate(startDate)} ({daysUntilText})
+                        {formatDate(startDate)}
+                        {daysUntilText && ` (${daysUntilText})`}
                     </p>
                     <p className="text-[14px] mb-1">
                         {event.startTime && formatTime(event.startTime)}

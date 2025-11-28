@@ -15,7 +15,8 @@ export default function BookingDetailsStep({
     quantity,
     onQuantityChange,
 }: BookingDetailsStepProps) {
-    const formatDate = (date: Date): string => {
+    const formatDate = (date: Date | null): string => {
+        if (!date || isNaN(date.getTime())) return "Дата не указана";
         const daysOfWeek = [
             "Воскресенье",
             "Понедельник",
@@ -51,7 +52,14 @@ export default function BookingDetailsStep({
         return time;
     };
 
-    const startDate = new Date(event.startDate);
+    const parseDate = (dateInput: Date | string | undefined): Date | null => {
+        if (!dateInput) return null;
+        const date =
+            dateInput instanceof Date ? dateInput : new Date(dateInput);
+        return isNaN(date.getTime()) ? null : date;
+    };
+
+    const startDate = parseDate(event.startDate);
 
     return (
         <div className="space-y-6">
