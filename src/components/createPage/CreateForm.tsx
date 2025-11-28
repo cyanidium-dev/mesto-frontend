@@ -48,6 +48,10 @@ export const CreateForm = ({
     const searchParams = useSearchParams();
     const editId = searchParams.get("edit");
     const urlType = searchParams.get("type");
+    const urlUserType = searchParams.get("userType") as
+        | "business"
+        | "individual"
+        | null;
 
     const getBusiness = useBusinessStore(s => s.getBusiness);
     const getEvent = useEventsStore(s => s.getEvent);
@@ -158,7 +162,7 @@ export const CreateForm = ({
             ? convertBusinessToFormValues(editItem as Business)
             : {
                   type: "",
-                  userType: "business",
+                  userType: urlUserType || "business",
                   category: "",
                   languages: [],
                   tags: [],
@@ -173,9 +177,11 @@ export const CreateForm = ({
               };
 
     useEffect(() => {
-        if (editId && urlType && !createType) {
+        if (urlType && !createType) {
             handleCreateTypeChange(urlType as "event" | "business");
-            setCurrentStep(1);
+            if (editId) {
+                setCurrentStep(1);
+            }
         }
     }, [editId, urlType, createType, handleCreateTypeChange, setCurrentStep]);
 
@@ -303,6 +309,16 @@ export const CreateForm = ({
                 const isIndividual = props.values.userType === "individual";
 
                 const getBusinessStep = () => {
+                    if (currentStep === 1 && isIndividual) {
+                        return (
+                            <LangCategory
+                                formProps={
+                                    props as unknown as FormikProps<BaseFormValues>
+                                }
+                                setCurrentStep={setCurrentStep}
+                            />
+                        );
+                    }
                     if (currentStep === 1) {
                         return (
                             <BussinessType

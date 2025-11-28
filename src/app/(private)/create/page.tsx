@@ -1,28 +1,37 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState, useEffect } from "react";
 import Container from "@/components/shared/container/Container";
 import NavigationButton from "@/components/shared/buttons/NavigationButton";
 import ArrowIcon from "@/components/shared/icons/ArrowIcon";
 import ProgressBar from "@/components/shared/progress/ProgressBar";
 import { CreateForm } from "@/components/createPage/CreateForm";
 
-export default function CreatePage() {
+function CreatePageContent() {
     const router = useRouter();
-    const [currentStep, setCurrentStep] = useState(0);
+    const searchParams = useSearchParams();
+    const stepParam = searchParams.get("step");
+    const userTypeParam = searchParams.get("userType");
+    const initialStep = stepParam ? parseInt(stepParam, 10) : 0;
+    const [currentStep, setCurrentStep] = useState(initialStep);
     const [createType, setCreateType] = useState<"event" | "business" | null>(
         null
     );
 
-    // Determine which steps have required fields (skip button should be hidden)
+    useEffect(() => {
+        if (stepParam) {
+            const step = parseInt(stepParam, 10);
+            if (!isNaN(step) && step >= 0) {
+                setCurrentStep(step);
+            }
+        }
+    }, [stepParam]);
     const getStepsWithRequiredFields = (
         type: "event" | "business" | null
     ): number[] => {
         if (type === "event") {
-            // Event: step 1 (LangCategory), step 3 (Title), step 4 (EventDateTime), step 5 (Location)
             return [1, 3, 4, 5];
         } else if (type === "business") {
-            // Business: step 1 (BussinessType), step 2 (LangCategory), step 6 (Location)
             return [1, 2, 6];
         }
         return [];
@@ -31,15 +40,14 @@ export default function CreatePage() {
     const stepsWithRequiredFields = getStepsWithRequiredFields(createType);
     const shouldHideSkip =
         stepsWithRequiredFields.includes(currentStep) ||
-        currentStep === 0 || // StepZero
-        currentStep === 8 || // Submit step (events)
-        currentStep === 9; // Submit step (business)
+        currentStep === 0 ||
+        currentStep === 8 ||
+        currentStep === 9;
 
-    // Calculate total steps: step 0 + event steps (1-8) = 9, or step 0 + business steps (1-9) = 10
     const getTotalSteps = () => {
-        if (createType === "event") return 9; // step 0 + 8 steps
-        if (createType === "business") return 10; // step 0 + 9 steps
-        return 9; // default to event steps when type is not yet selected
+        if (createType === "event") return 9;
+        if (createType === "business") return 10;
+        return 9;
     };
 
     return (
@@ -48,11 +56,18 @@ export default function CreatePage() {
                 <Container className="pt-2 pb-2">
                     <div className="flex justify-between items-center mb-2">
                         <NavigationButton
-                            onClick={
-                                currentStep === 0 || currentStep === 1
-                                    ? () => router.back()
-                                    : () => setCurrentStep(prev => prev - 1)
-                            }
+                            onClick={() => {
+                                if (
+                                    currentStep === 0 ||
+                                    currentStep === 1 ||
+                                    (currentStep === 2 &&
+                                        userTypeParam === "individual")
+                                ) {
+                                    router.back();
+                                } else {
+                                    setCurrentStep(prev => prev - 1);
+                                }
+                            }}
                         >
                             <ArrowIcon />
                             Назад
@@ -84,5 +99,13 @@ export default function CreatePage() {
                 </Container>
             </div>
         </div>
+    );
+}
+
+export default function CreatePage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <CreatePageContent />
+        </Suspense>
     );
 }

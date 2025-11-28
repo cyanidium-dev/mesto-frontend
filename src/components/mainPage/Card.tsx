@@ -89,7 +89,14 @@ export default function Card({ business }: CardProps) {
                 </div>
                 <div>
                     <h3 className="flex flex-col gap-1 mb-2 min-h-8">
-                        <span className="line-clamp-1">{title}</span>
+                        <button
+                            onClick={() =>
+                                router.push(`/profile/business/${business.id}`)
+                            }
+                            className="text-left line-clamp-1 hover:underline"
+                        >
+                            {title}
+                        </button>
                         {category ? (
                             <span className="line-clamp-1 text-[12px] text-gray-placeholder">
                                 {category}

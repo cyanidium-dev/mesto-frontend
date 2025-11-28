@@ -113,11 +113,10 @@ export const ListItem = ({ item }: ListItemProps) => {
                 isOpen={showDeleteModal}
                 onClose={handleCancelDelete}
                 onConfirm={handleConfirmDelete}
-                title={isEvent ? "Удалить событие?" : "Удалить бизнес?"}
-                message={
+                title={
                     isEvent
-                        ? "Вы уверены, что хотите удалить это событие? Это действие нельзя отменить."
-                        : "Вы уверены, что хотите удалить этот бизнес? Это действие нельзя отменить."
+                        ? "Вы действительно хотите удалить событие?"
+                        : "Вы действительно хотите удалить бизнес-точку?"
                 }
                 confirmText="Удалить"
                 cancelText="Отмена"

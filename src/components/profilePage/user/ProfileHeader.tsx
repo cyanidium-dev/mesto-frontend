@@ -68,7 +68,14 @@ export default function ProfileHeader({
                     >
                         <ShareIcon className="w-5 h-5" />
                     </button>
-                    <button className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light">
+                    <button
+                        onClick={() =>
+                            router.push(
+                                "/create?type=business&userType=individual&step=2"
+                            )
+                        }
+                        className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light"
+                    >
                         <GearIcon className="w-5 h-5" />
                     </button>
                 </div>

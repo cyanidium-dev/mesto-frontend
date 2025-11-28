@@ -9,7 +9,6 @@ interface ConfirmModalProps {
     onClose: () => void;
     onConfirm: () => void;
     title: string;
-    message: string;
     confirmText?: string;
     cancelText?: string;
 }
@@ -19,7 +18,6 @@ export default function ConfirmModal({
     onClose,
     onConfirm,
     title,
-    message,
     confirmText = "Удалить",
     cancelText = "Отмена",
 }: ConfirmModalProps) {

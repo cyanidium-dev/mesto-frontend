@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { Business } from "@/types/business";
 import GlobeIcon from "@/components/shared/icons/GlobeIcon";
 import SocialIconFromUrl from "@/components/shared/icons/SocialIconFromUrl";
@@ -16,7 +15,6 @@ export default function BusinessSocialLinks({
         business.siteLink;
 
     if (!hasSocialLinks) return null;
-
 
     return (
         <div className="mb-3">

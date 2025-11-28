@@ -38,7 +38,7 @@ interface GeocodingResult {
 
 const description = {
     event: "Уточните где будет проходить событие",
-    company: "Уточните где находиться ваша компания",
+    company: "Уточните где находится ваша компания",
     individual: "Уточните откуда или где вы работаете",
 };
 
@@ -241,7 +241,7 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                                 setShowResults(true);
                             }}
                             onFocus={() => setShowResults(true)}
-                            placeholder="Выбирите локацию"
+                            placeholder="Выберите локацию"
                             className="w-full pl-4 pr-12 h-[37px] text-[16px] font-normal leading-none text-dark bg-white placeholder-placeholder border border-gray-light rounded-full outline-none transition duration-300 ease-out focus:border-primary"
                         />
                         {isSearching ? (

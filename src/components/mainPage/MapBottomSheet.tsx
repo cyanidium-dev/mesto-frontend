@@ -286,9 +286,14 @@ export default function MapBottomSheet({
                                 </div>
 
                                 <div className="flex-1 min-w-0">
-                                    <h2 className="text-[14px] font-medium line-clamp-2 mb-1">
-                                        {title}
-                                    </h2>
+                                    <button
+                                        onClick={navigateToProfile}
+                                        className="text-left w-full"
+                                    >
+                                        <h2 className="text-[14px] font-medium line-clamp-2 mb-1 hover:underline">
+                                            {title}
+                                        </h2>
+                                    </button>
                                     <p className="text-[12px] text-gray-placeholder">
                                         {typeLabel}
                                     </p>

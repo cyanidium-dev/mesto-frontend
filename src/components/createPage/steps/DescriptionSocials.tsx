@@ -5,7 +5,6 @@ import MainButton from "../../shared/buttons/MainButton";
 import SectionTitle from "../../shared/titles/SectionTitle";
 import CustomizedInput from "../../shared/formComponents/CustomizedInput";
 import { BaseFormValues } from "@/types/formValues";
-import Image from "next/image";
 import Select, { StylesConfig } from "react-select";
 import { ErrorMessage } from "formik";
 import BrokenLinkIcon from "@/components/shared/icons/BrokenLinkIcon";
@@ -223,7 +222,7 @@ const description = {
     company: {
         title: "Услуги/Сервис",
         description:
-            "Выбирите услуги или сервис который предоставляет ваша компания",
+            "Выберите услуги или сервис который предоставляет ваша компания",
         siteLink: "Добвьте ссылку на сайт компании или привяжите соц. сети:",
         placeholder: "Начните писать услугу/сервис",
     },

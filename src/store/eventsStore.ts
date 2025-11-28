@@ -10,7 +10,11 @@ interface EventsStore {
     getEvent: (id: string) => Event | null;
     getAllEvents: () => Event[];
     getEventsByFilters: (filters: EventsFilters) => Event[];
-    updateEventAttendees: (eventId: string, userId: string, quantity?: number) => void;
+    updateEventAttendees: (
+        eventId: string,
+        userId: string,
+        quantity?: number
+    ) => void;
     initialized: boolean;
     initializeMockData: () => void;
 }
@@ -33,14 +37,14 @@ export const useEventsStore = create<EventsStore>()(
             initializeMockData: () => {
                 if (get().initialized) return;
                 const state = get();
-                // Only initialize if there's no persisted data
                 if (state.events.length === 0) {
                     set({ events: mockEvents, initialized: true });
                 } else {
                     set({ initialized: true });
                 }
             },
-            addEvent: event => set(state => ({ events: [...state.events, event] })),
+            addEvent: event =>
+                set(state => ({ events: [...state.events, event] })),
             deleteEvent: id =>
                 set(state => ({
                     events: state.events.filter(event => event.id !== id),
@@ -83,30 +87,50 @@ export const useEventsStore = create<EventsStore>()(
             partialize: state => ({
                 events: state.events,
             }),
-            // Handle Date serialization/deserialization
+
             storage: {
                 getItem: name => {
                     const str = localStorage.getItem(name);
                     if (!str) return null;
                     try {
                         const parsed = JSON.parse(str);
-                        if (parsed.state?.events && Array.isArray(parsed.state.events)) {
-                            // Convert date strings back to Date objects
+                        if (
+                            parsed.state?.events &&
+                            Array.isArray(parsed.state.events)
+                        ) {
                             parsed.state.events = parsed.state.events.map(
-                                (event: any) => ({
-                                    ...event,
-                                    startDate: event.startDate
-                                        ? new Date(event.startDate)
-                                        : undefined,
-                                    endDate: event.endDate
-                                        ? new Date(event.endDate)
-                                        : undefined,
-                                })
+                                (
+                                    event: Event & {
+                                        startDate?: string | Date;
+                                        endDate?: string | Date;
+                                    }
+                                ) => {
+                                    const eventData = event as Event & {
+                                        startDate?: string | Date;
+                                        endDate?: string | Date;
+                                    };
+                                    return {
+                                        ...eventData,
+                                        startDate: eventData.startDate
+                                            ? new Date(
+                                                  eventData.startDate as string
+                                              )
+                                            : undefined,
+                                        endDate: eventData.endDate
+                                            ? new Date(
+                                                  eventData.endDate as string
+                                              )
+                                            : undefined,
+                                    } as Event;
+                                }
                             );
                         }
                         return parsed;
                     } catch (error) {
-                        console.error("Error parsing events from localStorage:", error);
+                        console.error(
+                            "Error parsing events from localStorage:",
+                            error
+                        );
                         return null;
                     }
                 },
@@ -114,7 +138,10 @@ export const useEventsStore = create<EventsStore>()(
                     try {
                         localStorage.setItem(name, JSON.stringify(value));
                     } catch (error) {
-                        console.error("Error saving events to localStorage:", error);
+                        console.error(
+                            "Error saving events to localStorage:",
+                            error
+                        );
                     }
                 },
                 removeItem: name => {

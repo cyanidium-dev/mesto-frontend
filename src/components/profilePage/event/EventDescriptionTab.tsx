@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { Event } from "@/types/event";
 import ArrowDiagonalIcon from "@/components/shared/icons/ArrowDiagonalIcon";
 import GlobeIcon from "@/components/shared/icons/GlobeIcon";
@@ -12,7 +11,6 @@ interface EventDescriptionTabProps {
 export default function EventDescriptionTab({
     event,
 }: EventDescriptionTabProps) {
-
     return (
         <div className="space-y-4 mt-4">
             {event.description && (
