@@ -12,6 +12,7 @@ import ShareIcon from "../shared/icons/ShareIcon";
 import ArrowIcon from "../shared/icons/ArrowIcon";
 import BookingModal from "../shared/modal/BookingModal";
 import { useShare } from "@/hooks/useShare";
+import { useUserStore } from "@/store/userStore";
 import Toast from "../shared/toast/Toast";
 
 interface EventCardProps {
@@ -20,11 +21,14 @@ interface EventCardProps {
 
 export default function EventCard({ event }: EventCardProps) {
     const router = useRouter();
+    const currentUser = useUserStore(s => s.currentUser);
     const [isShownMore, setIsShownMore] = useState(false);
     const [shouldClamp, setShouldClamp] = useState(true);
     const [isBookingOpen, setIsBookingOpen] = useState(false);
     const { handleShare, showToast, setShowToast } = useShare();
     const toggleShowMore = () => setIsShownMore(prev => !prev);
+    const isCurrentUserCreator =
+        currentUser && event.creatorId === currentUser.id;
 
     const handleShowOnMap = () => {
         router.push(`/main?view=map&focus=${event.id}`);
@@ -92,7 +96,9 @@ export default function EventCard({ event }: EventCardProps) {
                 <div>
                     <h3 className="flex flex-col gap-1 mb-2 min-h-8">
                         <button
-                            onClick={() => router.push(`/profile/event/${event.id}`)}
+                            onClick={() =>
+                                router.push(`/profile/event/${event.id}`)
+                            }
                             className="text-left line-clamp-1 hover:underline"
                         >
                             {title}
@@ -126,13 +132,15 @@ export default function EventCard({ event }: EventCardProps) {
             </div>
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <MainButton 
-                        className="flex items-center gap-2 h-8 px-3 w-fit text-[12px]"
-                        onClick={() => setIsBookingOpen(true)}
-                    >
-                        <HandUpIcon className="text-white" />
-                        Забронировать
-                    </MainButton>
+                    {!isCurrentUserCreator && (
+                        <MainButton
+                            className="flex items-center gap-2 h-8 px-3 w-fit text-[12px]"
+                            onClick={() => setIsBookingOpen(true)}
+                        >
+                            <HandUpIcon className="text-white" />
+                            Забронировать
+                        </MainButton>
+                    )}
                     <IconButton onClick={() => handleShare(event.id, "event")}>
                         <ShareIcon />
                     </IconButton>

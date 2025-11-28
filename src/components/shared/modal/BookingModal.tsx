@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import ArrowIcon from "../icons/ArrowIcon";
 import CloseXIcon from "../icons/CloseXIcon";
 import ProgressBar from "../progress/ProgressBar";
@@ -26,7 +27,8 @@ export default function BookingModal({
     onClose,
     event,
 }: BookingModalProps) {
-    const addBooking = useBookingStore(s => s.addBooking);
+    const router = useRouter();
+    const addBookings = useBookingStore(s => s.addBookings);
     const currentUser = useUserStore(s => s.currentUser);
     const updateEventAttendees = useEventsStore(s => s.updateEventAttendees);
     const updateEventBookingCount = useEventsStore(
@@ -98,10 +100,10 @@ export default function BookingModal({
             }
 
             const userId = currentUser?.id || "guest";
-            addBooking({
+            const bookingsData = Array.from({ length: quantity }, () => ({
                 eventId: event.id,
                 userId: userId,
-                quantity: quantity,
+                quantity: 1,
                 firstName: formData.firstName,
                 lastName: formData.lastName,
                 email: formData.email,
@@ -110,7 +112,8 @@ export default function BookingModal({
                     similarEvents: checkboxes.similarEvents,
                     termsAccepted: checkboxes.terms,
                 },
-            });
+            }));
+            addBookings(bookingsData);
 
             updateEventAttendees(event.id, userId, quantity);
             updateEventBookingCount(event.id, quantity);
@@ -131,6 +134,7 @@ export default function BookingModal({
 
     const handleSuccessContinue = () => {
         onClose();
+        router.push(`/profile/event/${event.id}`);
     };
 
     if (!isOpen) return null;
