@@ -1,5 +1,5 @@
 "use client";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useEventsStore } from "@/store/eventsStore";
 import { useUserStore } from "@/store/userStore";
@@ -25,6 +25,7 @@ type TabKey = "overview" | "description" | "participants";
 export default function EventProfilePage() {
     const params = useParams();
     const router = useRouter();
+    const searchParams = useSearchParams();
     const eventId = params.id as string;
     const getEvent = useEventsStore(s => s.getEvent);
     const getUser = useUserStore(s => s.getUser);
@@ -32,13 +33,23 @@ export default function EventProfilePage() {
     const [event, setEvent] = useState<Event | null>(null);
     const [organizers, setOrganizers] = useState<User[]>([]);
     const [attendees, setAttendees] = useState<User[]>([]);
-    const [selectedTab, setSelectedTab] = useState<TabKey>("overview");
+    const tabParam = searchParams.get("tab");
+    const [selectedTab, setSelectedTab] = useState<TabKey>(
+        (tabParam as TabKey) || "overview"
+    );
     const [locationAddress, setLocationAddress] = useState<string>("");
     const [locationCity, setLocationCity] = useState<string>("");
     const [locationCountry, setLocationCountry] = useState<string>("");
 
     const isCurrentUserCreator =
         currentUser && event && currentUser.id === event.creatorId;
+
+    useEffect(() => {
+        const tabParam = searchParams.get("tab");
+        if (tabParam && ["overview", "description", "participants"].includes(tabParam)) {
+            setSelectedTab(tabParam as TabKey);
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         const eventData = getEvent(eventId);

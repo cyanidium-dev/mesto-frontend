@@ -6,6 +6,7 @@ import { mockBusinesses } from "@/data/mockBusinesses";
 interface BusinessStore {
     businesses: Business[];
     addBusiness: (business: Business) => void;
+    updateBusiness: (id: string, business: Partial<Business>) => void;
     deleteBusiness: (id: string) => void;
     getBusiness: (id: string) => Business | null;
     getAllBusinesses: () => Business[];
@@ -38,6 +39,14 @@ export const useBusinessStore = create<BusinessStore>()(
             },
             addBusiness: business =>
                 set(state => ({ businesses: [...state.businesses, business] })),
+            updateBusiness: (id, updatedBusiness) =>
+                set(state => ({
+                    businesses: state.businesses.map(business =>
+                        business.id === id
+                            ? { ...business, ...updatedBusiness }
+                            : business
+                    ),
+                })),
             deleteBusiness: id =>
                 set(state => ({
                     businesses: state.businesses.filter(

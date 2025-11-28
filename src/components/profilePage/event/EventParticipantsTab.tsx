@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Event } from "@/types/event";
 import { User } from "@/types/user";
 import { CATEGORIES } from "@/constants/filters";
@@ -16,6 +17,12 @@ export default function EventParticipantsTab({
     organizers,
     attendees,
 }: EventParticipantsTabProps) {
+    const router = useRouter();
+
+    const handleUserClick = (userId: string) => {
+        router.push(`/profile?userId=${userId}&tab=events`);
+    };
+
     return (
         <div className="space-y-4 mt-4">
             <div>
@@ -24,9 +31,10 @@ export default function EventParticipantsTab({
                 </p>
                 {organizers.length > 0 ? (
                     organizers.map(organizer => (
-                        <div
+                        <button
                             key={organizer.id}
-                            className="flex items-center gap-3 p-3 rounded-[12px]"
+                            onClick={() => handleUserClick(organizer.id)}
+                            className="flex items-center gap-3 p-3 rounded-[12px] w-full text-left hover:bg-gray-ultra-light transition-colors"
                         >
                             <div className="relative size-10 rounded-full overflow-hidden shrink-0">
                                 <Image
@@ -54,7 +62,7 @@ export default function EventParticipantsTab({
                             <div className="flex items-center justify-center size-8 rounded-full bg-gray-ultra-light">
                                 <ArrowDiagonalIcon className="text-black shrink-0 w-5 h-5" />
                             </div>
-                        </div>
+                        </button>
                     ))
                 ) : (
                     <div className="p-3 rounded-[12px] bg-gray-ultra-light">
@@ -71,9 +79,10 @@ export default function EventParticipantsTab({
                 </p>
                 {attendees.length > 0 ? (
                     attendees.map(attendee => (
-                        <div
+                        <button
                             key={attendee.id}
-                            className="flex items-center gap-3 p-3 rounded-[12px]"
+                            onClick={() => handleUserClick(attendee.id)}
+                            className="flex items-center gap-3 p-3 rounded-[12px] w-full text-left hover:bg-gray-ultra-light transition-colors"
                         >
                             <div className="relative size-10 rounded-full overflow-hidden shrink-0">
                                 <Image
@@ -99,7 +108,7 @@ export default function EventParticipantsTab({
                             <div className="flex items-center justify-center size-8 rounded-full bg-gray-ultra-light">
                                 <ArrowDiagonalIcon className="text-black shrink-0 w-5 h-5" />
                             </div>
-                        </div>
+                        </button>
                     ))
                 ) : (
                     <div className="p-3 rounded-[12px] bg-gray-ultra-light">

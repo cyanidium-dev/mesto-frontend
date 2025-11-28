@@ -4,6 +4,7 @@ import {
     useEffect,
     useMemo,
     useCallback,
+    useRef,
     Dispatch,
     SetStateAction,
 } from "react";
@@ -55,13 +56,27 @@ export const CreateForm = ({
 
     const getBusiness = useBusinessStore(s => s.getBusiness);
     const getEvent = useEventsStore(s => s.getEvent);
+    const initializeBusinessMockData = useBusinessStore(
+        s => s.initializeMockData
+    );
+    const initializeEventsMockData = useEventsStore(s => s.initializeMockData);
 
     const [createType, setCreateType] = useState<"event" | "business" | null>(
         urlType === "event" || urlType === "business" ? urlType : null
     );
 
+    useEffect(() => {
+        initializeBusinessMockData();
+        initializeEventsMockData();
+    }, [initializeBusinessMockData, initializeEventsMockData]);
+
+    const stepInitializedRef = useRef<string | null>(null);
+
     const editItem = useMemo(() => {
-        if (!editId) return null;
+        if (!editId) {
+            stepInitializedRef.current = null;
+            return null;
+        }
         if (urlType === "event") {
             return getEvent(editId);
         } else if (urlType === "business") {
@@ -71,23 +86,26 @@ export const CreateForm = ({
     }, [editId, urlType, getEvent, getBusiness]);
 
     const convertEventToFormValues = (event: Event): EventFormValues => {
+        const formatDate = (date: Date | string | undefined): string => {
+            if (!date) return "";
+            const dateObj = date instanceof Date ? date : new Date(date);
+            if (isNaN(dateObj.getTime())) return "";
+            const year = dateObj.getFullYear();
+            const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+            const day = String(dateObj.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        };
+
         return {
             type: "",
             category: event.category,
             languages: event.languages,
             tags: event.tags || [],
             title: event.title,
-            startDate:
-                event.startDate instanceof Date
-                    ? event.startDate.toISOString().split("T")[0]
-                    : new Date(event.startDate).toISOString().split("T")[0],
-            startTime: event.startTime,
+            startDate: formatDate(event.startDate),
+            startTime: event.startTime || "",
             hasEndDate: !!event.endDate,
-            endDate: event.endDate
-                ? event.endDate instanceof Date
-                    ? event.endDate.toISOString().split("T")[0]
-                    : new Date(event.endDate).toISOString().split("T")[0]
-                : "",
+            endDate: formatDate(event.endDate),
             hasEndTime: !!event.endTime,
             endTime: event.endTime || "",
             position: event.location,
@@ -135,57 +153,105 @@ export const CreateForm = ({
         router.push("/main");
     };
 
-    const eventInitialValues: EventFormValues =
-        editItem && "startDate" in editItem
-            ? convertEventToFormValues(editItem as Event)
-            : {
-                  type: "",
-                  category: "",
-                  languages: [],
-                  tags: [],
-                  title: "",
-                  startDate: "",
-                  startTime: "",
-                  hasEndDate: false,
-                  endDate: "",
-                  hasEndTime: false,
-                  endTime: "",
-                  position: null,
-                  description: "",
-                  socialMediaUrls: [],
-                  siteLink: "",
-                  imageUrls: [],
-              };
+    const eventInitialValues: EventFormValues = useMemo(() => {
+        if (editItem && "startDate" in editItem) {
+            return convertEventToFormValues(editItem as Event);
+        }
+        return {
+            type: "",
+            category: "",
+            languages: [],
+            tags: [],
+            title: "",
+            startDate: "",
+            startTime: "",
+            hasEndDate: false,
+            endDate: "",
+            hasEndTime: false,
+            endTime: "",
+            position: null,
+            description: "",
+            socialMediaUrls: [],
+            siteLink: "",
+            imageUrls: [],
+        };
+    }, [editItem]);
 
-    const businessInitialValues: BusinessFormValues =
-        editItem && !("startDate" in editItem)
-            ? convertBusinessToFormValues(editItem as Business)
-            : {
-                  type: "",
-                  userType: urlUserType || "business",
-                  category: "",
-                  languages: [],
-                  tags: [],
-                  title: "",
-                  workingHours: [],
-                  position: null,
-                  description: "",
-                  socialMediaUrls: [],
-                  siteLink: "",
-                  imageUrls: [],
-                  services: [],
-              };
+    const businessInitialValues: BusinessFormValues = useMemo(() => {
+        if (editItem && !("startDate" in editItem)) {
+            return convertBusinessToFormValues(editItem as Business);
+        }
+        return {
+            type: "",
+            userType: urlUserType || "business",
+            category: "",
+            languages: [],
+            tags: [],
+            title: "",
+            workingHours: [],
+            position: null,
+            description: "",
+            socialMediaUrls: [],
+            siteLink: "",
+            imageUrls: [],
+            services: [],
+        };
+    }, [editItem, urlUserType]);
 
     useEffect(() => {
-        if (urlType && !createType) {
-            handleCreateTypeChange(urlType as "event" | "business");
-            if (editId) {
-                setCurrentStep(1);
+        if (editId && stepInitializedRef.current === editId) {
+            if (editItem && createType) {
+                const maxStep = createType === "event" ? 8 : 9;
+                if (currentStep > maxStep) {
+                    const itemType =
+                        "startDate" in editItem ? "event" : "business";
+                    if (itemType === "business") {
+                        setCurrentStep(2);
+                    } else {
+                        setCurrentStep(1);
+                    }
+                }
             }
+            return;
         }
-    }, [editId, urlType, createType, handleCreateTypeChange, setCurrentStep]);
+        if (!editId) {
+            stepInitializedRef.current = null;
+            return;
+        }
 
-    if (currentStep === 0 || (!createType && !editId)) {
+        if (editId && editItem) {
+            if (!createType) {
+                stepInitializedRef.current = editId;
+                const itemType = "startDate" in editItem ? "event" : "business";
+                handleCreateTypeChange(itemType);
+                if (itemType === "business") {
+                    setCurrentStep(2);
+                } else {
+                    setCurrentStep(1);
+                }
+            } else if (currentStep === 0 && !stepInitializedRef.current) {
+                stepInitializedRef.current = editId;
+                const itemType = "startDate" in editItem ? "event" : "business";
+                if (itemType === "business") {
+                    setCurrentStep(2);
+                } else {
+                    setCurrentStep(1);
+                }
+            }
+        } else if (urlType && !createType && !editId) {
+            handleCreateTypeChange(urlType as "event" | "business");
+        }
+    }, [
+        editId,
+        urlType,
+        createType,
+        editItem,
+        currentStep,
+        handleCreateTypeChange,
+        setCurrentStep,
+    ]);
+
+    if (!editId && (currentStep === 0 || !createType)) {
         return (
             <StepZero
                 setCreateType={(type: "event" | "business") => {
@@ -194,6 +260,10 @@ export const CreateForm = ({
                 }}
             />
         );
+    }
+
+    if (editId && (!editItem || !createType || currentStep > 9)) {
+        return <div>Загрузка...</div>;
     }
 
     if (createType === "event") {
@@ -443,7 +513,21 @@ export const CreateForm = ({
                                 setCurrentStep={setCurrentStep}
                             />
                         );
+                    } else if (currentStep === 9) {
+                        return (
+                            <Submit
+                                formProps={
+                                    props as unknown as FormikProps<
+                                        EventFormValues | BusinessFormValues
+                                    >
+                                }
+                                setCurrentStep={setCurrentStep}
+                            />
+                        );
                     } else {
+                        if (editId && currentStep > 9) {
+                            return <div>Загрузка...</div>;
+                        }
                         return (
                             <Submit
                                 formProps={

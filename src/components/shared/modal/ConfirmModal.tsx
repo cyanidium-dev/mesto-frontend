@@ -40,7 +40,7 @@ export default function ConfirmModal({
                     <MainButton
                         variant="red"
                         onClick={onConfirm}
-                        className="gap-2"
+                        className="gap-2 shrink-0 h-10"
                     >
                         <TrashIcon className="w-5 h-5" />
                         {confirmText}
@@ -48,7 +48,7 @@ export default function ConfirmModal({
                     <MainButton
                         variant="secondary"
                         onClick={onClose}
-                        className="gap-2"
+                        className="gap-2 shrink-0 h-10"
                     >
                         <UndoIcon className="w-5 h-5" />
                         {cancelText}

@@ -6,6 +6,7 @@ import { mockEvents } from "@/data/mockEvents";
 interface EventsStore {
     events: Event[];
     addEvent: (event: Event) => void;
+    updateEvent: (id: string, event: Partial<Event>) => void;
     deleteEvent: (id: string) => void;
     getEvent: (id: string) => Event | null;
     getAllEvents: () => Event[];
@@ -15,6 +16,7 @@ interface EventsStore {
         userId: string,
         quantity?: number
     ) => void;
+    updateEventBookingCount: (eventId: string, quantity: number) => void;
     initialized: boolean;
     initializeMockData: () => void;
 }
@@ -45,6 +47,12 @@ export const useEventsStore = create<EventsStore>()(
             },
             addEvent: event =>
                 set(state => ({ events: [...state.events, event] })),
+            updateEvent: (id, updatedEvent) =>
+                set(state => ({
+                    events: state.events.map(event =>
+                        event.id === id ? { ...event, ...updatedEvent } : event
+                    ),
+                })),
             deleteEvent: id =>
                 set(state => ({
                     events: state.events.filter(event => event.id !== id),
@@ -75,7 +83,24 @@ export const useEventsStore = create<EventsStore>()(
                                     newAttendees.push(userId);
                                 }
                             }
-                            return { ...event, attendees: newAttendees };
+                            return {
+                                ...event,
+                                attendees: newAttendees,
+                            };
+                        }
+                        return event;
+                    }),
+                }));
+            },
+            updateEventBookingCount: (eventId, quantity) => {
+                set(state => ({
+                    events: state.events.map(event => {
+                        if (event.id === eventId) {
+                            return {
+                                ...event,
+                                bookingCount:
+                                    (event.bookingCount || 0) + quantity,
+                            };
                         }
                         return event;
                     }),

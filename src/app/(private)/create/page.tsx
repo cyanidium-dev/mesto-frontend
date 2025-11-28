@@ -11,9 +11,10 @@ function CreatePageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const stepParam = searchParams.get("step");
+    const editId = searchParams.get("edit");
     const userTypeParam = searchParams.get("userType");
     const initialStep = stepParam ? parseInt(stepParam, 10) : 0;
-    const [currentStep, setCurrentStep] = useState(initialStep);
+    const [currentStep, setCurrentStep] = useState(editId ? 0 : initialStep);
     const [createType, setCreateType] = useState<"event" | "business" | null>(
         null
     );

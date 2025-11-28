@@ -17,6 +17,7 @@ export interface Event {
     creatorId: string;
     attendees: string[];
     maxAttendees?: number;
+    bookingCount?: number;
     isRepetitive?: boolean;
     repeatedTimes?: number;
     siteLink?: string;

@@ -209,7 +209,7 @@ const SocialLinksInput = () => {
                                 {isEditing ? (
                                     <div
                                         className={`relative flex-1 min-w-0 ${
-                                            error ? "pb-5" : ""
+                                            error ? "pb-1" : ""
                                         }`}
                                     >
                                         <input

@@ -1,7 +1,7 @@
 "use client";
 import { Dispatch, SetStateAction } from "react";
 import { FormikProps } from "formik";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import MainButton from "../../shared/buttons/MainButton";
 import SectionTitle from "../../shared/titles/SectionTitle";
 import { useEventsStore } from "@/store/eventsStore";
@@ -40,8 +40,15 @@ const description = {
 export const Submit = ({ formProps }: SubmitProps) => {
     const { values, isSubmitting } = formProps;
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const editId = searchParams.get("edit");
+    const urlType = searchParams.get("type");
     const addEvent = useEventsStore(s => s.addEvent);
+    const updateEvent = useEventsStore(s => s.updateEvent);
+    const getEvent = useEventsStore(s => s.getEvent);
     const addBusiness = useBusinessStore(s => s.addBusiness);
+    const updateBusiness = useBusinessStore(s => s.updateBusiness);
+    const getBusiness = useBusinessStore(s => s.getBusiness);
     const currentUser = useUserStore(s => s.currentUser);
 
     let type: "event" | "company" | "individual";
@@ -62,7 +69,7 @@ export const Submit = ({ formProps }: SubmitProps) => {
             let itemId: string | null = null;
 
             if (isEventForm(values)) {
-                itemId = `event-${Date.now()}`;
+                itemId = editId || `event-${Date.now()}`;
 
                 const getDefaultMaxAttendees = (category: string): number => {
                     const categoryDefaults: Record<string, number> = {
@@ -75,52 +82,114 @@ export const Submit = ({ formProps }: SubmitProps) => {
                     return categoryDefaults[category] || 50;
                 };
 
-                const newEvent: Event = {
-                    id: itemId,
-                    category: values.category,
-                    languages: values.languages,
-                    tags: values.tags,
-                    title: values.title,
-                    description: values.description,
-                    imageUrls: values.imageUrls,
-                    socialMediaUrls: values.socialMediaUrls,
-                    location: values.position!,
-                    startDate: new Date(values.startDate),
-                    startTime: values.startTime,
-                    endDate:
-                        values.hasEndDate && values.endDate
-                            ? new Date(values.endDate)
-                            : undefined,
-                    endTime:
-                        values.hasEndTime && values.endTime
-                            ? values.endTime
-                            : undefined,
-                    creatorId: currentUser?.id || "anonymous",
-                    attendees: [],
-                    maxAttendees: getDefaultMaxAttendees(values.category),
-                    siteLink: values.siteLink,
-                };
-                addEvent(newEvent);
+                if (editId) {
+                    const existingEvent = getEvent(editId);
+                    if (existingEvent) {
+                        updateEvent(editId, {
+                            category: values.category,
+                            languages: values.languages,
+                            tags: values.tags,
+                            title: values.title,
+                            description: values.description,
+                            imageUrls: values.imageUrls,
+                            socialMediaUrls: values.socialMediaUrls,
+                            location: values.position!,
+                            startDate: new Date(values.startDate),
+                            startTime: values.startTime,
+                            endDate:
+                                values.hasEndDate && values.endDate
+                                    ? new Date(values.endDate)
+                                    : undefined,
+                            endTime:
+                                values.hasEndTime && values.endTime
+                                    ? values.endTime
+                                    : undefined,
+                            siteLink: values.siteLink,
+                        });
+                        itemId = editId;
+                    }
+                } else {
+                    const getDefaultMaxAttendees = (
+                        category: string
+                    ): number => {
+                        const categoryDefaults: Record<string, number> = {
+                            sport: 30,
+                            music: 100,
+                            art: 50,
+                            food: 25,
+                            education: 20,
+                        };
+                        return categoryDefaults[category] || 50;
+                    };
+
+                    const newEvent: Event = {
+                        id: itemId,
+                        category: values.category,
+                        languages: values.languages,
+                        tags: values.tags,
+                        title: values.title,
+                        description: values.description,
+                        imageUrls: values.imageUrls,
+                        socialMediaUrls: values.socialMediaUrls,
+                        location: values.position!,
+                        startDate: new Date(values.startDate),
+                        startTime: values.startTime,
+                        endDate:
+                            values.hasEndDate && values.endDate
+                                ? new Date(values.endDate)
+                                : undefined,
+                        endTime:
+                            values.hasEndTime && values.endTime
+                                ? values.endTime
+                                : undefined,
+                        creatorId: currentUser?.id || "anonymous",
+                        attendees: [],
+                        maxAttendees: getDefaultMaxAttendees(values.category),
+                        siteLink: values.siteLink,
+                    };
+                    addEvent(newEvent);
+                }
             } else {
-                itemId = `business-${Date.now()}`;
-                const newBusiness: Business = {
-                    id: itemId,
-                    userType: values.userType,
-                    category: values.category,
-                    languages: values.languages,
-                    tags: values.tags,
-                    title: values.title,
-                    description: values.description,
-                    imageUrls: values.imageUrls,
-                    socialMediaUrls: values.socialMediaUrls,
-                    location: values.position!,
-                    workingHours: values.workingHours,
-                    services: values.services,
-                    creatorId: currentUser?.id || "anonymous",
-                    siteLink: values.siteLink,
-                    calendlyUrl: DEFAULT_CALENDLY_URL,
-                };
-                addBusiness(newBusiness);
+                if (editId) {
+                    const existingBusiness = getBusiness(editId);
+                    if (existingBusiness) {
+                        updateBusiness(editId, {
+                            userType: values.userType,
+                            category: values.category,
+                            languages: values.languages,
+                            tags: values.tags,
+                            title: values.title,
+                            description: values.description,
+                            imageUrls: values.imageUrls,
+                            socialMediaUrls: values.socialMediaUrls,
+                            location: values.position!,
+                            workingHours: values.workingHours,
+                            services: values.services,
+                            siteLink: values.siteLink,
+                        });
+                        itemId = editId;
+                    }
+                } else {
+                    itemId = `business-${Date.now()}`;
+                    const newBusiness: Business = {
+                        id: itemId,
+                        userType: values.userType,
+                        category: values.category,
+                        languages: values.languages,
+                        tags: values.tags,
+                        title: values.title,
+                        description: values.description,
+                        imageUrls: values.imageUrls,
+                        socialMediaUrls: values.socialMediaUrls,
+                        location: values.position!,
+                        workingHours: values.workingHours,
+                        services: values.services,
+                        creatorId: currentUser?.id || "anonymous",
+                        siteLink: values.siteLink,
+                        calendlyUrl: DEFAULT_CALENDLY_URL,
+                    };
+                    addBusiness(newBusiness);
+                }
             }
 
             if (navigateToMap && itemId) {

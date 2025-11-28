@@ -29,6 +29,9 @@ export default function BookingModal({
     const addBooking = useBookingStore(s => s.addBooking);
     const currentUser = useUserStore(s => s.currentUser);
     const updateEventAttendees = useEventsStore(s => s.updateEventAttendees);
+    const updateEventBookingCount = useEventsStore(
+        s => s.updateEventBookingCount
+    );
 
     const [step, setStep] = useState<BookingStep>("details");
     const [quantity, setQuantity] = useState(2);
@@ -110,6 +113,7 @@ export default function BookingModal({
             });
 
             updateEventAttendees(event.id, userId, quantity);
+            updateEventBookingCount(event.id, quantity);
 
             setStep("success");
         }

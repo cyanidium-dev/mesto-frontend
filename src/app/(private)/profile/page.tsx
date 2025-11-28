@@ -1,6 +1,6 @@
 "use client";
-import { useState, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useMemo, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useUserStore } from "@/store/userStore";
 import { useBusinessStore } from "@/store/businessStore";
 import { useEventsStore } from "@/store/eventsStore";
@@ -20,10 +20,23 @@ type TabKey = "info" | "events" | "businesses";
 
 export default function ProfilePage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const currentUser = useUserStore(s => s.currentUser);
     const allBusinesses = useBusinessStore(s => s.getAllBusinesses());
     const allEvents = useEventsStore(s => s.getAllEvents());
-    const [selectedTab, setSelectedTab] = useState<TabKey>("info");
+    const tabParam = searchParams.get("tab");
+    const [selectedTab, setSelectedTab] = useState<TabKey>(
+        (tabParam && ["info", "events", "businesses"].includes(tabParam)
+            ? tabParam
+            : "info") as TabKey
+    );
+
+    useEffect(() => {
+        const tabParam = searchParams.get("tab");
+        if (tabParam && ["info", "events", "businesses"].includes(tabParam)) {
+            setSelectedTab(tabParam as TabKey);
+        }
+    }, [searchParams]);
 
     const userBusinesses = useMemo(() => {
         if (!currentUser) return [];
