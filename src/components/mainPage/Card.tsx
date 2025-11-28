@@ -9,6 +9,8 @@ import LocationMapIcon from "../shared/icons/LocationMapIcon";
 import AddProfileIcon from "../shared/icons/AddProfileIcon";
 import ShareIcon from "../shared/icons/ShareIcon";
 import ArrowIcon from "../shared/icons/ArrowIcon";
+import { useShare } from "@/hooks/useShare";
+import Toast from "../shared/toast/Toast";
 
 interface CardProps {
     business: Business;
@@ -18,6 +20,7 @@ export default function Card({ business }: CardProps) {
     const router = useRouter();
     const [isShownMore, setIsShownMore] = useState(false);
     const [shouldClamp, setShouldClamp] = useState(true); // для line-clamp
+    const { handleShare, showToast, setShowToast } = useShare();
     const toggleShowMore = () => setIsShownMore(prev => !prev);
 
     const handleShowOnMap = () => {
@@ -115,7 +118,7 @@ export default function Card({ business }: CardProps) {
                     >
                         <AddProfileIcon className="text-white" />
                     </button>
-                    <IconButton>
+                    <IconButton onClick={() => handleShare(business.id, "business")}>
                         <ShareIcon />
                     </IconButton>
                 </div>
@@ -127,6 +130,11 @@ export default function Card({ business }: CardProps) {
                     />
                 </IconButton>
             </div>
+            <Toast
+                message="Ссылка скопирована"
+                isVisible={showToast}
+                onClose={() => setShowToast(false)}
+            />
         </li>
     );
 }

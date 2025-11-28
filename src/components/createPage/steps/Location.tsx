@@ -131,7 +131,7 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
             } else {
                 setSearchResults([]);
             }
-        } catch (error) {
+        } catch {
             setSearchResults([]);
         } finally {
             setIsSearching(false);
@@ -155,7 +155,7 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
         setFieldValue("position", position);
         setMapCenterState(position);
         setSelectedLocationName(result.display_name);
-        setSearchQuery(result.display_name);
+        setSearchQuery("");
         setShowResults(false);
         lastReverseGeocodedPosition.current = position;
         if (!isMapOpen) {
@@ -178,14 +178,11 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                 const data = await response.json();
                 const locationName = data.display_name || "";
                 setSelectedLocationName(locationName);
-                setSearchQuery(locationName);
             } else {
                 setSelectedLocationName("");
-                setSearchQuery("");
             }
-        } catch (error) {
+        } catch {
             setSelectedLocationName("");
-            setSearchQuery("");
         }
     };
 
@@ -214,7 +211,6 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                     .then(data => {
                         const locationName = data.display_name || "";
                         setSelectedLocationName(locationName);
-                        setSearchQuery(prev => prev || locationName);
                     })
                     .catch(() => {});
             }
@@ -278,7 +274,7 @@ export const Location = ({ setCurrentStep, formProps }: LocationProps) => {
                 </div>
 
                 {!isMapOpen ? (
-                    <div className="h-[168px] w-[343px] rounded-[16px] overflow-hidden mb-4 relative bg-gray-ultra-light border border-gray-light flex items-center justify-center">
+                    <div className="h-[168px] w-full rounded-[16px] overflow-hidden mb-4 relative bg-gray-ultra-light border border-gray-light flex items-center justify-center">
                         <div className="flex flex-col items-center gap-4">
                             <button
                                 type="button"

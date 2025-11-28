@@ -10,6 +10,9 @@ import LocationMapIcon from "../shared/icons/LocationMapIcon";
 import HandUpIcon from "../shared/icons/HandUpIcon";
 import ShareIcon from "../shared/icons/ShareIcon";
 import ArrowIcon from "../shared/icons/ArrowIcon";
+import BookingModal from "../shared/modal/BookingModal";
+import { useShare } from "@/hooks/useShare";
+import Toast from "../shared/toast/Toast";
 
 interface EventCardProps {
     event: Event;
@@ -19,6 +22,8 @@ export default function EventCard({ event }: EventCardProps) {
     const router = useRouter();
     const [isShownMore, setIsShownMore] = useState(false);
     const [shouldClamp, setShouldClamp] = useState(true);
+    const [isBookingOpen, setIsBookingOpen] = useState(false);
+    const { handleShare, showToast, setShowToast } = useShare();
     const toggleShowMore = () => setIsShownMore(prev => !prev);
 
     const handleShowOnMap = () => {
@@ -116,11 +121,14 @@ export default function EventCard({ event }: EventCardProps) {
             </div>
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                    <MainButton className="flex items-center gap-2 h-8 px-3 w-fit text-[12px]">
+                    <MainButton 
+                        className="flex items-center gap-2 h-8 px-3 w-fit text-[12px]"
+                        onClick={() => setIsBookingOpen(true)}
+                    >
                         <HandUpIcon className="text-white" />
                         Забронировать
                     </MainButton>
-                    <IconButton>
+                    <IconButton onClick={() => handleShare(event.id, "event")}>
                         <ShareIcon />
                     </IconButton>
                 </div>
@@ -132,6 +140,17 @@ export default function EventCard({ event }: EventCardProps) {
                     />
                 </IconButton>
             </div>
+
+            <BookingModal
+                isOpen={isBookingOpen}
+                onClose={() => setIsBookingOpen(false)}
+                event={event}
+            />
+            <Toast
+                message="Ссылка скопирована"
+                isVisible={showToast}
+                onClose={() => setShowToast(false)}
+            />
         </li>
     );
 }

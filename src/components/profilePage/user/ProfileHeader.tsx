@@ -6,6 +6,8 @@ import ArrowIcon from "@/components/shared/icons/ArrowIcon";
 import ShareIcon from "@/components/shared/icons/ShareIcon";
 import GearIcon from "@/components/shared/icons/GearIcon";
 import { User } from "@/types/user";
+import { useShare } from "@/hooks/useShare";
+import Toast from "@/components/shared/toast/Toast";
 
 interface ProfileHeaderProps {
     user: User;
@@ -17,6 +19,7 @@ export default function ProfileHeader({
     categoryLabel,
 }: ProfileHeaderProps) {
     const router = useRouter();
+    const { handleShare, showToast, setShowToast } = useShare();
 
     return (
         <>
@@ -59,7 +62,10 @@ export default function ProfileHeader({
                     </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0 ml-2">
-                    <button className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light">
+                    <button
+                        onClick={() => handleShare()}
+                        className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light"
+                    >
                         <ShareIcon className="w-5 h-5" />
                     </button>
                     <button className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light">
@@ -67,6 +73,11 @@ export default function ProfileHeader({
                     </button>
                 </div>
             </div>
+            <Toast
+                message="Ссылка скопирована"
+                isVisible={showToast}
+                onClose={() => setShowToast(false)}
+            />
         </>
     );
 }

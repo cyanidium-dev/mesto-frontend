@@ -10,6 +10,8 @@ import DotsIcon from "@/components/shared/icons/DotsIcon";
 import MainButton from "@/components/shared/buttons/MainButton";
 import ArrowDiagonalIcon from "@/components/shared/icons/ArrowDiagonalIcon";
 import AddProfileIcon from "@/components/shared/icons/AddProfileIcon";
+import { useShare } from "@/hooks/useShare";
+import Toast from "@/components/shared/toast/Toast";
 
 interface MapBottomSheetProps {
     item: Business | Event | null;
@@ -23,6 +25,7 @@ export default function MapBottomSheet({
     onClose,
 }: MapBottomSheetProps) {
     const router = useRouter();
+    const { handleShare, showToast, setShowToast } = useShare();
     const [dragY, setDragY] = useState(0);
     const [isDragging, setIsDragging] = useState(false);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -294,6 +297,14 @@ export default function MapBottomSheet({
 
                             <div className="flex items-center gap-3 shrink-0 ml-2">
                                 <button
+                                    onClick={() => {
+                                        if (item) {
+                                            handleShare(
+                                                item.id,
+                                                isEvent ? "event" : "business"
+                                            );
+                                        }
+                                    }}
                                     className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-ultra-light hover:bg-gray-light transition-colors"
                                     aria-label="Share"
                                 >
@@ -377,6 +388,11 @@ export default function MapBottomSheet({
                     }}
                 />
             )}
+            <Toast
+                message="Ссылка скопирована"
+                isVisible={showToast}
+                onClose={() => setShowToast(false)}
+            />
         </>
     );
 }
