@@ -21,19 +21,40 @@ interface SubmitProps {
 
 const description = {
     event: {
-        title: "Супер, вы создали событие!",
-        description:
-            "Теперь вы можете увидеть его на карте или изменить детали события зайдя через ваш профиль",
+        create: {
+            title: "Супер, вы создали событие!",
+            description:
+                "Теперь вы можете увидеть его на карте или изменить детали события зайдя через ваш профиль",
+        },
+        edit: {
+            title: "Супер, вы изменили событие!",
+            description:
+                "Изменения сохранены. Вы можете увидеть его на карте или изменить детали события зайдя через ваш профиль",
+        },
     },
     company: {
-        title: "Супер, вы создали бизнес-точку!",
-        description:
-            "Теперь вы можете увидеть её на карте или изменить детали бизнес-точки зайдя через ваш профиль",
+        create: {
+            title: "Супер, вы создали бизнес-точку!",
+            description:
+                "Теперь вы можете увидеть её на карте или изменить детали бизнес-точки зайдя через ваш профиль",
+        },
+        edit: {
+            title: "Супер, вы изменили бизнес-точку!",
+            description:
+                "Изменения сохранены. Вы можете увидеть её на карте или изменить детали бизнес-точки зайдя через ваш профиль",
+        },
     },
     individual: {
-        title: "Супер, вы создали бизнес-точку!",
-        description:
-            "Теперь вы можете увидеть её на карте или изменить детали бизнес-точки зайдя через ваш профиль",
+        create: {
+            title: "Супер, вы создали бизнес-точку!",
+            description:
+                "Теперь вы можете увидеть её на карте или изменить детали бизнес-точки зайдя через ваш профиль",
+        },
+        edit: {
+            title: "Супер, вы изменили бизнес-точку!",
+            description:
+                "Изменения сохранены. Вы можете увидеть её на карте или изменить детали бизнес-точки зайдя через ваш профиль",
+        },
     },
 };
 
@@ -240,13 +261,19 @@ export const Submit = ({ formProps }: SubmitProps) => {
                 }
             }
 
-            if (navigateToMap && itemId) {
+            if (editId) {
+                router.push("/profile");
+            } else if (navigateToMap && itemId) {
                 router.push(`/main?view=map&focus=${itemId}`);
             } else {
                 router.push("/main");
             }
         } catch (error) {
-            router.push("/main");
+            if (editId) {
+                router.push("/profile");
+            } else {
+                router.push("/main");
+            }
         }
     };
 
@@ -261,10 +288,14 @@ export const Submit = ({ formProps }: SubmitProps) => {
                     <CheckCircleIcon className="w-[72px] h-[72px] text-[#00C950]" />
                 </div>
                 <SectionTitle className="mb-3 text-center relative">
-                    {description[type].title}
+                    {editId
+                        ? description[type].edit.title
+                        : description[type].create.title}
                 </SectionTitle>
                 <p className="text-center max-w-[265px]">
-                    {description[type].description}
+                    {editId
+                        ? description[type].edit.description
+                        : description[type].create.description}
                 </p>
             </div>
             <div className="flex flex-col gap-3">
@@ -274,7 +305,11 @@ export const Submit = ({ formProps }: SubmitProps) => {
                     className="h-12"
                     disabled={isSubmitting}
                 >
-                    {isSubmitting ? "Сохранение..." : "На главную"}
+                    {isSubmitting
+                        ? "Сохранение..."
+                        : editId
+                        ? "Вернуться в профиль"
+                        : "На главную"}
                 </MainButton>
                 <MainButton
                     onClick={handleViewOnMap}
