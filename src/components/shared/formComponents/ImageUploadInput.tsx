@@ -3,7 +3,8 @@
 import { useRef, useState, useEffect } from "react";
 import { FieldProps, useFormikContext } from "formik";
 import Image from "next/image";
-// import { FaTrash, FaCamera } from "react-icons/fa";
+import TrashIcon from "../icons/TrashIcon";
+import CameraIcon from "../icons/CameraIcon";
 
 interface ImageUploadInputProps {
   fieldName: string;
@@ -67,12 +68,7 @@ export default function ImageUploadInput({
             onClick={handleRemove}
             className="absolute bottom-0 right-1"
           >
-            <Image
-              src="/images/icons/trash.svg"
-              alt="trash"
-              width={36}
-              height={36}
-            />
+            <TrashIcon className="w-9 h-9" />
           </button>
         </div>
       ) : null}
@@ -96,12 +92,7 @@ export default function ImageUploadInput({
           fill
           className="-z-10 pointer-events-none"
         />
-        <Image
-          src="/images/icons/camera.svg"
-          alt="camera"
-          width={32}
-          height={32}
-        />
+        <CameraIcon className="w-8 h-8" />
       </div>
 
       <input

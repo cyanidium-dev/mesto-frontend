@@ -1,0 +1,56 @@
+"use client";
+
+import MainButton from "../buttons/MainButton";
+import UndoIcon from "../icons/UndoIcon";
+import CancelIcon from "../icons/CancelIcon";
+
+interface BlockUserModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onConfirm: () => void;
+}
+
+export default function BlockUserModal({
+    isOpen,
+    onClose,
+    onConfirm,
+}: BlockUserModalProps) {
+    if (!isOpen) return null;
+
+    const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (e.target === e.currentTarget) {
+            onClose();
+        }
+    };
+
+    return (
+        <div
+            className="fixed inset-0 z-500 px-[16px] py-[24px] flex items-end justify-center bg-black/50"
+            onClick={handleBackdropClick}
+        >
+            <div className="bg-white rounded-[24px] p-4 w-full max-w-md shadow-lg">
+                <h3 className="text-[16px] font-bold mb-10">
+                    Вы действительно хотите заблокировать этого пользователя?
+                </h3>
+                <div className="flex flex-col gap-2">
+                    <MainButton
+                        variant="red"
+                        onClick={onConfirm}
+                        className="gap-2 h-10 shrink-0"
+                    >
+                        <CancelIcon className="w-5 h-5" />
+                        Заблокировать
+                    </MainButton>
+                    <MainButton
+                        variant="secondary"
+                        onClick={onClose}
+                        className="gap-2 h-10 shrink-0"
+                    >
+                        <UndoIcon className="w-5 h-5" />
+                        Отмена
+                    </MainButton>
+                </div>
+            </div>
+        </div>
+    );
+}
