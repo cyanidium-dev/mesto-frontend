@@ -237,6 +237,7 @@ export const LangCategory = ({
                     options={categories}
                     labelClassName="mb-6"
                     fieldClassName="px-[10px] py-2 leading-[19px]"
+                    wrapperClassName="mt-3"
                 />
                 <div>
                     <p className="mb-3 text-[14px]">
