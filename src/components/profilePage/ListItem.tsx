@@ -9,7 +9,7 @@ import { useEventsStore } from "@/store/eventsStore";
 import { CATEGORIES } from "@/constants/filters";
 import Image from "next/image";
 import ConfirmModal from "@/components/shared/modal/ConfirmModal";
-import GearIcon from "@/components/shared/icons/GearIcon";
+import EditPenIcon from "@/components/shared/icons/EditPenIcon";
 import TrashIcon from "@/components/shared/icons/TrashIcon";
 import ArrowDiagonalIcon from "../shared/icons/ArrowDiagonalIcon";
 
@@ -99,7 +99,7 @@ export const ListItem = ({ item }: ListItemProps) => {
                     className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light"
                     aria-label="edit"
                 >
-                    <GearIcon className="w-5 h-5" />
+                    <EditPenIcon className="w-5 h-5" />
                 </button>
                 <button
                     onClick={handleDeleteClick}

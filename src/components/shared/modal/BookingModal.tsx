@@ -116,7 +116,9 @@ export default function BookingModal({
     };
 
     const handleBack = () => {
-        if (step === "contact") {
+        if (step === "details") {
+            onClose();
+        } else if (step === "contact") {
             setStep("details");
         } else if (step === "success") {
             onClose();

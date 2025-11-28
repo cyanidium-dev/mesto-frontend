@@ -56,6 +56,46 @@ const isValidUrl = (url: string): boolean => {
     }
 };
 
+const isValidSocialUrl = (url: string, platform: SocialPlatform): boolean => {
+    if (!isValidUrl(url)) return false;
+    const lowerUrl = url.toLowerCase();
+    switch (platform) {
+        case "facebook":
+            return lowerUrl.includes("facebook.com");
+        case "instagram":
+            return lowerUrl.includes("instagram.com");
+        case "telegram":
+            return (
+                lowerUrl.includes("telegram.org") || lowerUrl.includes("t.me")
+            );
+        default:
+            return false;
+    }
+};
+
+const getSocialUrlError = (
+    url: string,
+    platform: SocialPlatform
+): string | null => {
+    if (!url.trim()) return null;
+    if (!isValidUrl(url)) {
+        return "Введите корректный URL";
+    }
+    if (!isValidSocialUrl(url, platform)) {
+        switch (platform) {
+            case "facebook":
+                return "Введите ссылку на Facebook (facebook.com)";
+            case "instagram":
+                return "Введите ссылку на Instagram (instagram.com)";
+            case "telegram":
+                return "Введите ссылку на Telegram (telegram.org или t.me)";
+            default:
+                return "Введите корректную ссылку";
+        }
+    }
+    return null;
+};
+
 const SocialLinksInput = () => {
     const { values, setFieldValue } = useFormikContext<BaseFormValues>();
     const socialMediaUrls = values.socialMediaUrls || [];
@@ -67,6 +107,13 @@ const SocialLinksInput = () => {
         facebook: socialMediaUrls[0] || "",
         instagram: socialMediaUrls[1] || "",
         telegram: socialMediaUrls[2] || "",
+    });
+    const [inputErrors, setInputErrors] = useState<
+        Record<SocialPlatform, string | null>
+    >({
+        facebook: null,
+        instagram: null,
+        telegram: null,
     });
 
     const getPlatformIndex = (platform: SocialPlatform): number => {
@@ -86,18 +133,22 @@ const SocialLinksInput = () => {
 
     const handleInputChange = (platform: SocialPlatform, value: string) => {
         setInputValues(prev => ({ ...prev, [platform]: value }));
+        const error = getSocialUrlError(value, platform);
+        setInputErrors(prev => ({ ...prev, [platform]: error }));
     };
 
     const handleCheckmarkClick = (platform: SocialPlatform) => {
         const value = inputValues[platform];
-        if (isValidUrl(value)) {
+        if (isValidSocialUrl(value, platform)) {
             const index = getPlatformIndex(platform);
             const updated = [...socialMediaUrls];
             updated[index] = value;
             setFieldValue("socialMediaUrls", updated);
             setEditingPlatform(null);
+            setInputErrors(prev => ({ ...prev, [platform]: null }));
         } else {
-            setInputValues(prev => ({ ...prev, [platform]: "" }));
+            const error = getSocialUrlError(value, platform);
+            setInputErrors(prev => ({ ...prev, [platform]: error }));
         }
     };
 
@@ -111,6 +162,7 @@ const SocialLinksInput = () => {
             setEditingPlatform(null);
             const linkValue = getLinkValue(platform);
             setInputValues(prev => ({ ...prev, [platform]: linkValue }));
+            setInputErrors(prev => ({ ...prev, [platform]: null }));
         }
     };
 
@@ -120,6 +172,7 @@ const SocialLinksInput = () => {
         updated[index] = "";
         setFieldValue("socialMediaUrls", updated);
         setInputValues(prev => ({ ...prev, [platform]: "" }));
+        setInputErrors(prev => ({ ...prev, [platform]: null }));
         setEditingPlatform(null);
     };
 
@@ -136,12 +189,15 @@ const SocialLinksInput = () => {
                     const linkValue = getLinkValue(platform);
                     const inputValue = inputValues[platform];
                     const isEditing = editingPlatform === platform;
-                    const hasValidLink = linkValue && isValidUrl(linkValue);
+                    const hasValidLink =
+                        linkValue && isValidSocialUrl(linkValue, platform);
 
-                    const isValidInput = inputValue && isValidUrl(inputValue);
+                    const isValidInput =
+                        inputValue && isValidSocialUrl(inputValue, platform);
+                    const error = inputErrors[platform];
 
                     return (
-                        <div key={platform} className="flex items-center gap-3">
+                        <div key={platform} className="flex items-start gap-3">
                             <div className="flex items-center gap-2 flex-1 min-w-0">
                                 <SocialIcon
                                     platform={platform}
@@ -151,7 +207,11 @@ const SocialLinksInput = () => {
                                     {label}
                                 </span>
                                 {isEditing ? (
-                                    <div className="relative flex-1 min-w-0">
+                                    <div
+                                        className={`relative flex-1 min-w-0 ${
+                                            error ? "pb-5" : ""
+                                        }`}
+                                    >
                                         <input
                                             type="url"
                                             value={inputValue}
@@ -166,7 +226,11 @@ const SocialLinksInput = () => {
                                             }
                                             placeholder="https://..."
                                             autoFocus
-                                            className="w-full px-3 pr-10 h-[37px] text-[14px] font-normal leading-none text-dark bg-white placeholder-placeholder border border-gray-light rounded-full outline-none transition duration-300 ease-out focus:border-primary"
+                                            className={`w-full px-3 pr-10 h-[37px] text-[14px] font-normal leading-none text-dark bg-white placeholder-placeholder border rounded-full outline-none transition duration-300 ease-out ${
+                                                error
+                                                    ? "border-red-500 focus:border-red-500"
+                                                    : "border-gray-light focus:border-primary"
+                                            }`}
                                         />
                                         <button
                                             type="button"
@@ -182,6 +246,11 @@ const SocialLinksInput = () => {
                                         >
                                             <CheckmarkIcon className="w-5 h-5 text-black" />
                                         </button>
+                                        {error && (
+                                            <p className="absolute top-full left-0 mt-1 text-[12px] text-red-500 whitespace-nowrap">
+                                                {error}
+                                            </p>
+                                        )}
                                     </div>
                                 ) : null}
                             </div>
