@@ -22,7 +22,7 @@ const validationSchema = yup.object({
 
 const createTypeOptions = [
     {
-        label: "Бизнес точку",
+        label: "Бизнес-точку",
         value: "business",
         emoji: "/images/icons/classical-building.png",
     },
@@ -36,9 +36,9 @@ const createTypeOptions = [
 const getDescription = (selectedValue: "event" | "business" | ""): string => {
     switch (selectedValue) {
         case "event":
-            return "Событие - это одноразовое собрание, если повторяется, тогда создавай бизнес точку";
+            return "Событие - это одноразовое собрание, если повторяется, тогда создавай бизнес-точку";
         case "business":
-            return "Бизнес точка - это повторяющеся событие или постоянная точка";
+            return "Бизнес-точка - это повторяющееся событие или постоянная точка";
         default:
             return "";
     }

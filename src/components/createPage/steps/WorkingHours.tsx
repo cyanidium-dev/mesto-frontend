@@ -291,7 +291,7 @@ const WorkingHoursInput = () => {
             <div className="mb-6">
                 <p className="block text-[14px] mb-6">
                     Уточните в какие дни и часы работает компания, эта
-                    информация будет показываться в вашей бизнес точке
+                    информация будет показываться в вашей бизнес-точке
                 </p>
                 <label className="block text-[12px] mb-2">Рабочее время</label>
                 <div className="relative">

@@ -48,7 +48,7 @@ export const BussinessType = ({
             <div>
                 <SectionTitle className="mb-6">Кто вы?</SectionTitle>
                 <p className="mb-6 text-[14px] text-gray-text">
-                    Выбирите свое позиционирование
+                    Выберите свое позиционирование
                 </p>
                 <ImageRadioButtonInput
                     fieldName="userType"
