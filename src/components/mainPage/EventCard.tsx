@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Event } from "@/types/event";
 import Image from "next/image";
 import MainButton from "../shared/buttons/MainButton";
@@ -21,6 +21,7 @@ interface EventCardProps {
 
 export default function EventCard({ event }: EventCardProps) {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const currentUser = useUserStore(s => s.currentUser);
     const [isShownMore, setIsShownMore] = useState(false);
     const [shouldClamp, setShouldClamp] = useState(true);
@@ -102,13 +103,19 @@ export default function EventCard({ event }: EventCardProps) {
                         unoptimized
                     />
                 </div>
-                <div>
+                <div className="flex-1 min-w-0 pr-12">
                     <h3 className="flex flex-col gap-1 mb-2 min-h-8">
                         <button
-                            onClick={() =>
-                                router.push(`/profile/event/${event.id}`)
-                            }
-                            className="text-left line-clamp-1 hover:underline"
+                            onClick={() => {
+                                const viewParam = searchParams.get("view");
+                                const returnTo = viewParam
+                                    ? `?returnTo=/main?view=${viewParam}`
+                                    : `?returnTo=/main`;
+                                router.push(
+                                    `/profile/event/${event.id}${returnTo}`
+                                );
+                            }}
+                            className="text-left line-clamp-1 hover:underline max-w-full"
                         >
                             {title}
                         </button>

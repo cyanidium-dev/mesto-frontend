@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Business } from "@/types/business";
 import { Event } from "@/types/event";
 import Card from "./Card";
@@ -15,10 +16,14 @@ export default function List({ businesses, events = [] }: ListProps) {
       <h2 className="mb-2 font-medium">В радиусе 2 км</h2>
       <ul className="flex flex-col gap-2">
         {events.map((event) => (
-          <EventCard key={event.id} event={event} />
+          <Suspense key={event.id} fallback={<div>Loading...</div>}>
+            <EventCard event={event} />
+          </Suspense>
         ))}
         {businesses.map((business) => (
-          <Card key={business.id} business={business} />
+          <Suspense key={business.id} fallback={<div>Loading...</div>}>
+            <Card business={business} />
+          </Suspense>
         ))}
       </ul>
     </Container>

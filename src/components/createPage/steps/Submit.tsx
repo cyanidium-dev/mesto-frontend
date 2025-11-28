@@ -51,6 +51,54 @@ export const Submit = ({ formProps }: SubmitProps) => {
     const getBusiness = useBusinessStore(s => s.getBusiness);
     const currentUser = useUserStore(s => s.currentUser);
 
+    const parseDateString = (dateString: string): Date => {
+        if (!dateString) {
+            throw new Error("Date string is empty");
+        }
+
+        if (dateString.includes("-")) {
+            const date = new Date(dateString);
+            if (!isNaN(date.getTime())) {
+                return date;
+            }
+        }
+
+        const parts = dateString.split(/\D/);
+        if (parts.length === 3) {
+            const formatter = new Intl.DateTimeFormat(navigator.language, {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+            });
+            const formatParts = formatter.formatToParts(new Date(2024, 11, 25));
+            const orderedParts = formatParts.filter(p => p.type !== "literal");
+
+            let year = "";
+            let month = "";
+            let day = "";
+
+            orderedParts.forEach((part, i) => {
+                if (part.type === "month") month = parts[i].padStart(2, "0");
+                if (part.type === "day") day = parts[i].padStart(2, "0");
+                if (part.type === "year") year = parts[i];
+            });
+
+            if (year && month && day) {
+                const isoDate = `${year}-${month}-${day}`;
+                const date = new Date(isoDate);
+                if (!isNaN(date.getTime())) {
+                    return date;
+                }
+            }
+        }
+
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+            throw new Error(`Invalid date string: ${dateString}`);
+        }
+        return date;
+    };
+
     let type: "event" | "company" | "individual";
     if ("userType" in values && values.userType) {
         type = values.userType === "individual" ? "individual" : "company";
@@ -94,11 +142,11 @@ export const Submit = ({ formProps }: SubmitProps) => {
                             imageUrls: values.imageUrls,
                             socialMediaUrls: values.socialMediaUrls,
                             location: values.position!,
-                            startDate: new Date(values.startDate),
+                            startDate: parseDateString(values.startDate),
                             startTime: values.startTime,
                             endDate:
                                 values.hasEndDate && values.endDate
-                                    ? new Date(values.endDate)
+                                    ? parseDateString(values.endDate)
                                     : undefined,
                             endTime:
                                 values.hasEndTime && values.endTime
@@ -132,11 +180,11 @@ export const Submit = ({ formProps }: SubmitProps) => {
                         imageUrls: values.imageUrls,
                         socialMediaUrls: values.socialMediaUrls,
                         location: values.position!,
-                        startDate: new Date(values.startDate),
+                        startDate: parseDateString(values.startDate),
                         startTime: values.startTime,
                         endDate:
                             values.hasEndDate && values.endDate
-                                ? new Date(values.endDate)
+                                ? parseDateString(values.endDate)
                                 : undefined,
                         endTime:
                             values.hasEndTime && values.endTime

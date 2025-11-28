@@ -1,5 +1,5 @@
 "use client";
-import { useRouter, useParams } from "next/navigation";
+import { useRouter, useParams, useSearchParams } from "next/navigation";
 import NavigationButton from "@/components/shared/buttons/NavigationButton";
 import ArrowIcon from "@/components/shared/icons/ArrowIcon";
 import ShareIcon from "@/components/shared/icons/ShareIcon";
@@ -9,11 +9,17 @@ import Toast from "@/components/shared/toast/Toast";
 export default function EventHeader() {
     const router = useRouter();
     const params = useParams();
+    const searchParams = useSearchParams();
     const eventId = params.id as string;
     const { handleShare, showToast, setShowToast } = useShare();
 
     const handleBack = () => {
-        router.back();
+        const returnTo = searchParams.get("returnTo");
+        if (returnTo) {
+            router.push(returnTo);
+        } else {
+            router.back();
+        }
     };
 
     return (

@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Event } from "@/types/event";
 import { User } from "@/types/user";
 import { CATEGORIES } from "@/constants/filters";
@@ -20,9 +21,17 @@ export default function EventParticipantsTab({
 }: EventParticipantsTabProps) {
     const router = useRouter();
     const getAllBusinesses = useBusinessStore(s => s.getAllBusinesses);
+    const initializeBusinessMockData = useBusinessStore(
+        s => s.initializeMockData
+    );
+
+    useEffect(() => {
+        initializeBusinessMockData();
+    }, [initializeBusinessMockData]);
 
     const handleUserClick = (userId: string) => {
         const allBusinesses = getAllBusinesses();
+
         const individualBusiness = allBusinesses.find(
             business =>
                 business.creatorId === userId &&
@@ -31,6 +40,15 @@ export default function EventParticipantsTab({
 
         if (individualBusiness) {
             router.push(`/profile/business/${individualBusiness.id}`);
+            return;
+        }
+
+        const userBusinesses = allBusinesses.filter(
+            business => business.creatorId === userId
+        );
+
+        if (userBusinesses.length > 0) {
+            router.push(`/profile/business/${userBusinesses[0].id}`);
         } else {
             router.push(`/profile?tab=events`);
         }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Business } from "@/types/business";
 import Image from "next/image";
 import IconButton from "../shared/buttons/IconButton";
@@ -18,6 +18,7 @@ interface CardProps {
 
 export default function Card({ business }: CardProps) {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const [isShownMore, setIsShownMore] = useState(false);
     const [shouldClamp, setShouldClamp] = useState(true); // для line-clamp
     const { handleShare, showToast, setShowToast } = useShare();
@@ -87,13 +88,19 @@ export default function Card({ business }: CardProps) {
                         unoptimized
                     />
                 </div>
-                <div>
+                <div className="flex-1 min-w-0 pr-12">
                     <h3 className="flex flex-col gap-1 mb-2 min-h-8">
                         <button
-                            onClick={() =>
-                                router.push(`/profile/business/${business.id}`)
-                            }
-                            className="text-left line-clamp-1 hover:underline"
+                            onClick={() => {
+                                const viewParam = searchParams.get("view");
+                                const returnTo = viewParam
+                                    ? `?returnTo=/main?view=${viewParam}`
+                                    : `?returnTo=/main`;
+                                router.push(
+                                    `/profile/business/${business.id}${returnTo}`
+                                );
+                            }}
+                            className="text-left line-clamp-1 hover:underline max-w-full"
                         >
                             {title}
                         </button>
@@ -125,7 +132,9 @@ export default function Card({ business }: CardProps) {
                     >
                         <AddProfileIcon className="text-white" />
                     </button>
-                    <IconButton onClick={() => handleShare(business.id, "business")}>
+                    <IconButton
+                        onClick={() => handleShare(business.id, "business")}
+                    >
                         <ShareIcon />
                     </IconButton>
                 </div>

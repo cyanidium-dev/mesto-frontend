@@ -3,6 +3,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useEventsStore } from "@/store/eventsStore";
 import { useUserStore } from "@/store/userStore";
+import { useBusinessStore } from "@/store/businessStore";
 import { Event } from "@/types/event";
 import { User } from "@/types/user";
 import Container from "@/components/shared/container/Container";
@@ -30,6 +31,9 @@ export default function EventProfilePage() {
     const getEvent = useEventsStore(s => s.getEvent);
     const getUser = useUserStore(s => s.getUser);
     const currentUser = useUserStore(s => s.currentUser);
+    const initializeBusinessMockData = useBusinessStore(
+        s => s.initializeMockData
+    );
     const [event, setEvent] = useState<Event | null>(null);
     const [organizers, setOrganizers] = useState<User[]>([]);
     const [attendees, setAttendees] = useState<User[]>([]);
@@ -43,6 +47,10 @@ export default function EventProfilePage() {
 
     const isCurrentUserCreator =
         currentUser && event && currentUser.id === event.creatorId;
+
+    useEffect(() => {
+        initializeBusinessMockData();
+    }, [initializeBusinessMockData]);
 
     useEffect(() => {
         const tabParam = searchParams.get("tab");
@@ -96,7 +104,12 @@ export default function EventProfilePage() {
     }, [eventId, getEvent, getUser]);
 
     const handleBack = () => {
-        router.back();
+        const returnTo = searchParams.get("returnTo");
+        if (returnTo) {
+            router.push(returnTo);
+        } else {
+            router.back();
+        }
     };
 
     const allImageUrls =

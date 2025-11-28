@@ -344,18 +344,21 @@ export const EventDateTime = ({
                                         );
                                         e.target.value = masked;
 
-                                        setFieldValue("startDate", masked);
-
                                         if (masked) {
                                             const isoDate =
                                                 parseDateFromLocale(masked);
-                                            if (
-                                                isoDate &&
-                                                datePickerRef.current
-                                            ) {
-                                                datePickerRef.current.value =
-                                                    isoDate;
+                                            if (isoDate) {
+                                                setFieldValue(
+                                                    "startDate",
+                                                    isoDate
+                                                );
+                                                if (datePickerRef.current) {
+                                                    datePickerRef.current.value =
+                                                        isoDate;
+                                                }
                                             }
+                                        } else {
+                                            setFieldValue("startDate", "");
                                         }
                                     }}
                                 />
@@ -365,14 +368,10 @@ export const EventDateTime = ({
                                     className="absolute opacity-0 pointer-events-none w-0 h-0"
                                     onChange={e => {
                                         if (e.target.value) {
+                                            const isoDate = e.target.value;
                                             const formatted =
-                                                formatDateForDisplay(
-                                                    e.target.value
-                                                );
-                                            setFieldValue(
-                                                "startDate",
-                                                formatted
-                                            );
+                                                formatDateForDisplay(isoDate);
+                                            setFieldValue("startDate", isoDate);
                                         }
                                     }}
                                 />
@@ -433,18 +432,23 @@ export const EventDateTime = ({
                                             );
                                             e.target.value = masked;
 
-                                            setFieldValue("endDate", masked);
-
                                             if (masked) {
                                                 const isoDate =
                                                     parseDateFromLocale(masked);
-                                                if (
-                                                    isoDate &&
-                                                    endDatePickerRef.current
-                                                ) {
-                                                    endDatePickerRef.current.value =
-                                                        isoDate;
+                                                if (isoDate) {
+                                                    setFieldValue(
+                                                        "endDate",
+                                                        isoDate
+                                                    );
+                                                    if (
+                                                        endDatePickerRef.current
+                                                    ) {
+                                                        endDatePickerRef.current.value =
+                                                            isoDate;
+                                                    }
                                                 }
+                                            } else {
+                                                setFieldValue("endDate", "");
                                             }
                                         }}
                                     />
@@ -454,13 +458,14 @@ export const EventDateTime = ({
                                         className="absolute opacity-0 pointer-events-none w-0 h-0"
                                         onChange={e => {
                                             if (e.target.value) {
+                                                const isoDate = e.target.value;
                                                 const formatted =
                                                     formatDateForDisplay(
-                                                        e.target.value
+                                                        isoDate
                                                     );
                                                 setFieldValue(
                                                     "endDate",
-                                                    formatted
+                                                    isoDate
                                                 );
                                             }
                                         }}
