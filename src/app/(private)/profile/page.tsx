@@ -1,5 +1,5 @@
 "use client";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useUserStore } from "@/store/userStore";
 import { useBusinessStore } from "@/store/businessStore";
@@ -18,7 +18,7 @@ import ProfileDescription from "@/components/profilePage/user/ProfileDescription
 
 type TabKey = "info" | "events" | "businesses";
 
-export default function ProfilePage() {
+function ProfilePageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const currentUser = useUserStore(s => s.currentUser);
@@ -253,5 +253,13 @@ export default function ProfilePage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function ProfilePage() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <ProfilePageContent />
+        </Suspense>
     );
 }
