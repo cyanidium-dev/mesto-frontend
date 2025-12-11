@@ -214,10 +214,9 @@ const description = {
 };
 
 const SubcategorySelector = () => {
-    const { values, setFieldValue, errors, touched } =
+    const { values, setFieldValue } =
         useFormikContext<BaseFormValues>();
     const selectedCategory = values.category;
-    const selectedSubcategory = values.subcategory || "";
 
     const subcategories = useMemo(() => {
         if (!selectedCategory) return [];
@@ -241,129 +240,42 @@ const SubcategorySelector = () => {
         label: sub.label,
     }));
 
-    const selectedOption = subcategoryOptions.find(
-        opt => opt.value === selectedSubcategory
-    );
+    const hasCategory = !!selectedCategory;
+    const hasSubcategories = subcategories.length > 0;
+    const isDisabled = !hasCategory || !hasSubcategories;
 
-    const isError = errors.subcategory && touched.subcategory;
-
-    const handleChange = (option: { value: string; label: string } | null) => {
-        setFieldValue("subcategory", option?.value || "");
-    };
-
-    if (!selectedCategory || subcategories.length === 0) {
-        return null;
-    }
-
-    type OptionType = { value: string; label: string };
-    const customStyles: StylesConfig<OptionType, false> = {
-        control: provided => ({
-            ...provided,
-            minHeight: "auto",
-            height: "auto",
-            borderRadius: "9999px",
-            border: `1px solid ${isError ? "#fb2c36" : "#d4d4d4"}`,
-            boxShadow: "none",
-            "&:hover": {
-                border: `1px solid ${isError ? "#fb2c36" : "#155dfc"}`,
-            },
-            "&:focus-within": {
-                border: `1px solid ${isError ? "#fb2c36" : "#155dfc"}`,
-            },
-            paddingLeft: "10px",
-            paddingRight: "10px",
-            paddingTop: "8px",
-            paddingBottom: "8px",
-            fontSize: "16px",
-            cursor: "pointer",
-        }),
-        placeholder: provided => ({
-            ...provided,
-            color: "#000000",
-            fontSize: "16px",
-            lineHeight: "19px",
-        }),
-        menu: provided => ({
-            ...provided,
-            borderRadius: "12px",
-            border: "1px solid #d4d4d4",
-            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
-            zIndex: 20,
-            marginTop: "2px",
-        }),
-        option: (provided, state) => ({
-            ...provided,
-            backgroundColor: state.isSelected
-                ? "#155dfc"
-                : state.isFocused
-                ? "#EFF6FF"
-                : "white",
-            color: state.isSelected ? "white" : "#171717",
-            cursor: "pointer",
-            padding: "12px",
-            fontSize: "16px",
-            "&:active": {
-                backgroundColor: "#155dfc",
-                color: "white",
-            },
-        }),
-        indicatorSeparator: () => ({
-            display: "none",
-        }),
-        dropdownIndicator: provided => ({
-            ...provided,
-            padding: "0",
-        }),
-    };
-
-    const DropdownIndicator = (
-        props: DropdownIndicatorProps<OptionType, false>
-    ) => {
-        const { selectProps, innerProps } = props;
-        const menuIsOpen = selectProps.menuIsOpen || false;
+    if (isDisabled) {
         return (
-            <div
-                {...innerProps}
-                style={{
-                    position: "absolute",
-                    right: "12px",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                }}
-            >
-                <ArrowIcon
-                    className={`transition duration-300 ease-out ${
-                        menuIsOpen ? "rotate-90" : "-rotate-90"
-                    }`}
-                />
+            <div className="mb-6">
+                <label className="block text-[14px] mb-6">
+                    Выбрать вид деятельности:
+                </label>
+                <div className="mt-3 pointer-events-none opacity-50">
+                    <div className="relative w-full px-[10px] py-2 text-[16px] border border-gray-light rounded-full bg-gray-50">
+                        <span className="text-gray-placeholder">
+                            {!hasCategory
+                                ? "Сначала выберите категорию"
+                                : "Нет доступных видов деятельности"}
+                        </span>
+                        <ArrowIcon className="absolute right-3 bottom-1/2 translate-y-1/2 -rotate-90 opacity-50" />
+                    </div>
+                </div>
             </div>
         );
-    };
+    }
 
     return (
         <div className="mb-6">
-            <label className="block text-[14px] mb-3">
-                Выбрать вид деятельности:
-            </label>
-            <Select
-                value={selectedOption}
-                onChange={handleChange}
-                options={subcategoryOptions}
+            <SelectInput
+                fieldName="subcategory"
+                label="Выбрать вид деятельности:"
                 placeholder="Выбрать вид деятельности"
-                styles={customStyles}
-                components={{
-                    DropdownIndicator,
-                    IndicatorSeparator: () => null,
-                }}
-                className="react-select-container"
-                classNamePrefix="react-select"
-                isClearable
+                options={subcategoryOptions}
+                labelClassName="mb-6"
+                fieldClassName="px-[10px] py-2 leading-[19px]"
+                wrapperClassName="mt-3"
+                required={false}
             />
-            {isError && (
-                <p className="text-[12px] text-red-500 mt-1">
-                    {errors.subcategory as string}
-                </p>
-            )}
         </div>
     );
 };
