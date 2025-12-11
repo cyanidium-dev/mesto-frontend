@@ -12,6 +12,7 @@ export const createBusinessValidationSchema =
             category: yup
                 .string()
                 .required("Это поле обязательно для заполнения."),
+            subcategory: yup.string(),
             languages: yup
                 .array()
                 .of(yup.string())

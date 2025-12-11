@@ -1,5 +1,5 @@
 "use client";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useMemo, useEffect } from "react";
 import { FormikProps, useFormikContext } from "formik";
 import MainButton from "../../shared/buttons/MainButton";
 import SectionTitle from "../../shared/titles/SectionTitle";
@@ -10,7 +10,8 @@ import Select, {
     StylesConfig,
     DropdownIndicatorProps,
 } from "react-select";
-import { LANGUAGES, CATEGORIES } from "@/constants/filters";
+import { LANGUAGES } from "@/constants/filters";
+import { CATEGORIES, getSubcategoriesByCategory } from "@/constants/categories";
 import ArrowIcon from "../../shared/icons/ArrowIcon";
 
 interface LangCategoryProps {
@@ -20,7 +21,7 @@ interface LangCategoryProps {
 
 const categories = CATEGORIES.map(cat => ({
     value: cat.key,
-    label: cat.label,
+    label: `${cat.emoji} ${cat.label}`,
 }));
 
 const languages = LANGUAGES.map(lang => ({
@@ -212,6 +213,161 @@ const description = {
     },
 };
 
+const SubcategorySelector = () => {
+    const { values, setFieldValue, errors, touched } =
+        useFormikContext<BaseFormValues>();
+    const selectedCategory = values.category;
+    const selectedSubcategory = values.subcategory || "";
+
+    const subcategories = useMemo(() => {
+        if (!selectedCategory) return [];
+        return getSubcategoriesByCategory(selectedCategory);
+    }, [selectedCategory]);
+
+    useEffect(() => {
+        if (selectedCategory && values.subcategory) {
+            const currentSubcategories = getSubcategoriesByCategory(selectedCategory);
+            const subcategoryExists = currentSubcategories.some(
+                sub => sub.key === values.subcategory
+            );
+            if (!subcategoryExists) {
+                setFieldValue("subcategory", "");
+            }
+        }
+    }, [selectedCategory, values.subcategory, setFieldValue]);
+
+    const subcategoryOptions = subcategories.map(sub => ({
+        value: sub.key,
+        label: sub.label,
+    }));
+
+    const selectedOption = subcategoryOptions.find(
+        opt => opt.value === selectedSubcategory
+    );
+
+    const isError = errors.subcategory && touched.subcategory;
+
+    const handleChange = (option: { value: string; label: string } | null) => {
+        setFieldValue("subcategory", option?.value || "");
+    };
+
+    if (!selectedCategory || subcategories.length === 0) {
+        return null;
+    }
+
+    type OptionType = { value: string; label: string };
+    const customStyles: StylesConfig<OptionType, false> = {
+        control: provided => ({
+            ...provided,
+            minHeight: "auto",
+            height: "auto",
+            borderRadius: "9999px",
+            border: `1px solid ${isError ? "#fb2c36" : "#d4d4d4"}`,
+            boxShadow: "none",
+            "&:hover": {
+                border: `1px solid ${isError ? "#fb2c36" : "#155dfc"}`,
+            },
+            "&:focus-within": {
+                border: `1px solid ${isError ? "#fb2c36" : "#155dfc"}`,
+            },
+            paddingLeft: "10px",
+            paddingRight: "10px",
+            paddingTop: "8px",
+            paddingBottom: "8px",
+            fontSize: "16px",
+            cursor: "pointer",
+        }),
+        placeholder: provided => ({
+            ...provided,
+            color: "#000000",
+            fontSize: "16px",
+            lineHeight: "19px",
+        }),
+        menu: provided => ({
+            ...provided,
+            borderRadius: "12px",
+            border: "1px solid #d4d4d4",
+            boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+            zIndex: 20,
+            marginTop: "2px",
+        }),
+        option: (provided, state) => ({
+            ...provided,
+            backgroundColor: state.isSelected
+                ? "#155dfc"
+                : state.isFocused
+                ? "#EFF6FF"
+                : "white",
+            color: state.isSelected ? "white" : "#171717",
+            cursor: "pointer",
+            padding: "12px",
+            fontSize: "16px",
+            "&:active": {
+                backgroundColor: "#155dfc",
+                color: "white",
+            },
+        }),
+        indicatorSeparator: () => ({
+            display: "none",
+        }),
+        dropdownIndicator: provided => ({
+            ...provided,
+            padding: "0",
+        }),
+    };
+
+    const DropdownIndicator = (
+        props: DropdownIndicatorProps<OptionType, false>
+    ) => {
+        const { selectProps, innerProps } = props;
+        const menuIsOpen = selectProps.menuIsOpen || false;
+        return (
+            <div
+                {...innerProps}
+                style={{
+                    position: "absolute",
+                    right: "12px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                }}
+            >
+                <ArrowIcon
+                    className={`transition duration-300 ease-out ${
+                        menuIsOpen ? "rotate-90" : "-rotate-90"
+                    }`}
+                />
+            </div>
+        );
+    };
+
+    return (
+        <div className="mb-6">
+            <label className="block text-[14px] mb-3">
+                Выбрать вид деятельности:
+            </label>
+            <Select
+                value={selectedOption}
+                onChange={handleChange}
+                options={subcategoryOptions}
+                placeholder="Выбрать вид деятельности"
+                styles={customStyles}
+                components={{
+                    DropdownIndicator,
+                    IndicatorSeparator: () => null,
+                }}
+                className="react-select-container"
+                classNamePrefix="react-select"
+                isClearable
+            />
+            {isError && (
+                <p className="text-[12px] text-red-500 mt-1">
+                    {errors.subcategory as string}
+                </p>
+            )}
+        </div>
+    );
+};
+
 export const LangCategory = ({
     setCurrentStep,
     formProps,
@@ -239,6 +395,7 @@ export const LangCategory = ({
                     fieldClassName="px-[10px] py-2 leading-[19px]"
                     wrapperClassName="mt-3"
                 />
+                <SubcategorySelector />
                 <div>
                     <p className="mb-3 text-[14px]">
                         {description[type].languages}

@@ -101,6 +101,7 @@ export const CreateForm = ({
         return {
             type: "",
             category: event.category,
+            subcategory: event.subcategory,
             languages: event.languages,
             tags: event.tags || [],
             title: event.title,
@@ -125,6 +126,7 @@ export const CreateForm = ({
             type: "",
             userType: business.userType,
             category: business.category,
+            subcategory: business.subcategory,
             languages: business.languages,
             tags: business.tags,
             title: business.title || "",
@@ -166,6 +168,7 @@ export const CreateForm = ({
         return {
             type: "",
             category: "",
+            subcategory: "",
             languages: [],
             tags: [],
             title: "",
@@ -191,6 +194,7 @@ export const CreateForm = ({
             type: "",
             userType: urlUserType || "business",
             category: "",
+            subcategory: "",
             languages: [],
             tags: [],
             title: "",

@@ -142,11 +142,10 @@ export const Submit = ({ formProps }: SubmitProps) => {
 
                 const getDefaultMaxAttendees = (category: string): number => {
                     const categoryDefaults: Record<string, number> = {
-                        sport: 30,
-                        music: 100,
-                        art: 50,
+                        sports: 30,
+                        art: 100,
                         food: 25,
-                        education: 20,
+                        work: 20,
                     };
                     return categoryDefaults[category] || 50;
                 };
@@ -156,6 +155,7 @@ export const Submit = ({ formProps }: SubmitProps) => {
                     if (existingEvent) {
                         updateEvent(editId, {
                             category: values.category,
+                            subcategory: values.subcategory,
                             languages: values.languages,
                             tags: values.tags,
                             title: values.title,
@@ -182,11 +182,10 @@ export const Submit = ({ formProps }: SubmitProps) => {
                         category: string
                     ): number => {
                         const categoryDefaults: Record<string, number> = {
-                            sport: 30,
-                            music: 100,
-                            art: 50,
+                            sports: 30,
+                            art: 100,
                             food: 25,
-                            education: 20,
+                            work: 20,
                         };
                         return categoryDefaults[category] || 50;
                     };
@@ -194,6 +193,7 @@ export const Submit = ({ formProps }: SubmitProps) => {
                     const newEvent: Event = {
                         id: itemId,
                         category: values.category,
+                        subcategory: values.subcategory,
                         languages: values.languages,
                         tags: values.tags,
                         title: values.title,
@@ -225,6 +225,7 @@ export const Submit = ({ formProps }: SubmitProps) => {
                         updateBusiness(editId, {
                             userType: values.userType,
                             category: values.category,
+                            subcategory: values.subcategory,
                             languages: values.languages,
                             tags: values.tags,
                             title: values.title,
@@ -244,6 +245,7 @@ export const Submit = ({ formProps }: SubmitProps) => {
                         id: itemId,
                         userType: values.userType,
                         category: values.category,
+                        subcategory: values.subcategory,
                         languages: values.languages,
                         tags: values.tags,
                         title: values.title,

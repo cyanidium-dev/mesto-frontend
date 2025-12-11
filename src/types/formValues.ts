@@ -2,6 +2,7 @@ import { LatLngExpression } from "leaflet";
 
 export interface BaseFormValues {
     category: string;
+    subcategory?: string;
     languages: string[];
     tags: string[];
     title?: string;
