@@ -23,7 +23,9 @@ export const createBusinessValidationSchema =
                 .of(yup.string())
                 .min(1, "Выберите хотя бы один тег")
                 .required("Это поле обязательно для заполнения."),
-            title: yup.string(),
+            title: yup
+                .string()
+                .required("Это поле обязательно для заполнения."),
             workingHours: yup.array().of(
                 yup.object().shape({
                     start: yup.string(),

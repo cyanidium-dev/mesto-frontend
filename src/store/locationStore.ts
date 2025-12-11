@@ -20,7 +20,10 @@ export const useLocationStore = create<LocationStore>()(
     }),
     {
       name: "user-location-storage", // ключ у localStorage
-      partialize: (state) => ({ userLocation: state.userLocation }), // тільки userLocation зберігається
+      partialize: (state) => ({ 
+        userLocation: state.userLocation,
+        mapCenter: state.mapCenter, // зберігаємо також mapCenter
+      }),
     }
   )
 );

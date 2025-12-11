@@ -18,6 +18,9 @@ function CreatePageContent() {
     const [createType, setCreateType] = useState<"event" | "business" | null>(
         null
     );
+    const [userType, setUserType] = useState<"business" | "individual" | null>(
+        null
+    );
 
     useEffect(() => {
         if (stepParam) {
@@ -28,17 +31,26 @@ function CreatePageContent() {
         }
     }, [stepParam]);
     const getStepsWithRequiredFields = (
-        type: "event" | "business" | null
+        type: "event" | "business" | null,
+        isIndividual: boolean | null
     ): number[] => {
         if (type === "event") {
-            return [1, 3, 4, 5];
+            // Event: Step 1 (LangCategory), Step 2 (Interests - component requires tags), Step 3 (Title), Step 4 (EventDateTime), Step 5 (Location)
+            return [1, 2, 3, 4, 5];
         } else if (type === "business") {
-            return [1, 2, 6];
+            if (isIndividual) {
+                // Individual business: Step 1 (LangCategory), Step 2 (Interests - tags required), Step 4 (Location), Step 5 (DescriptionSocials - description required)
+                return [1, 2, 4, 5];
+            } else {
+                // Regular business: Step 1 (BussinessType), Step 2 (LangCategory), Step 3 (Interests - tags required), Step 4 (Title), Step 6 (Location), Step 7 (DescriptionSocials - description required)
+                return [1, 2, 3, 4, 6, 7];
+            }
         }
         return [];
     };
 
-    const stepsWithRequiredFields = getStepsWithRequiredFields(createType);
+    const isIndividual = userType === "individual";
+    const stepsWithRequiredFields = getStepsWithRequiredFields(createType, isIndividual);
     const shouldHideSkip =
         stepsWithRequiredFields.includes(currentStep) ||
         currentStep === 0 ||
@@ -95,6 +107,7 @@ function CreatePageContent() {
                             currentStep={currentStep}
                             setCurrentStep={setCurrentStep}
                             onCreateTypeChange={setCreateType}
+                            onUserTypeChange={setUserType}
                         />
                     </Suspense>
                 </Container>
