@@ -32,6 +32,21 @@ export default function SearchBar({
     const [categoryValue, setCategoryValue] = useState<Selection>(new Set([]));
     const [openNowValue, setOpenNowValue] = useState(false);
 
+ const handleCategoryChange = (keys: Selection) => {
+        const keysSet = keys instanceof Set ? keys : new Set(keys === "all" ? [] : [keys]);
+        const currentSet = categoryValue instanceof Set ? categoryValue : new Set(categoryValue === "all" ? [] : [categoryValue]);
+        
+        if (currentSet.size > 0 && keysSet.size > 0) {
+            const currentKey = Array.from(currentSet)[0];
+            const newKey = Array.from(keysSet)[0];
+            if (currentKey === newKey) {
+                setCategoryValue(new Set([]));
+                return;
+            }
+        }
+        setCategoryValue(keys);
+    };
+
     useEffect(() => {
         if (onFiltersChange) {
             const filters: FilterValues = {
@@ -156,7 +171,8 @@ export default function SearchBar({
                         placeholder="Категория"
                         aria-label="select input"
                         selectedKeys={categoryValue}
-                        onSelectionChange={setCategoryValue}
+                        onSelectionChange={handleCategoryChange}
+                        disallowEmptySelection={false}
                         classNames={{
                             base: "w-fit",
                             mainWrapper: "w-fit",
