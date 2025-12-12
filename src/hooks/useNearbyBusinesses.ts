@@ -68,7 +68,7 @@ const generateFakeBusinesses = (lat: number, lng: number): Business[] => {
             description: base.desc,
             imageUrls: generateGalleryImages(i),
             location: [lat + latOffset, lng + lngOffset] as [number, number],
-            category: "services",
+            category: "home",
             languages: ["ru", "uk"],
             tags: ["услуги", "выезд"],
             creatorId: `user-${i + 1}`,

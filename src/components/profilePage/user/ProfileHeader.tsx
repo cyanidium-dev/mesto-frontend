@@ -12,11 +12,13 @@ import Toast from "@/components/shared/toast/Toast";
 interface ProfileHeaderProps {
     user: User;
     categoryLabel?: string;
+    title?: string;
 }
 
 export default function ProfileHeader({
     user,
     categoryLabel,
+    title,
 }: ProfileHeaderProps) {
     const router = useRouter();
     const { handleShare, showToast, setShowToast } = useShare();
@@ -32,7 +34,7 @@ export default function ProfileHeader({
                     Назад
                 </NavigationButton>
                 <h1 className="text-[16px] font-bold text-center w-full">
-                    Мой профиль
+                    {title || "Мой профиль"}
                 </h1>
             </div>
             <div className="flex items-center justify-between w-full mb-3">
@@ -68,16 +70,18 @@ export default function ProfileHeader({
                     >
                         <ShareIcon className="w-5 h-5" />
                     </button>
-                    <button
-                        onClick={() =>
-                            router.push(
-                                "/create?type=business&userType=individual&step=2"
-                            )
-                        }
-                        className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light"
-                    >
-                        <GearIcon className="w-5 h-5" />
-                    </button>
+                    {title === undefined && (
+                        <button
+                            onClick={() =>
+                                router.push(
+                                    "/create?type=business&userType=individual&step=2"
+                                )
+                            }
+                            className="w-[32px] h-[32px] flex items-center justify-center rounded-full bg-gray-ultra-light"
+                        >
+                            <GearIcon className="w-5 h-5" />
+                        </button>
+                    )}
                 </div>
             </div>
             <Toast

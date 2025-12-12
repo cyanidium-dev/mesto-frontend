@@ -3,6 +3,7 @@ import { LatLngExpression } from "leaflet";
 export interface Event {
     id: string;
     category: string;
+    subcategory?: string;
     languages: string[];
     tags?: string[];
     title: string;

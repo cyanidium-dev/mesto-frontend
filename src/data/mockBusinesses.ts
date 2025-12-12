@@ -93,7 +93,7 @@ export const mockBusinesses: Business[] = [
             number,
             number
         ],
-        category: "services",
+        category: "work",
         languages: ["ru", "uk"],
         tags: ["образование", "репетитор", "математика"],
         workingHours: [
@@ -120,7 +120,7 @@ export const mockBusinesses: Business[] = [
             number,
             number
         ],
-        category: "sport",
+        category: "sports",
         languages: ["ru", "en", "de"],
         tags: ["фитнес", "спорт", "тренировки"],
         workingHours: [
@@ -215,7 +215,7 @@ export const mockBusinesses: Business[] = [
             number,
             number
         ],
-        category: "education",
+        category: "shopping",
         languages: ["ru", "en", "de", "uk"],
         tags: ["книги", "литература", "образование"],
         workingHours: [
@@ -243,7 +243,7 @@ export const mockBusinesses: Business[] = [
             number,
             number
         ],
-        category: "services",
+        category: "pets",
         languages: ["ru", "en"],
         tags: ["ветеринар", "животные", "здоровье"],
         workingHours: [
@@ -280,7 +280,7 @@ export const mockBusinesses: Business[] = [
             number,
             number
         ],
-        category: "technology",
+        category: "shopping",
         languages: ["ru", "en", "de"],
         tags: ["электроника", "техника", "смартфоны"],
         workingHours: [
@@ -311,7 +311,7 @@ export const mockBusinesses: Business[] = [
             number,
             number
         ],
-        category: "sport",
+        category: "sports",
         languages: ["ru", "en"],
         tags: ["йога", "медитация", "здоровье"],
         workingHours: [
@@ -503,7 +503,7 @@ export const mockBusinesses: Business[] = [
             number,
             number
         ],
-        category: "education",
+        category: "work",
         languages: ["ru", "en"],
         tags: ["английский", "репетитор", "образование"],
         workingHours: [

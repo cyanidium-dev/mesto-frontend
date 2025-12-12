@@ -38,12 +38,14 @@ interface CreateFormProps {
     currentStep: number;
     setCurrentStep: Dispatch<SetStateAction<number>>;
     onCreateTypeChange?: (type: "event" | "business" | null) => void;
+    onUserTypeChange?: (userType: "business" | "individual" | null) => void;
 }
 
 export const CreateForm = ({
     currentStep,
     setCurrentStep,
     onCreateTypeChange,
+    onUserTypeChange,
 }: CreateFormProps) => {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -99,6 +101,7 @@ export const CreateForm = ({
         return {
             type: "",
             category: event.category,
+            subcategory: event.subcategory,
             languages: event.languages,
             tags: event.tags || [],
             title: event.title,
@@ -123,6 +126,7 @@ export const CreateForm = ({
             type: "",
             userType: business.userType,
             category: business.category,
+            subcategory: business.subcategory,
             languages: business.languages,
             tags: business.tags,
             title: business.title || "",
@@ -145,8 +149,12 @@ export const CreateForm = ({
         (type: "event" | "business" | null) => {
             setCreateType(type);
             onCreateTypeChange?.(type);
+            // Reset userType when switching to event
+            if (type === "event" && onUserTypeChange) {
+                onUserTypeChange(null);
+            }
         },
-        [onCreateTypeChange]
+        [onCreateTypeChange, onUserTypeChange]
     );
 
     const submitForm = () => {
@@ -160,6 +168,7 @@ export const CreateForm = ({
         return {
             type: "",
             category: "",
+            subcategory: "",
             languages: [],
             tags: [],
             title: "",
@@ -185,6 +194,7 @@ export const CreateForm = ({
             type: "",
             userType: urlUserType || "business",
             category: "",
+            subcategory: "",
             languages: [],
             tags: [],
             title: "",
@@ -250,6 +260,20 @@ export const CreateForm = ({
         handleCreateTypeChange,
         setCurrentStep,
     ]);
+
+    // Initialize userType from URL or edit item
+    useEffect(() => {
+        if (onUserTypeChange) {
+            if (urlUserType) {
+                onUserTypeChange(urlUserType);
+            } else if (editItem && !("startDate" in editItem)) {
+                const business = editItem as Business;
+                onUserTypeChange(business.userType);
+            } else if (createType === "event") {
+                onUserTypeChange(null);
+            }
+        }
+    }, [urlUserType, editItem, createType, onUserTypeChange]);
 
     if (!editId && (currentStep === 0 || !createType)) {
         return (
@@ -364,6 +388,22 @@ export const CreateForm = ({
                 setFieldValue("title", "");
             }
         }, [isIndividual, currentUser, values.title, setFieldValue]);
+
+        return null;
+    };
+
+    const UserTypeNotifier = ({
+        userType,
+        onUserTypeChange,
+    }: {
+        userType: "business" | "individual" | undefined;
+        onUserTypeChange?: (userType: "business" | "individual" | null) => void;
+    }) => {
+        useEffect(() => {
+            if (onUserTypeChange) {
+                onUserTypeChange(userType || null);
+            }
+        }, [userType, onUserTypeChange]);
 
         return null;
     };
@@ -544,6 +584,10 @@ export const CreateForm = ({
                 return (
                     <>
                         <IndividualBusinessTitleSetter />
+                        <UserTypeNotifier
+                            userType={props.values.userType}
+                            onUserTypeChange={onUserTypeChange}
+                        />
                         {getBusinessStep()}
                     </>
                 );

@@ -13,6 +13,7 @@ import { useUserStore } from "@/store/userStore";
 import { Business } from "@/types/business";
 import { Event } from "@/types/event";
 import { getCoordinates } from "@/utils/distance";
+import { isLocationInCities, CITY_COORDINATES } from "@/utils/cityUtils";
 import { isItemOpenNow } from "@/utils/openNow";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
@@ -162,6 +163,16 @@ export default function Main() {
         }
     }, [searchParams, viewMode, getEvent, getBusiness, setMapCenter]);
 
+    useEffect(() => {
+        if (viewMode === "map" && filters.cities.length === 1) {
+            const selectedCity = filters.cities[0];
+            const cityCoords = CITY_COORDINATES[selectedCity];
+            if (cityCoords) {
+                setMapCenter(cityCoords);
+            }
+        }
+    }, [filters.cities, viewMode, setMapCenter]);
+
     return (
         <>
             <SearchBar
@@ -220,6 +231,12 @@ function filterItems<T extends Business | Event>(
 
         if (filters.openNow) {
             if (!isItemOpenNow(item)) {
+                return false;
+            }
+        }
+
+        if (filters.cities.length > 0) {
+            if (!isLocationInCities(item.location, filters.cities)) {
                 return false;
             }
         }

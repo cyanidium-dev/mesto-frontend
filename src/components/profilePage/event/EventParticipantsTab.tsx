@@ -20,7 +20,6 @@ export default function EventParticipantsTab({
     attendees,
 }: EventParticipantsTabProps) {
     const router = useRouter();
-    const getAllBusinesses = useBusinessStore(s => s.getAllBusinesses);
     const initializeBusinessMockData = useBusinessStore(
         s => s.initializeMockData
     );
@@ -30,28 +29,7 @@ export default function EventParticipantsTab({
     }, [initializeBusinessMockData]);
 
     const handleUserClick = (userId: string) => {
-        const allBusinesses = getAllBusinesses();
-
-        const individualBusiness = allBusinesses.find(
-            business =>
-                business.creatorId === userId &&
-                business.userType === "individual"
-        );
-
-        if (individualBusiness) {
-            router.push(`/profile/business/${individualBusiness.id}`);
-            return;
-        }
-
-        const userBusinesses = allBusinesses.filter(
-            business => business.creatorId === userId
-        );
-
-        if (userBusinesses.length > 0) {
-            router.push(`/profile/business/${userBusinesses[0].id}`);
-        } else {
-            router.push(`/profile?tab=events`);
-        }
+        router.push(`/profile/user/${userId}`);
     };
 
     return (

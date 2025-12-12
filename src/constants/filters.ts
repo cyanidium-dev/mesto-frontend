@@ -21,15 +21,12 @@ export const LANGUAGES_SHORT: FilterOption[] = [
     { key: "fr", label: "Фран" },
 ];
 
-export const CATEGORIES: FilterOption[] = [
-    { key: "sport", label: "Спорт" },
-    { key: "music", label: "Музыка" },
-    { key: "food", label: "Еда" },
-    { key: "art", label: "Искусство" },
-    { key: "tech", label: "Технологии" },
-    { key: "social", label: "Общение" },
-    { key: "services", label: "Услуги" },
-];
+import { CATEGORIES as CATEGORIES_WITH_SUB } from "./categories";
+
+export const CATEGORIES: FilterOption[] = CATEGORIES_WITH_SUB.map(cat => ({
+    key: cat.key,
+    label: cat.label,
+}));
 
 export const CITIES: FilterOption[] = [
     { key: "Barcelona", label: "Барселона" },

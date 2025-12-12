@@ -32,6 +32,23 @@ export default function SearchBar({
     const [categoryValue, setCategoryValue] = useState<Selection>(new Set([]));
     const [openNowValue, setOpenNowValue] = useState(false);
 
+    const handleCategoryChange = (keys: Selection) => {
+        const keysSet = keys instanceof Set ? keys : new Set(keys === "all" ? [] : [keys]);
+        const currentSet = categoryValue instanceof Set ? categoryValue : new Set(categoryValue === "all" ? [] : [categoryValue]);
+        
+        if (currentSet.size > 0 && keysSet.size > 0) {
+            const currentKey = Array.from(currentSet)[0];
+            const newKey = Array.from(keysSet)[0];
+            if (currentKey === newKey) {
+                setTimeout(() => {
+                    setCategoryValue(new Set([]));
+                }, 150);
+                return;
+            }
+        }
+        setCategoryValue(keys);
+    };
+
     useEffect(() => {
         if (onFiltersChange) {
             const filters: FilterValues = {
@@ -156,7 +173,9 @@ export default function SearchBar({
                         placeholder="Категория"
                         aria-label="select input"
                         selectedKeys={categoryValue}
-                        onSelectionChange={setCategoryValue}
+                        onSelectionChange={handleCategoryChange}
+                        disallowEmptySelection={false}
+                        selectionMode="single"
                         classNames={{
                             base: "w-fit",
                             mainWrapper: "w-fit",
@@ -167,8 +186,14 @@ export default function SearchBar({
                             }`,
                             innerWrapper: "w-fit pr-2",
                             value: "text-[12px]",
-                            popoverContent: "w-fit min-w-[97px]",
+                            popoverContent: "min-w-[180px] max-w-[calc(100vw-2rem)]",
                             selectorIcon: "end-1.5",
+                        }}
+                        popoverProps={{
+                            placement: "bottom-start",
+                            classNames: {
+                                content: "min-w-[180px] max-w-[calc(100vw-2rem)]",
+                            },
                         }}
                     >
                         {CATEGORIES.map(category => (

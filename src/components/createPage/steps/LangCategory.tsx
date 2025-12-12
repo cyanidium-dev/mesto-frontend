@@ -1,5 +1,5 @@
 "use client";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useMemo, useEffect } from "react";
 import { FormikProps, useFormikContext } from "formik";
 import MainButton from "../../shared/buttons/MainButton";
 import SectionTitle from "../../shared/titles/SectionTitle";
@@ -10,7 +10,8 @@ import Select, {
     StylesConfig,
     DropdownIndicatorProps,
 } from "react-select";
-import { LANGUAGES, CATEGORIES } from "@/constants/filters";
+import { LANGUAGES } from "@/constants/filters";
+import { CATEGORIES, getSubcategoriesByCategory } from "@/constants/categories";
 import ArrowIcon from "../../shared/icons/ArrowIcon";
 
 interface LangCategoryProps {
@@ -20,7 +21,7 @@ interface LangCategoryProps {
 
 const categories = CATEGORIES.map(cat => ({
     value: cat.key,
-    label: cat.label,
+    label: `${cat.emoji} ${cat.label}`,
 }));
 
 const languages = LANGUAGES.map(lang => ({
@@ -212,6 +213,73 @@ const description = {
     },
 };
 
+const SubcategorySelector = () => {
+    const { values, setFieldValue } =
+        useFormikContext<BaseFormValues>();
+    const selectedCategory = values.category;
+
+    const subcategories = useMemo(() => {
+        if (!selectedCategory) return [];
+        return getSubcategoriesByCategory(selectedCategory);
+    }, [selectedCategory]);
+
+    useEffect(() => {
+        if (selectedCategory && values.subcategory) {
+            const currentSubcategories = getSubcategoriesByCategory(selectedCategory);
+            const subcategoryExists = currentSubcategories.some(
+                sub => sub.key === values.subcategory
+            );
+            if (!subcategoryExists) {
+                setFieldValue("subcategory", "");
+            }
+        }
+    }, [selectedCategory, values.subcategory, setFieldValue]);
+
+    const subcategoryOptions = subcategories.map(sub => ({
+        value: sub.key,
+        label: sub.label,
+    }));
+
+    const hasCategory = !!selectedCategory;
+    const hasSubcategories = subcategories.length > 0;
+    const isDisabled = !hasCategory || !hasSubcategories;
+
+    if (isDisabled) {
+        return (
+            <div className="mb-6">
+                <label className="block text-[14px] mb-6">
+                    Выбрать вид деятельности:
+                </label>
+                <div className="mt-3 pointer-events-none opacity-50">
+                    <div className="relative w-full px-[10px] py-2 text-[16px] border border-gray-light rounded-full bg-gray-50">
+                        <span className="text-gray-placeholder">
+                            {!hasCategory
+                                ? "Сначала выберите категорию"
+                                : "Нет доступных видов деятельности"}
+                        </span>
+                        <ArrowIcon className="absolute right-3 bottom-1/2 translate-y-1/2 -rotate-90 opacity-50" />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="mb-6">
+            <SelectInput
+                fieldName="subcategory"
+                label="Выбрать вид деятельности:"
+                placeholder="Выбрать вид деятельности"
+                options={subcategoryOptions}
+                labelClassName="mb-6"
+                fieldClassName="px-[10px] py-2 leading-[19px]"
+                wrapperClassName="mt-3"
+                required={false}
+            />
+        </div>
+    );
+};
+
 export const LangCategory = ({
     setCurrentStep,
     formProps,
@@ -239,6 +307,7 @@ export const LangCategory = ({
                     fieldClassName="px-[10px] py-2 leading-[19px]"
                     wrapperClassName="mt-3"
                 />
+                <SubcategorySelector />
                 <div>
                     <p className="mb-3 text-[14px]">
                         {description[type].languages}

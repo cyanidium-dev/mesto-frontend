@@ -8,6 +8,7 @@ export interface Business {
     imageUrls?: string[];
     location: LatLngExpression;
     category: string;
+    subcategory?: string;
     languages: string[];
     tags: string[];
     workingHours?: ({
