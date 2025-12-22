@@ -58,7 +58,8 @@ export const mockEvents: Event[] = [
     {
         id: "event-1",
         category: "sports",
-        languages: ["ru", "en"],
+        subcategory: "sports-sections",
+        languages: ["ru"],
         tags: ["футбол", "спорт"],
         title: "Футбольный матч в парке",
         description:
@@ -102,7 +103,8 @@ export const mockEvents: Event[] = [
     {
         id: "event-3",
         category: "art",
-        languages: ["en", "de"],
+        subcategory: "art-galleries",
+        languages: ["ru"],
         tags: ["выставка", "живопись"],
         title: "Выставка современного искусства",
         description:
@@ -124,7 +126,7 @@ export const mockEvents: Event[] = [
     {
         id: "event-4",
         category: "food",
-        languages: ["ru", "en"],
+        languages: ["ru"],
         tags: ["кулинария", "мастер-класс"],
         title: "Мастер-класс по итальянской кухне",
         description:
@@ -146,7 +148,8 @@ export const mockEvents: Event[] = [
     {
         id: "event-5",
         category: "sports",
-        languages: ["ru", "en"],
+        subcategory: "sports-sections",
+        languages: ["ru"],
         tags: ["бег", "марафон"],
         title: "Городской марафон",
         description:
@@ -166,7 +169,7 @@ export const mockEvents: Event[] = [
     {
         id: "event-6",
         category: "art",
-        languages: ["ru", "en", "uk"],
+        languages: ["ru", "uk"],
         tags: ["джаз", "концерт"],
         title: "Джазовый вечер",
         description:
@@ -188,7 +191,8 @@ export const mockEvents: Event[] = [
     {
         id: "event-7",
         category: "work",
-        languages: ["ru", "en"],
+        subcategory: "courses-trainings",
+        languages: ["ru"],
         tags: ["лекция", "наука"],
         title: "Лекция о космосе",
         description:
@@ -210,7 +214,8 @@ export const mockEvents: Event[] = [
     {
         id: "event-8",
         category: "art",
-        languages: ["ru", "en", "de"],
+        subcategory: "theater-studios",
+        languages: ["ru"],
         tags: ["театр", "спектакль"],
         title: "Театральная постановка 'Гамлет'",
         description:
@@ -232,7 +237,8 @@ export const mockEvents: Event[] = [
     {
         id: "event-9",
         category: "sports",
-        languages: ["ru", "en"],
+        subcategory: "yoga-meditation",
+        languages: ["ru"],
         tags: ["йога", "медитация"],
         title: "Йога на рассвете",
         description:
@@ -254,7 +260,7 @@ export const mockEvents: Event[] = [
     {
         id: "event-10",
         category: "food",
-        languages: ["ru", "en"],
+        languages: ["ru"],
         tags: ["дегустация", "вино"],
         title: "Дегустация вин",
         description:
@@ -276,7 +282,7 @@ export const mockEvents: Event[] = [
     {
         id: "event-11",
         category: "art",
-        languages: ["ru", "en"],
+        languages: ["ru"],
         tags: ["танцы", "вечеринка"],
         title: "Сальса вечеринка",
         description:
@@ -298,7 +304,8 @@ export const mockEvents: Event[] = [
     {
         id: "event-12",
         category: "work",
-        languages: ["ru", "en"],
+        subcategory: "master-classes",
+        languages: ["ru"],
         tags: ["воркшоп", "технологии"],
         title: "Воркшоп по программированию",
         description:
@@ -320,7 +327,7 @@ export const mockEvents: Event[] = [
     {
         id: "event-13",
         category: "art",
-        languages: ["ru", "en", "de"],
+        languages: ["ru"],
         tags: ["классика", "концерт"],
         title: "Классический концерт",
         description:
@@ -338,5 +345,96 @@ export const mockEvents: Event[] = [
         attendees: [],
         maxAttendees: 150,
         siteLink: "https://example.com/classical",
+    },
+    {
+        id: "event-14",
+        category: "art",
+        subcategory: "art-galleries",
+        languages: ["ru"],
+        tags: ["выставка", "живопись", "современное искусство"],
+        title: "Выставка современной живописи",
+        description:
+            "Экспозиция работ современных художников. Разнообразные стили и техники. Экспозиция работ современных художников. Разнообразные стили и техники. Экспозиция работ современных художников. Разнообразные стили и техники.",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 13, 20) as [
+            number,
+            number
+        ],
+        startDate: new Date(2025, 0, 25),
+        startTime: "10:00",
+        endDate: new Date(2025, 1, 10),
+        creatorId: categoryOrganizers.art,
+        attendees: [],
+        maxAttendees: 100,
+        siteLink: "https://example.com/gallery",
+    },
+    {
+        id: "event-15",
+        category: "work",
+        subcategory: "courses-trainings",
+        languages: ["ru"],
+        tags: ["курс", "обучение", "навыки"],
+        title: "Курс по цифровому маркетингу",
+        description:
+            "Практический курс для начинающих маркетологов. Изучаем основы SMM, контент-маркетинга и аналитики. Практический курс для начинающих маркетологов. Изучаем основы SMM, контент-маркетинга и аналитики. Практический курс для начинающих маркетологов. Изучаем основы SMM, контент-маркетинга и аналитики.",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 14, 20) as [
+            number,
+            number
+        ],
+        startDate: new Date(2025, 1, 1),
+        startTime: "18:00",
+        endDate: new Date(2025, 1, 15),
+        endTime: "20:00",
+        creatorId: categoryOrganizers.work,
+        attendees: [],
+        maxAttendees: 30,
+        siteLink: "https://example.com/marketing",
+    },
+    {
+        id: "event-16",
+        category: "art",
+        subcategory: "theater-studios",
+        languages: ["ru"],
+        tags: ["театр", "спектакль", "драма"],
+        title: "Театральная постановка 'Ромео и Джульетта'",
+        description:
+            "Классическая пьеса Шекспира в современной интерпретации. Многоязычные субтитры. Классическая пьеса Шекспира в современной интерпретации. Многоязычные субтитры. Классическая пьеса Шекспира в современной интерпретации. Многоязычные субтитры.",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 15, 20) as [
+            number,
+            number
+        ],
+        startDate: new Date(2025, 1, 5),
+        startTime: "19:00",
+        endDate: new Date(2025, 1, 5),
+        endTime: "21:30",
+        creatorId: categoryOrganizers.art,
+        attendees: [],
+        maxAttendees: 150,
+        siteLink: "https://example.com/romeo",
+    },
+    {
+        id: "event-17",
+        category: "work",
+        subcategory: "master-classes",
+        languages: ["ru"],
+        tags: ["мастер-класс", "кулинария", "выпечка"],
+        title: "Мастер-класс по выпечке хлеба",
+        description:
+            "Учимся печь настоящий хлеб на закваске. Все ингредиенты и рецепты включены. Учимся печь настоящий хлеб на закваске. Все ингредиенты и рецепты включены. Учимся печь настоящий хлеб на закваске. Все ингредиенты и рецепты включены.",
+        imageUrls: generateGalleryImages(0),
+        location: generateCoordinates(centerLat, centerLng, 16, 20) as [
+            number,
+            number
+        ],
+        startDate: new Date(2025, 1, 8),
+        startTime: "14:00",
+        endDate: new Date(2025, 1, 8),
+        endTime: "17:00",
+        creatorId: categoryOrganizers.work,
+        attendees: [],
+        maxAttendees: 12,
+        siteLink: "https://example.com/bread",
     },
 ];
