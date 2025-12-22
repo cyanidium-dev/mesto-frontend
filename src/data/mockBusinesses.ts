@@ -31,6 +31,21 @@ const generateCoordinates = (
 const centerLat = 50.0755;
 const centerLng = 14.4378;
 
+const CITY_CENTERS: Array<[number, number]> = [
+    [50.0755, 14.4378], // Prague
+    [52.52, 13.405], // Berlin
+    [48.8566, 2.3522], // Paris
+    [51.5074, -0.1278], // London
+    [52.3676, 4.9041], // Amsterdam
+    [48.2082, 16.3738], // Vienna
+    [41.3851, 2.1734], // Barcelona
+    [40.4168, -3.7038], // Madrid
+];
+
+const getCityCenter = (index: number): [number, number] => {
+    return CITY_CENTERS[index % CITY_CENTERS.length];
+};
+
 const mockImages = [
     "/images/mockedData/businessPfp.png",
     "/images/mockedData/businessGalleryItem.png",
@@ -57,13 +72,13 @@ export const mockBusinesses: Business[] = [
         description:
             "Уютное кафе с отличным кофе и домашней выпечкой. Работаем ежедневно с 8:00 до 22:00. Уютное кафе с отличным кофе и домашней выпечкой. Работаем ежедневно с 8:00 до 22:00. Уютное кафе с отличным кофе и домашней выпечкой. Работаем ежедневно с 8:00 до 22:00.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 0, 15) as [
-            number,
-            number
-        ],
+        location: (() => {
+            const [lat, lng] = getCityCenter(0);
+            return generateCoordinates(lat, lng, 0, 15) as [number, number];
+        })(),
         category: "food",
         subcategory: "cafes",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["кафе", "кофе", "выпечка"],
         workingHours: [
             { start: "08:00", end: "22:00" },
@@ -90,7 +105,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Частный репетитор по математике. Индивидуальные занятия для школьников и студентов. Частный репетитор по математике. Индивидуальные занятия для школьников и студентов. Частный репетитор по математике. Индивидуальные занятия для школьников и студентов.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 1, 15) as [
+        location: (() => { const [lat, lng] = [52.52, 13.405]; return generateCoordinates(lat, lng, 1, 15) as [number, number]; })() as [
             number,
             number
         ],
@@ -118,13 +133,13 @@ export const mockBusinesses: Business[] = [
         description:
             "Современный фитнес-клуб с профессиональным оборудованием и опытными тренерами. Современный фитнес-клуб с профессиональным оборудованием и опытными тренерами. Современный фитнес-клуб с профессиональным оборудованием и опытными тренерами.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 2, 15) as [
+        location: (() => { const [lat, lng] = [48.8566, 2.3522]; return generateCoordinates(lat, lng, 2, 15) as [number, number]; })() as [
             number,
             number
         ],
         category: "sports",
         subcategory: "gyms",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["фитнес", "спорт", "тренировки"],
         workingHours: [
             { start: "06:00", end: "23:00" },
@@ -155,13 +170,13 @@ export const mockBusinesses: Business[] = [
         description:
             "Аутентичная итальянская кухня в центре города. Свежие пасты, пицца из дровяной печи и отличное вино. Аутентичная итальянская кухня в центре города. Свежие пасты, пицца из дровяной печи и отличное вино. Аутентичная итальянская кухня в центре города. Свежие пасты, пицца из дровяной печи и отличное вино.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 3, 15) as [
+        location: (() => { const [lat, lng] = [51.5074, -0.1278]; return generateCoordinates(lat, lng, 3, 15) as [number, number]; })() as [
             number,
             number
         ],
         category: "food",
         subcategory: "restaurants",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["ресторан", "итальянская кухня", "паста", "пицца"],
         workingHours: [
             { start: "12:00", end: "23:00" },
@@ -187,7 +202,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Полный спектр услуг красоты: стрижки, окрашивание, маникюр, педикюр, макияж. Полный спектр услуг красоты: стрижки, окрашивание, маникюр, педикюр, макияж. Полный спектр услуг красоты: стрижки, окрашивание, маникюр, педикюр, макияж.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 4, 15) as [
+        location: (() => { const [lat, lng] = [52.3676, 4.9041]; return generateCoordinates(lat, lng, 4, 15) as [number, number]; })() as [
             number,
             number
         ],
@@ -216,7 +231,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Большой выбор книг на разных языках. Художественная литература, научные издания, детские книги. Большой выбор книг на разных языках. Художественная литература, научные издания, детские книги. Большой выбор книг на разных языках. Художественная литература, научные издания, детские книги.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 5, 15) as [
+        location: (() => { const [lat, lng] = [48.2082, 16.3738]; return generateCoordinates(lat, lng, 5, 15) as [number, number]; })() as [
             number,
             number
         ],
@@ -245,13 +260,13 @@ export const mockBusinesses: Business[] = [
         description:
             "Профессиональная ветеринарная помощь. Консультации, вакцинация, хирургия, стоматология для животных. Профессиональная ветеринарная помощь. Консультации, вакцинация, хирургия, стоматология для животных. Профессиональная ветеринарная помощь. Консультации, вакцинация, хирургия, стоматология для животных.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 6, 15) as [
+        location: (() => { const [lat, lng] = [41.3851, 2.1734]; return generateCoordinates(lat, lng, 6, 15) as [number, number]; })() as [
             number,
             number
         ],
         category: "pets",
         subcategory: "veterinary",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["ветеринар", "животные", "здоровье"],
         workingHours: [
             { start: "08:00", end: "20:00" },
@@ -283,13 +298,13 @@ export const mockBusinesses: Business[] = [
         description:
             "Широкий ассортимент электроники: смартфоны, ноутбуки, планшеты, аксессуары. Гарантия и сервис. Широкий ассортимент электроники: смартфоны, ноутбуки, планшеты, аксессуары. Гарантия и сервис. Широкий ассортимент электроники: смартфоны, ноутбуки, планшеты, аксессуары. Гарантия и сервис.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 7, 15) as [
+        location: (() => { const [lat, lng] = [40.4168, -3.7038]; return generateCoordinates(lat, lng, 7, 15) as [number, number]; })() as [
             number,
             number
         ],
         category: "shopping",
         subcategory: "electronics",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["электроника", "техника", "смартфоны"],
         workingHours: [
             { start: "10:00", end: "20:00" },
@@ -315,13 +330,13 @@ export const mockBusinesses: Business[] = [
         description:
             "Занятия йогой для всех уровней. Хатха, виньяса, аштанга. Утренние и вечерние группы. Занятия йогой для всех уровней. Хатха, виньяса, аштанга. Утренние и вечерние группы. Занятия йогой для всех уровней. Хатха, виньяса, аштанга. Утренние и вечерние группы.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 8, 15) as [
+        location: (() => { const [lat, lng] = [50.0755, 14.4378]; return generateCoordinates(lat, lng, 8, 15) as [number, number]; })() as [
             number,
             number
         ],
         category: "sports",
         subcategory: "yoga-meditation",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["йога", "медитация", "здоровье"],
         workingHours: [
             { start: "07:00", end: "21:00" },
@@ -349,13 +364,13 @@ export const mockBusinesses: Business[] = [
         description:
             "Настоящая итальянская пицца, приготовленная в дровяной печи. Свежие ингредиенты и быстрая доставка. Настоящая итальянская пицца, приготовленная в дровяной печи. Свежие ингредиенты и быстрая доставка. Настоящая итальянская пицца, приготовленная в дровяной печи. Свежие ингредиенты и быстрая доставка.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 9, 15) as [
+        location: (() => { const [lat, lng] = [52.52, 13.405]; return generateCoordinates(lat, lng, 9, 15) as [number, number]; })() as [
             number,
             number
         ],
         category: "food",
         subcategory: "fast-food",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["пицца", "итальянская кухня", "доставка"],
         workingHours: [
             { start: "11:00", end: "23:00" },
@@ -381,12 +396,12 @@ export const mockBusinesses: Business[] = [
         description:
             "Обучение различным стилям танцев: латина, сальса, бачата, хип-хоп, современные танцы. Обучение различным стилям танцев: латина, сальса, бачата, хип-хоп, современные танцы. Обучение различным стилям танцев: латина, сальса, бачата, хип-хоп, современные танцы.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 10, 15) as [
+        location: (() => { const [lat, lng] = [48.8566, 2.3522]; return generateCoordinates(lat, lng, 10, 15) as [number, number]; })() as [
             number,
             number
         ],
         category: "art",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["танцы", "латина", "сальса"],
         workingHours: [
             { start: "16:00", end: "22:00" },
@@ -414,13 +429,13 @@ export const mockBusinesses: Business[] = [
         description:
             "Специализированная кофейня с обжаркой собственного производства. Эспрессо, капучино, альтернативные методы заваривания. Специализированная кофейня с обжаркой собственного производства. Эспрессо, капучино, альтернативные методы заваривания. Специализированная кофейня с обжаркой собственного производства. Эспрессо, капучино, альтернативные методы заваривания.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 11, 15) as [
+        location: (() => { const [lat, lng] = [51.5074, -0.1278]; return generateCoordinates(lat, lng, 11, 15) as [number, number]; })() as [
             number,
             number
         ],
         category: "food",
         subcategory: "cafes",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["кофе", "кофейня", "обжарка"],
         workingHours: [
             { start: "07:00", end: "20:00" },
@@ -446,13 +461,13 @@ export const mockBusinesses: Business[] = [
         description:
             "Профессиональная фотосъемка: портреты, свадьбы, корпоративы, семейные фотосессии. Студия и выездная съемка. Профессиональная фотосъемка: портреты, свадьбы, корпоративы, семейные фотосессии. Студия и выездная съемка. Профессиональная фотосъемка: портреты, свадьбы, корпоративы, семейные фотосессии. Студия и выездная съемка.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 12, 15) as [
+        location: (() => { const [lat, lng] = [52.3676, 4.9041]; return generateCoordinates(lat, lng, 12, 15) as [number, number]; })() as [
             number,
             number
         ],
         category: "art",
         subcategory: "photography-video",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["фото", "фотосъемка", "портреты"],
         workingHours: [
             { start: "10:00", end: "20:00" },
@@ -481,13 +496,13 @@ export const mockBusinesses: Business[] = [
         description:
             "Профессиональный фотограф. Специализируюсь на портретной и свадебной фотографии. Более 5 лет опыта. Профессиональный фотограф. Специализируюсь на портретной и свадебной фотографии. Более 5 лет опыта. Профессиональный фотограф. Специализируюсь на портретной и свадебной фотографии. Более 5 лет опыта.",
         imageUrls: generateGalleryImages(13),
-        location: generateCoordinates(centerLat, centerLng, 13, 15) as [
+        location: (() => { const [lat, lng] = [48.2082, 16.3738]; return generateCoordinates(lat, lng, 13, 15) as [number, number]; })() as [
             number,
             number
         ],
         category: "art",
         subcategory: "photography-video",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["фотограф", "портреты", "свадьбы"],
         workingHours: [
             { start: "10:00", end: "19:00" },
@@ -512,13 +527,13 @@ export const mockBusinesses: Business[] = [
         description:
             "Частный преподаватель английского языка. Индивидуальные и групповые занятия. Подготовка к экзаменам IELTS, TOEFL. Частный преподаватель английского языка. Индивидуальные и групповые занятия. Подготовка к экзаменам IELTS, TOEFL. Частный преподаватель английского языка. Индивидуальные и групповые занятия. Подготовка к экзаменам IELTS, TOEFL.",
         imageUrls: generateGalleryImages(14),
-        location: generateCoordinates(centerLat, centerLng, 14, 15) as [
+        location: (() => { const [lat, lng] = [41.3851, 2.1734]; return generateCoordinates(lat, lng, 14, 15) as [number, number]; })() as [
             number,
             number
         ],
         category: "work",
         subcategory: "tutors",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["английский", "репетитор", "образование"],
         workingHours: [
             { start: "14:00", end: "21:00" },
@@ -547,7 +562,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Мужская парикмахерская и барбершоп. Классические и современные стрижки, бритье, укладка бороды. Мужская парикмахерская и барбершоп. Классические и современные стрижки, бритье, укладка бороды. Мужская парикмахерская и барбершоп. Классические и современные стрижки, бритье, укладка бороды.",
         imageUrls: generateGalleryImages(15),
-        location: generateCoordinates(centerLat, centerLng, 15, 20) as [
+        location: (() => { const [lat, lng] = [40.4168, -3.7038]; return generateCoordinates(lat, lng, 15, 20) as [number, number]; })() as [
             number,
             number
         ],
@@ -580,7 +595,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Профессиональный груминг для собак и кошек. Стрижка, мытье, уход за когтями и ушами. Профессиональный груминг для собак и кошек. Стрижка, мытье, уход за когтями и ушами. Профессиональный груминг для собак и кошек. Стрижка, мытье, уход за когтями и ушами.",
         imageUrls: generateGalleryImages(16),
-        location: generateCoordinates(centerLat, centerLng, 16, 20) as [
+        location: (() => { const [lat, lng] = [50.0755, 14.4378]; return generateCoordinates(lat, lng, 16, 20) as [number, number]; })() as [
             number,
             number
         ],
@@ -616,7 +631,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Современный тренажерный зал с профессиональным оборудованием. Персональные тренировки, групповые занятия, кардио-зона. Современный тренажерный зал с профессиональным оборудованием. Персональные тренировки, групповые занятия, кардио-зона. Современный тренажерный зал с профессиональным оборудованием. Персональные тренировки, групповые занятия, кардио-зона.",
         imageUrls: generateGalleryImages(17),
-        location: generateCoordinates(centerLat, centerLng, 17, 25) as [
+        location: (() => { const [lat, lng] = [52.52, 13.405]; return generateCoordinates(lat, lng, 17, 25) as [number, number]; })() as [
             number,
             number
         ],
@@ -654,7 +669,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Элегантный ресторан с французской кухней. Романтическая атмосфера, изысканные блюда, отличное вино. Элегантный ресторан с французской кухней. Романтическая атмосфера, изысканные блюда, отличное вино. Элегантный ресторан с французской кухней. Романтическая атмосфера, изысканные блюда, отличное вино.",
         imageUrls: generateGalleryImages(18),
-        location: generateCoordinates(centerLat, centerLng, 18, 25) as [
+        location: (() => { const [lat, lng] = [48.8566, 2.3522]; return generateCoordinates(lat, lng, 18, 25) as [number, number]; })() as [
             number,
             number
         ],
@@ -687,7 +702,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Полный спектр услуг красоты: стрижки, окрашивание, маникюр, педикюр, наращивание ресниц. Полный спектр услуг красоты: стрижки, окрашивание, маникюр, педикюр, наращивание ресниц. Полный спектр услуг красоты: стрижки, окрашивание, маникюр, педикюр, наращивание ресниц.",
         imageUrls: generateGalleryImages(19),
-        location: generateCoordinates(centerLat, centerLng, 19, 25) as [
+        location: (() => { const [lat, lng] = [51.5074, -0.1278]; return generateCoordinates(lat, lng, 19, 25) as [number, number]; })() as [
             number,
             number
         ],
@@ -723,7 +738,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Все для творчества: краски, кисти, холсты, материалы для рукоделия, товары для скрапбукинга. Все для творчества: краски, кисти, холсты, материалы для рукоделия, товары для скрапбукинга. Все для творчества: краски, кисти, холсты, материалы для рукоделия, товары для скрапбукинга.",
         imageUrls: generateGalleryImages(20),
-        location: generateCoordinates(centerLat, centerLng, 20, 25) as [
+        location: (() => { const [lat, lng] = [52.3676, 4.9041]; return generateCoordinates(lat, lng, 20, 25) as [number, number]; })() as [
             number,
             number
         ],
@@ -758,7 +773,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Ветеринарная помощь для ваших питомцев. Консультации, вакцинация, лечение, хирургия. Ветеринарная помощь для ваших питомцев. Консультации, вакцинация, лечение, хирургия. Ветеринарная помощь для ваших питомцев. Консультации, вакцинация, лечение, хирургия.",
         imageUrls: generateGalleryImages(21),
-        location: generateCoordinates(centerLat, centerLng, 21, 25) as [
+        location: (() => { const [lat, lng] = [48.2082, 16.3738]; return generateCoordinates(lat, lng, 21, 25) as [number, number]; })() as [
             number,
             number
         ],
@@ -797,7 +812,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Смартфоны, планшеты, ноутбуки, наушники, аксессуары. Гарантия, рассрочка, обмен старой техники. Смартфоны, планшеты, ноутбуки, наушники, аксессуары. Гарантия, рассрочка, обмен старой техники. Смартфоны, планшеты, ноутбуки, наушники, аксессуары. Гарантия, рассрочка, обмен старой техники.",
         imageUrls: generateGalleryImages(22),
-        location: generateCoordinates(centerLat, centerLng, 22, 25) as [
+        location: (() => { const [lat, lng] = [41.3851, 2.1734]; return generateCoordinates(lat, lng, 22, 25) as [number, number]; })() as [
             number,
             number
         ],
@@ -830,7 +845,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Сочные бургеры, картошка фри, наггетсы. Быстрое обслуживание, доставка, самовывоз. Сочные бургеры, картошка фри, наггетсы. Быстрое обслуживание, доставка, самовывоз. Сочные бургеры, картошка фри, наггетсы. Быстрое обслуживание, доставка, самовывоз.",
         imageUrls: generateGalleryImages(23),
-        location: generateCoordinates(centerLat, centerLng, 23, 25) as [
+        location: (() => { const [lat, lng] = [40.4168, -3.7038]; return generateCoordinates(lat, lng, 23, 25) as [number, number]; })() as [
             number,
             number
         ],
@@ -863,7 +878,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Современный барбершоп для мужчин. Стрижки, бритье, укладка, уход за бородой. Современный барбершоп для мужчин. Стрижки, бритье, укладка, уход за бородой. Современный барбершоп для мужчин. Стрижки, бритье, укладка, уход за бородой.",
         imageUrls: generateGalleryImages(24),
-        location: generateCoordinates(centerLat, centerLng, 24, 25) as [
+        location: (() => { const [lat, lng] = [50.0755, 14.4378]; return generateCoordinates(lat, lng, 24, 25) as [number, number]; })() as [
             number,
             number
         ],
@@ -901,7 +916,7 @@ export const mockBusinesses: Business[] = [
         description:
             "Профессиональный груминг для собак всех пород. Стрижка, мытье, уход за когтями, чистка ушей. Профессиональный груминг для собак всех пород. Стрижка, мытье, уход за когтями, чистка ушей. Профессиональный груминг для собак всех пород. Стрижка, мытье, уход за когтями, чистка ушей.",
         imageUrls: generateGalleryImages(25),
-        location: generateCoordinates(centerLat, centerLng, 25, 30) as [
+        location: (() => { const [lat, lng] = [52.52, 13.405]; return generateCoordinates(lat, lng, 25, 30) as [number, number]; })() as [
             number,
             number
         ],

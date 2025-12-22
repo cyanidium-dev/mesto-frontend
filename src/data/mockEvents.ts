@@ -26,8 +26,12 @@ const generateCoordinates = (
     return [centerLat + latOffset, centerLng + lngOffset];
 };
 
-const centerLat = 50.0755;
-const centerLng = 14.4378;
+const generateDate = (daysFromNow: number): Date => {
+    const date = new Date();
+    date.setDate(date.getDate() + daysFromNow);
+    return date;
+};
+
 
 const mockImages = [
     "/images/mockedData/businessPfp.png",
@@ -59,20 +63,20 @@ export const mockEvents: Event[] = [
         id: "event-1",
         category: "sports",
         subcategory: "sports-sections",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["футбол", "спорт"],
         title: "Футбольный матч в парке",
         description:
             "Присоединяйтесь к нам на дружеский футбольный матч в центральном парке. Приветствуются игроки всех уровней! Присоединяйтесь к нам на дружеский футбольный матч в центральном парке. Приветствуются игроки всех уровней! Присоединяйтесь к нам на дружеский футбольный матч в центральном парке. Приветствуются игроки всех уровней!",
         imageUrls: generateGalleryImages(0),
         socialMediaUrls: ["https://facebook.com/event1"],
-        location: generateCoordinates(centerLat, centerLng, 0, 13) as [
+        location: (() => { const [lat, lng] = [50.0755, 14.4378]; return generateCoordinates(lat, lng, 0, 13) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2024, 11, 25),
+        startDate: generateDate(0),
         startTime: "18:00",
-        endDate: new Date(2024, 11, 25),
+        endDate: generateDate(0),
         endTime: "20:00",
         creatorId: categoryOrganizers.sports,
         attendees: ["user-2", "user-3", "user-5", "user-6"],
@@ -89,11 +93,11 @@ export const mockEvents: Event[] = [
             "Живая музыка, отличная атмосфера и незабываемые эмоции. Приходите со своими друзьями! Живая музыка, отличная атмосфера и незабываемые эмоции. Приходите со своими друзьями! Живая музыка, отличная атмосфера и незабываемые эмоции. Приходите со своими друзьями!",
         imageUrls: generateGalleryImages(0),
         socialMediaUrls: ["https://instagram.com/event2"],
-        location: generateCoordinates(centerLat, centerLng, 1, 13) as [
+        location: (() => { const [lat, lng] = [52.52, 13.405]; return generateCoordinates(lat, lng, 1, 13) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2024, 11, 28),
+        startDate: generateDate(1),
         startTime: "19:30",
         creatorId: categoryOrganizers.art,
         attendees: ["user-1", "user-3", "user-4", "user-5", "user-6", "user-7"],
@@ -104,19 +108,19 @@ export const mockEvents: Event[] = [
         id: "event-3",
         category: "art",
         subcategory: "art-galleries",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["выставка", "живопись"],
         title: "Выставка современного искусства",
         description:
             "Экспозиция работ местных художников. Открытие состоится в пятницу вечером. Экспозиция работ местных художников. Открытие состоится в пятницу вечером. Экспозиция работ местных художников. Открытие состоится в пятницу вечером.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 2, 13) as [
+        location: (() => { const [lat, lng] = [48.8566, 2.3522]; return generateCoordinates(lat, lng, 2, 13) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2024, 11, 30),
+        startDate: generateDate(2),
         startTime: "17:00",
-        endDate: new Date(2025, 0, 15),
+        endDate: generateDate(17),
         creatorId: categoryOrganizers.art,
         attendees: ["user-1", "user-2", "user-4"],
         maxAttendees: 50,
@@ -126,19 +130,19 @@ export const mockEvents: Event[] = [
     {
         id: "event-4",
         category: "food",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["кулинария", "мастер-класс"],
         title: "Мастер-класс по итальянской кухне",
         description:
             "Учимся готовить настоящую пасту и пиццу. Все ингредиенты включены. Приходите с друзьями! Учимся готовить настоящую пасту и пиццу. Все ингредиенты включены. Приходите с друзьями! Учимся готовить настоящую пасту и пиццу. Все ингредиенты включены. Приходите с друзьями!",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 3, 13) as [
+        location: (() => { const [lat, lng] = [51.5074, -0.1278]; return generateCoordinates(lat, lng, 3, 13) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2024, 11, 26),
+        startDate: generateDate(3),
         startTime: "18:00",
-        endDate: new Date(2024, 11, 26),
+        endDate: generateDate(3),
         endTime: "21:00",
         creatorId: categoryOrganizers.food,
         attendees: ["user-2", "user-3", "user-5"],
@@ -149,17 +153,17 @@ export const mockEvents: Event[] = [
         id: "event-5",
         category: "sports",
         subcategory: "sports-sections",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["бег", "марафон"],
         title: "Городской марафон",
         description:
             "Ежегодный городской марафон. Дистанции: 5км, 10км, 21км, 42км. Регистрация обязательна. Ежегодный городской марафон. Дистанции: 5км, 10км, 21км, 42км. Регистрация обязательна. Ежегодный городской марафон. Дистанции: 5км, 10км, 21км, 42км. Регистрация обязательна.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 4, 13) as [
+        location: (() => { const [lat, lng] = [52.3676, 4.9041]; return generateCoordinates(lat, lng, 4, 13) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2025, 0, 10),
+        startDate: generateDate(7),
         startTime: "08:00",
         creatorId: categoryOrganizers.sports,
         attendees: [],
@@ -175,13 +179,13 @@ export const mockEvents: Event[] = [
         description:
             "Живая джазовая музыка в уютной атмосфере. Выступление местных музыкантов. Живая джазовая музыка в уютной атмосфере. Выступление местных музыкантов. Живая джазовая музыка в уютной атмосфере. Выступление местных музыкантов.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 5, 13) as [
+        location: (() => { const [lat, lng] = [48.2082, 16.3738]; return generateCoordinates(lat, lng, 5, 13) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2024, 11, 27),
+        startDate: generateDate(4),
         startTime: "20:00",
-        endDate: new Date(2024, 11, 27),
+        endDate: generateDate(4),
         endTime: "23:00",
         creatorId: categoryOrganizers.art,
         attendees: [],
@@ -192,19 +196,19 @@ export const mockEvents: Event[] = [
         id: "event-7",
         category: "work",
         subcategory: "courses-trainings",
-        languages: ["ru"],
+        languages: ["uk"],
         tags: ["лекция", "наука"],
         title: "Лекция о космосе",
         description:
             "Увлекательная лекция о последних открытиях в астрономии. Для всех возрастов. Увлекательная лекция о последних открытиях в астрономии. Для всех возрастов. Увлекательная лекция о последних открытиях в астрономии. Для всех возрастов.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 6, 13) as [
+        location: (() => { const [lat, lng] = [41.3851, 2.1734]; return generateCoordinates(lat, lng, 6, 13) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2024, 11, 29),
+        startDate: generateDate(5),
         startTime: "19:00",
-        endDate: new Date(2024, 11, 29),
+        endDate: generateDate(5),
         endTime: "21:00",
         creatorId: categoryOrganizers.work,
         attendees: ["user-1", "user-2", "user-3", "user-4", "user-5"],
@@ -221,13 +225,13 @@ export const mockEvents: Event[] = [
         description:
             "Классическая постановка Шекспира на современный лад. Английский язык с субтитрами. Классическая постановка Шекспира на современный лад. Английский язык с субтитрами. Классическая постановка Шекспира на современный лад. Английский язык с субтитрами.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 7, 13) as [
+        location: (() => { const [lat, lng] = [40.4168, -3.7038]; return generateCoordinates(lat, lng, 7, 13) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2025, 0, 5),
+        startDate: generateDate(10),
         startTime: "19:30",
-        endDate: new Date(2025, 0, 5),
+        endDate: generateDate(10),
         endTime: "22:00",
         creatorId: categoryOrganizers.art,
         attendees: [],
@@ -244,13 +248,13 @@ export const mockEvents: Event[] = [
         description:
             "Утренняя практика йоги в парке. Встречаем рассвет вместе. Принесите коврик! Утренняя практика йоги в парке. Встречаем рассвет вместе. Принесите коврик! Утренняя практика йоги в парке. Встречаем рассвет вместе. Принесите коврик!",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 9, 13) as [
+        location: (() => { const [lat, lng] = [52.52, 13.405]; return generateCoordinates(lat, lng, 9, 13) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2025, 0, 1),
+        startDate: generateDate(14),
         startTime: "07:00",
-        endDate: new Date(2025, 0, 1),
+        endDate: generateDate(14),
         endTime: "08:30",
         creatorId: categoryOrganizers.sports,
         attendees: [],
@@ -266,13 +270,13 @@ export const mockEvents: Event[] = [
         description:
             "Знакомство с винами из разных регионов. Профессиональный сомелье расскажет о каждом сорте. Знакомство с винами из разных регионов. Профессиональный сомелье расскажет о каждом сорте. Знакомство с винами из разных регионов. Профессиональный сомелье расскажет о каждом сорте.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 10, 13) as [
+        location: (() => { const [lat, lng] = [48.8566, 2.3522]; return generateCoordinates(lat, lng, 10, 13) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2025, 0, 8),
+        startDate: generateDate(6),
         startTime: "18:00",
-        endDate: new Date(2025, 0, 8),
+        endDate: generateDate(6),
         endTime: "21:00",
         creatorId: categoryOrganizers.food,
         attendees: [],
@@ -288,13 +292,13 @@ export const mockEvents: Event[] = [
         description:
             "Танцевальная вечеринка в стиле сальса. Урок для начинающих в 20:00, затем свободные танцы. Танцевальная вечеринка в стиле сальса. Урок для начинающих в 20:00, затем свободные танцы. Танцевальная вечеринка в стиле сальса. Урок для начинающих в 20:00, затем свободные танцы.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 11, 13) as [
+        location: (() => { const [lat, lng] = [51.5074, -0.1278]; return generateCoordinates(lat, lng, 11, 13) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2025, 0, 12),
+        startDate: generateDate(8),
         startTime: "20:00",
-        endDate: new Date(2025, 0, 12),
+        endDate: generateDate(8),
         endTime: "01:00",
         creatorId: categoryOrganizers.art,
         attendees: [],
@@ -311,13 +315,13 @@ export const mockEvents: Event[] = [
         description:
             "Практический воркшоп для начинающих программистов. Изучаем основы JavaScript. Практический воркшоп для начинающих программистов. Изучаем основы JavaScript. Практический воркшоп для начинающих программистов. Изучаем основы JavaScript.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 12, 13) as [
+        location: (() => { const [lat, lng] = [52.3676, 4.9041]; return generateCoordinates(lat, lng, 12, 13) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2025, 0, 15),
+        startDate: generateDate(11),
         startTime: "10:00",
-        endDate: new Date(2025, 0, 15),
+        endDate: generateDate(17),
         endTime: "17:00",
         creatorId: categoryOrganizers.work,
         attendees: [],
@@ -333,13 +337,13 @@ export const mockEvents: Event[] = [
         description:
             "Произведения Моцарта и Бетховена в исполнении камерного оркестра. Произведения Моцарта и Бетховена в исполнении камерного оркестра. Произведения Моцарта и Бетховена в исполнении камерного оркестра.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 12, 13) as [
+        location: (() => { const [lat, lng] = [52.3676, 4.9041]; return generateCoordinates(lat, lng, 12, 13) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2025, 0, 20),
+        startDate: generateDate(16),
         startTime: "19:00",
-        endDate: new Date(2025, 0, 20),
+        endDate: generateDate(16),
         endTime: "21:30",
         creatorId: categoryOrganizers.art,
         attendees: [],
@@ -356,13 +360,13 @@ export const mockEvents: Event[] = [
         description:
             "Экспозиция работ современных художников. Разнообразные стили и техники. Экспозиция работ современных художников. Разнообразные стили и техники. Экспозиция работ современных художников. Разнообразные стили и техники.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 13, 20) as [
+        location: (() => { const [lat, lng] = [48.2082, 16.3738]; return generateCoordinates(lat, lng, 13, 20) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2025, 0, 25),
+        startDate: generateDate(21),
         startTime: "10:00",
-        endDate: new Date(2025, 1, 10),
+        endDate: generateDate(24),
         creatorId: categoryOrganizers.art,
         attendees: [],
         maxAttendees: 100,
@@ -378,13 +382,13 @@ export const mockEvents: Event[] = [
         description:
             "Практический курс для начинающих маркетологов. Изучаем основы SMM, контент-маркетинга и аналитики. Практический курс для начинающих маркетологов. Изучаем основы SMM, контент-маркетинга и аналитики. Практический курс для начинающих маркетологов. Изучаем основы SMM, контент-маркетинга и аналитики.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 14, 20) as [
+        location: (() => { const [lat, lng] = [41.3851, 2.1734]; return generateCoordinates(lat, lng, 14, 20) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2025, 1, 1),
+        startDate: generateDate(28),
         startTime: "18:00",
-        endDate: new Date(2025, 1, 15),
+        endDate: generateDate(29),
         endTime: "20:00",
         creatorId: categoryOrganizers.work,
         attendees: [],
@@ -401,13 +405,13 @@ export const mockEvents: Event[] = [
         description:
             "Классическая пьеса Шекспира в современной интерпретации. Многоязычные субтитры. Классическая пьеса Шекспира в современной интерпретации. Многоязычные субтитры. Классическая пьеса Шекспира в современной интерпретации. Многоязычные субтитры.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 15, 20) as [
+        location: (() => { const [lat, lng] = [40.4168, -3.7038]; return generateCoordinates(lat, lng, 15, 20) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2025, 1, 5),
+        startDate: generateDate(32),
         startTime: "19:00",
-        endDate: new Date(2025, 1, 5),
+        endDate: generateDate(32),
         endTime: "21:30",
         creatorId: categoryOrganizers.art,
         attendees: [],
@@ -424,13 +428,13 @@ export const mockEvents: Event[] = [
         description:
             "Учимся печь настоящий хлеб на закваске. Все ингредиенты и рецепты включены. Учимся печь настоящий хлеб на закваске. Все ингредиенты и рецепты включены. Учимся печь настоящий хлеб на закваске. Все ингредиенты и рецепты включены.",
         imageUrls: generateGalleryImages(0),
-        location: generateCoordinates(centerLat, centerLng, 16, 20) as [
+        location: (() => { const [lat, lng] = [50.0755, 14.4378]; return generateCoordinates(lat, lng, 16, 20) as [number, number]; })() as [
             number,
             number
         ],
-        startDate: new Date(2025, 1, 8),
+        startDate: generateDate(35),
         startTime: "14:00",
-        endDate: new Date(2025, 1, 8),
+        endDate: generateDate(35),
         endTime: "17:00",
         creatorId: categoryOrganizers.work,
         attendees: [],
