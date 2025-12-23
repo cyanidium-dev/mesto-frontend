@@ -441,4 +441,27 @@ export const mockEvents: Event[] = [
         maxAttendees: 12,
         siteLink: "https://example.com/bread",
     },
+    {
+        id: "event-18",
+        category: "sports",
+        subcategory: "yoga-meditation",
+        languages: ["ru"],
+        tags: ["йога", "медитация", "здоровье"],
+        title: "Вечерняя практика йоги",
+        description:
+            "Расслабляющая вечерняя практика йоги для снятия стресса после рабочего дня. Подходит для всех уровней. Расслабляющая вечерняя практика йоги для снятия стресса после рабочего дня. Подходит для всех уровней. Расслабляющая вечерняя практика йоги для снятия стресса после рабочего дня. Подходит для всех уровней.",
+        imageUrls: generateGalleryImages(0),
+        location: (() => { const [lat, lng] = [51.5074, -0.1278]; return generateCoordinates(lat, lng, 17, 20) as [number, number]; })() as [
+            number,
+            number
+        ],
+        startDate: generateDate(20),
+        startTime: "19:00",
+        endDate: generateDate(20),
+        endTime: "20:30",
+        creatorId: categoryOrganizers.sports,
+        attendees: [],
+        maxAttendees: 25,
+        siteLink: "https://example.com/yoga-evening",
+    },
 ];
