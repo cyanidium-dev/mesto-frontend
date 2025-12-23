@@ -16,6 +16,8 @@ import { getCoordinates } from "@/utils/distance";
 import { isLocationInCities, CITY_COORDINATES } from "@/utils/cityUtils";
 import { isItemOpenNow } from "@/utils/openNow";
 import { CATEGORIES, getSubcategoriesByCategory, getCategoryByKey } from "@/constants/categories";
+import { mockBusinesses } from "@/data/mockBusinesses";
+import { mockEvents } from "@/data/mockEvents";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
@@ -42,8 +44,8 @@ export default function Main() {
     const getBusiness = useBusinessStore(s => s.getBusiness);
 
     const fakeBusinesses = useNearbyBusinesses();
-    const savedBusinesses = useBusinessStore(s => s.getAllBusinesses());
-    const savedEvents = useEventsStore(s => s.getAllEvents());
+    const userCreatedBusinesses = useBusinessStore(s => s.userCreatedBusinesses);
+    const userCreatedEvents = useEventsStore(s => s.userCreatedEvents);
     const initializeBusinessMockData = useBusinessStore(
         s => s.initializeMockData
     );
@@ -59,6 +61,14 @@ export default function Main() {
         initializeEventsMockData,
         initializeUserMockData,
     ]);
+
+    const savedBusinesses = useMemo(() => {
+        return [...mockBusinesses, ...userCreatedBusinesses];
+    }, [userCreatedBusinesses]);
+
+    const savedEvents = useMemo(() => {
+        return [...mockEvents, ...userCreatedEvents];
+    }, [userCreatedEvents]);
 
     const allBusinesses = useMemo(() => {
         const combined = [...fakeBusinesses, ...savedBusinesses];

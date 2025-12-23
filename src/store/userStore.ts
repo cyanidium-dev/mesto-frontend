@@ -3,6 +3,13 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { mockUser, mockUsers } from "@/data/mockUser";
 
+const getUserServerSnapshot = () => ({
+    currentUser: null,
+    users: {},
+});
+
+const userServerSnapshot = getUserServerSnapshot();
+
 interface UserStore {
     currentUser: User | null;
     users: Record<string, User>;
@@ -51,8 +58,10 @@ export const useUserStore = create<UserStore>()(
                 currentUser: state.currentUser,
                 users: state.users,
             }),
+            getServerSnapshot: () => userServerSnapshot,
             storage: {
                 getItem: name => {
+                    if (typeof window === "undefined") return null;
                     const str = localStorage.getItem(name);
                     if (!str) return null;
                     try {
@@ -89,16 +98,19 @@ export const useUserStore = create<UserStore>()(
                     }
                 },
                 setItem: (name, value) => {
+                    if (typeof window === "undefined") return;
                     try {
                         localStorage.setItem(name, JSON.stringify(value));
                     } catch (error) {
                         console.error("Error saving users to localStorage:", error);
                     }
                 },
-                removeItem: name => {
+                removeItem: (name: string) => {
+                    if (typeof window === "undefined") return;
                     localStorage.removeItem(name);
                 },
             },
-        }
+            getServerSnapshot: () => userServerSnapshot,
+        } as unknown as Parameters<typeof persist<UserStore, [["zustand/persist", unknown]]>>[1]
     )
 );

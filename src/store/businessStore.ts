@@ -4,6 +4,12 @@ import { persist } from "zustand/middleware";
 import { mockBusinesses } from "@/data/mockBusinesses";
 import { cleanupBusinessStorage } from "@/utils/storageCleanup";
 
+const getBusinessServerSnapshot = () => ({
+    userCreatedBusinesses: [],
+});
+
+const businessServerSnapshot = getBusinessServerSnapshot();
+
 const isUserCreatedBusiness = (id: string): boolean => {
     const mockPattern = /^business-(\d+)$|^business-individual-\d+$/;
     if (mockPattern.test(id)) {
@@ -93,11 +99,13 @@ export const useBusinessStore = create<BusinessStore>()(
         }),
         {
             name: "business-storage",
-            partialize: state => ({
+            partialize: (state: BusinessStore) => ({
                 userCreatedBusinesses: state.userCreatedBusinesses,
             }),
+            getServerSnapshot: () => businessServerSnapshot,
             storage: {
-                getItem: name => {
+                getItem: (name: string) => {
+                    if (typeof window === "undefined") return null;
                     const str = localStorage.getItem(name);
                     if (!str) return null;
                     try {
@@ -108,7 +116,8 @@ export const useBusinessStore = create<BusinessStore>()(
                         return null;
                     }
                 },
-                setItem: (name, value) => {
+                setItem: (name: string, value: unknown) => {
+                    if (typeof window === "undefined") return;
                     try {
                         const cleaned = cleanupBusinessStorage(JSON.parse(JSON.stringify(value)));
                         localStorage.setItem(name, JSON.stringify(cleaned));
@@ -116,10 +125,11 @@ export const useBusinessStore = create<BusinessStore>()(
                         console.error("Error saving businesses to localStorage:", error);
                     }
                 },
-                removeItem: name => {
+                removeItem: (name: string) => {
+                    if (typeof window === "undefined") return;
                     localStorage.removeItem(name);
                 },
             },
-        }
+        } as unknown as Parameters<typeof persist<BusinessStore, [["zustand/persist", unknown]]>>[1]
     )
 );

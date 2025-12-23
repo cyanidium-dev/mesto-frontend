@@ -4,6 +4,12 @@ import { persist } from "zustand/middleware";
 import { mockEvents } from "@/data/mockEvents";
 import { cleanupEventStorage } from "@/utils/storageCleanup";
 
+const getEventsServerSnapshot = () => ({
+    userCreatedEvents: [],
+});
+
+const eventsServerSnapshot = getEventsServerSnapshot();
+
 const isUserCreatedEvent = (id: string): boolean => {
     const mockPattern = /^event-(\d+)$/;
     const match = id.match(mockPattern);
@@ -142,9 +148,10 @@ export const useEventsStore = create<EventsStore>()(
             partialize: state => ({
                 userCreatedEvents: state.userCreatedEvents,
             }),
-
+            getServerSnapshot: () => eventsServerSnapshot,
             storage: {
                 getItem: name => {
+                    if (typeof window === "undefined") return null;
                     const str = localStorage.getItem(name);
                     if (!str) return null;
                     try {
@@ -159,6 +166,7 @@ export const useEventsStore = create<EventsStore>()(
                     }
                 },
                 setItem: (name, value) => {
+                    if (typeof window === "undefined") return;
                     try {
                         const cleaned = cleanupEventStorage(JSON.parse(JSON.stringify(value)));
                         localStorage.setItem(name, JSON.stringify(cleaned));
@@ -169,10 +177,12 @@ export const useEventsStore = create<EventsStore>()(
                         );
                     }
                 },
-                removeItem: name => {
+                removeItem: (name: string) => {
+                    if (typeof window === "undefined") return;
                     localStorage.removeItem(name);
                 },
             },
-        }
+            getServerSnapshot: () => eventsServerSnapshot,
+        } as unknown as Parameters<typeof persist<EventsStore, [["zustand/persist", unknown]]>>[1]
     )
 );
