@@ -30,6 +30,10 @@ export function isBusinessOpenNow(business: Business): boolean {
 }
 
 export function isEventOpenNow(event: Event): boolean {
+    if (!event.startDate || !event.startTime) {
+        return false;
+    }
+
     const now = new Date();
     const currentTime = now.getTime();
 
@@ -47,25 +51,27 @@ export function isEventOpenNow(event: Event): boolean {
         );
     }
 
-    if (currentTime >= startDate.getTime()) {
-        if (event.isRepetitive) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const eventDay = new Date(startDate);
-            eventDay.setHours(0, 0, 0, 0);
-            return today.getTime() === eventDay.getTime();
-        }
+    if (event.isRepetitive) {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         const eventDay = new Date(startDate);
         eventDay.setHours(0, 0, 0, 0);
-        return (
-            today.getTime() === eventDay.getTime() &&
-            currentTime >= startDate.getTime()
-        );
+        if (today.getTime() === eventDay.getTime()) {
+            return currentTime >= startDate.getTime();
+        }
+        return false;
     }
 
-    return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const eventDay = new Date(startDate);
+    eventDay.setHours(0, 0, 0, 0);
+    
+    if (today.getTime() !== eventDay.getTime()) {
+        return false;
+    }
+
+    return currentTime >= startDate.getTime();
 }
 
 export function isItemOpenNow(item: Business | Event): boolean {

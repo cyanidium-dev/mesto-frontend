@@ -203,7 +203,8 @@ function filterItems<T extends Business | Event>(
 ): T[] {
     return items.filter(item => {
         if (filters.search) {
-            const searchLower = filters.search.toLowerCase();
+            const searchLower = filters.search.toLowerCase().trim();
+            if (!searchLower) return true;
             
             const titleMatch = (item.title || "")
                 .toLowerCase()
@@ -223,19 +224,35 @@ function filterItems<T extends Business | Event>(
             }
             
             let servicesMatch = false;
-            if ('services' in item && item.services) {
+            if ('services' in item && item.services && Array.isArray(item.services)) {
                 servicesMatch = item.services.some(service =>
                     service.toLowerCase().includes(searchLower)
                 );
             }
             
+            let descriptionMatch = false;
+            if (item.description) {
+                descriptionMatch = item.description.toLowerCase().includes(searchLower);
+            }
+            
+            let tagsMatch = false;
+            if (item.tags && Array.isArray(item.tags)) {
+                tagsMatch = item.tags.some(tag =>
+                    tag.toLowerCase().includes(searchLower)
+                );
+            }
+            
             if (!titleMatch && !categoryKeyMatch && !categoryLabelMatch && 
-                !subcategoryKeyMatch && !subcategoryLabelMatch && !servicesMatch) {
+                !subcategoryKeyMatch && !subcategoryLabelMatch && !servicesMatch &&
+                !descriptionMatch && !tagsMatch) {
                 return false;
             }
         }
 
         if (filters.languages.length > 0) {
+            if (!item.languages || !Array.isArray(item.languages)) {
+                return false;
+            }
             const hasMatchingLanguage = filters.languages.some(lang =>
                 item.languages.includes(lang)
             );
@@ -257,6 +274,9 @@ function filterItems<T extends Business | Event>(
         }
 
         if (filters.cities.length > 0) {
+            if (!item.location) {
+                return false;
+            }
             if (!isLocationInCities(item.location, filters.cities)) {
                 return false;
             }
