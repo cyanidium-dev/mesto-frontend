@@ -145,12 +145,12 @@ export const useEventsStore = create<EventsStore>()(
         }),
         {
             name: "events-storage",
-            partialize: state => ({
+            partialize: (state: EventsStore) => ({
                 userCreatedEvents: state.userCreatedEvents,
             }),
             getServerSnapshot: () => eventsServerSnapshot,
             storage: {
-                getItem: name => {
+                getItem: (name: string) => {
                     if (typeof window === "undefined") return null;
                     const str = localStorage.getItem(name);
                     if (!str) return null;
@@ -165,7 +165,7 @@ export const useEventsStore = create<EventsStore>()(
                         return null;
                     }
                 },
-                setItem: (name, value) => {
+                setItem: (name: string, value: unknown) => {
                     if (typeof window === "undefined") return;
                     try {
                         const cleaned = cleanupEventStorage(JSON.parse(JSON.stringify(value)));
@@ -182,7 +182,6 @@ export const useEventsStore = create<EventsStore>()(
                     localStorage.removeItem(name);
                 },
             },
-            getServerSnapshot: () => eventsServerSnapshot,
         } as unknown as Parameters<typeof persist<EventsStore, [["zustand/persist", unknown]]>>[1]
     )
 );

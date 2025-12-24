@@ -27,7 +27,7 @@ export const useLocationStore = create<LocationStore>()(
     }),
     {
       name: "user-location-storage",
-      partialize: (state) => ({ 
+      partialize: (state: LocationStore) => ({ 
         userLocation: state.userLocation,
         mapCenter: state.mapCenter,
       }),

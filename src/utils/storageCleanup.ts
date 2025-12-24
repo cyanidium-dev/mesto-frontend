@@ -1,6 +1,19 @@
 import { Business } from "@/types/business";
 import { Event } from "@/types/event";
 
+interface StorageState {
+    businesses?: Business[];
+    userCreatedBusinesses?: Business[];
+    events?: Event[];
+    userCreatedEvents?: Event[];
+    [key: string]: unknown;
+}
+
+interface ParsedStorage {
+    state?: StorageState;
+    [key: string]: unknown;
+}
+
 const isUserCreatedBusiness = (id: string): boolean => {
     const mockPattern = /^business-(\d+)$|^business-individual-\d+$/;
     if (mockPattern.test(id)) {
@@ -24,7 +37,7 @@ const isUserCreatedEvent = (id: string): boolean => {
     return true;
 };
 
-export const cleanupBusinessStorage = (parsed: any): any => {
+export const cleanupBusinessStorage = (parsed: ParsedStorage): ParsedStorage => {
     if (!parsed || !parsed.state) return parsed;
 
     if (parsed.state.businesses && Array.isArray(parsed.state.businesses)) {
@@ -44,7 +57,7 @@ export const cleanupBusinessStorage = (parsed: any): any => {
     return parsed;
 };
 
-export const cleanupEventStorage = (parsed: any): any => {
+export const cleanupEventStorage = (parsed: ParsedStorage): ParsedStorage => {
     if (!parsed || !parsed.state) return parsed;
 
     if (parsed.state.events && Array.isArray(parsed.state.events)) {

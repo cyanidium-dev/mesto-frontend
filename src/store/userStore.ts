@@ -54,13 +54,13 @@ export const useUserStore = create<UserStore>()(
         }),
         {
             name: "user-storage",
-            partialize: state => ({
+            partialize: (state: UserStore) => ({
                 currentUser: state.currentUser,
                 users: state.users,
             }),
             getServerSnapshot: () => userServerSnapshot,
             storage: {
-                getItem: name => {
+                getItem: (name: string) => {
                     if (typeof window === "undefined") return null;
                     const str = localStorage.getItem(name);
                     if (!str) return null;
@@ -97,7 +97,7 @@ export const useUserStore = create<UserStore>()(
                         return null;
                     }
                 },
-                setItem: (name, value) => {
+                setItem: (name: string, value: unknown) => {
                     if (typeof window === "undefined") return;
                     try {
                         localStorage.setItem(name, JSON.stringify(value));
@@ -110,7 +110,6 @@ export const useUserStore = create<UserStore>()(
                     localStorage.removeItem(name);
                 },
             },
-            getServerSnapshot: () => userServerSnapshot,
         } as unknown as Parameters<typeof persist<UserStore, [["zustand/persist", unknown]]>>[1]
     )
 );
