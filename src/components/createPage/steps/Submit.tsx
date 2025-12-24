@@ -157,7 +157,8 @@ export const Submit = ({ formProps }: SubmitProps) => {
                             category: values.category,
                             subcategory: values.subcategory,
                             languages: values.languages,
-                            tags: values.tags,
+                            // tags: values.tags, // Commented out - tags functionality unused
+                            tags: [], // Commented out - tags functionality unused
                             title: values.title,
                             description: values.description,
                             imageUrls: values.imageUrls,
@@ -195,7 +196,8 @@ export const Submit = ({ formProps }: SubmitProps) => {
                         category: values.category,
                         subcategory: values.subcategory,
                         languages: values.languages,
-                        tags: values.tags,
+                        // tags: values.tags, // Commented out - tags functionality unused
+                        tags: [], // Commented out - tags functionality unused
                         title: values.title,
                         description: values.description,
                         imageUrls: values.imageUrls,
@@ -227,7 +229,8 @@ export const Submit = ({ formProps }: SubmitProps) => {
                             category: values.category,
                             subcategory: values.subcategory,
                             languages: values.languages,
-                            tags: values.tags,
+                            // tags: values.tags, // Commented out - tags functionality unused
+                            tags: [], // Commented out - tags functionality unused
                             title: values.title,
                             description: values.description,
                             imageUrls: values.imageUrls,
@@ -247,7 +250,8 @@ export const Submit = ({ formProps }: SubmitProps) => {
                         category: values.category,
                         subcategory: values.subcategory,
                         languages: values.languages,
-                        tags: values.tags,
+                        // tags: values.tags, // Commented out - tags functionality unused
+                        tags: [], // Commented out - tags functionality unused
                         title: values.title,
                         description: values.description,
                         imageUrls: values.imageUrls,

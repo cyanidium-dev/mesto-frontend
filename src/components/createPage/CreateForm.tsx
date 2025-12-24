@@ -103,7 +103,8 @@ export const CreateForm = ({
             category: event.category,
             subcategory: event.subcategory,
             languages: event.languages,
-            tags: event.tags || [],
+            // tags: event.tags || [], // Commented out - tags functionality unused
+            tags: [], // Commented out - tags functionality unused
             title: event.title,
             startDate: formatDate(event.startDate),
             startTime: event.startTime || "",
@@ -128,7 +129,8 @@ export const CreateForm = ({
             category: business.category,
             subcategory: business.subcategory,
             languages: business.languages,
-            tags: business.tags,
+            // tags: business.tags, // Commented out - tags functionality unused
+            tags: [], // Commented out - tags functionality unused
             title: business.title || "",
             workingHours:
                 business.workingHours?.map(wh =>
@@ -307,7 +309,7 @@ export const CreateForm = ({
                                 }
                                 setCurrentStep={setCurrentStep}
                             />
-                        ) : currentStep === 2 ? (
+                        ) : /* currentStep === 2 ? (
                             <Interests
                                 formProps={
                                     props as unknown as FormikProps<
@@ -316,19 +318,19 @@ export const CreateForm = ({
                                 }
                                 setCurrentStep={setCurrentStep}
                             />
-                        ) : currentStep === 3 ? (
+                        ) : */ currentStep === 2 ? (
                             <Title
                                 formProps={
                                     props as unknown as FormikProps<BaseFormValues>
                                 }
                                 setCurrentStep={setCurrentStep}
                             />
-                        ) : currentStep === 4 ? (
+                        ) : currentStep === 3 ? (
                             <EventDateTime
                                 formProps={props}
                                 setCurrentStep={setCurrentStep}
                             />
-                        ) : currentStep === 5 ? (
+                        ) : currentStep === 4 ? (
                             <Location
                                 formProps={
                                     props as unknown as FormikProps<
@@ -337,14 +339,14 @@ export const CreateForm = ({
                                 }
                                 setCurrentStep={setCurrentStep}
                             />
-                        ) : currentStep === 6 ? (
+                        ) : currentStep === 5 ? (
                             <DescriptionSocials
                                 formProps={
                                     props as unknown as FormikProps<BaseFormValues>
                                 }
                                 setCurrentStep={setCurrentStep}
                             />
-                        ) : currentStep === 7 ? (
+                        ) : currentStep === 6 ? (
                             <ImagesUpload
                                 formProps={
                                     props as unknown as FormikProps<BaseFormValues>
@@ -445,7 +447,7 @@ export const CreateForm = ({
                                 setCurrentStep={setCurrentStep}
                             />
                         );
-                    } else if (currentStep === 3) {
+                    } else if (/* currentStep === 3) {
                         return (
                             <Interests
                                 formProps={
@@ -456,7 +458,7 @@ export const CreateForm = ({
                                 setCurrentStep={setCurrentStep}
                             />
                         );
-                    } else if (currentStep === 4) {
+                    } else if */ currentStep === 3) {
                         if (isIndividual) {
                             return (
                                 <WorkingHours
@@ -473,7 +475,7 @@ export const CreateForm = ({
                                 setCurrentStep={setCurrentStep}
                             />
                         );
-                    } else if (currentStep === 5) {
+                    } else if (currentStep === 4) {
                         if (isIndividual) {
                             return (
                                 <Location
@@ -492,7 +494,7 @@ export const CreateForm = ({
                                 setCurrentStep={setCurrentStep}
                             />
                         );
-                    } else if (currentStep === 6) {
+                    } else if (currentStep === 5) {
                         if (isIndividual) {
                             return (
                                 <DescriptionSocials
@@ -513,7 +515,7 @@ export const CreateForm = ({
                                 setCurrentStep={setCurrentStep}
                             />
                         );
-                    } else if (currentStep === 7) {
+                    } else if (currentStep === 6) {
                         if (isIndividual) {
                             return (
                                 <ImagesUpload
@@ -532,7 +534,7 @@ export const CreateForm = ({
                                 setCurrentStep={setCurrentStep}
                             />
                         );
-                    } else if (currentStep === 8) {
+                    } else if (currentStep === 7) {
                         if (isIndividual) {
                             return (
                                 <Submit
@@ -553,7 +555,18 @@ export const CreateForm = ({
                                 setCurrentStep={setCurrentStep}
                             />
                         );
-                    } else if (currentStep === 9) {
+                    } else if (currentStep === 8) {
+                        return (
+                            <Submit
+                                formProps={
+                                    props as unknown as FormikProps<
+                                        EventFormValues | BusinessFormValues
+                                    >
+                                }
+                                setCurrentStep={setCurrentStep}
+                            />
+                        );
+                    } else {
                         return (
                             <Submit
                                 formProps={
