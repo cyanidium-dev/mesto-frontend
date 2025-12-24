@@ -63,7 +63,7 @@ export const mockBusinesses: Business[] = [
         ],
         category: "food",
         languages: ["ru", "en"],
-        tags: [], // Commented out - tags functionality unused
+        tags: ["кафе", "кофе", "выпечка"],
         workingHours: [
             { start: "08:00", end: "22:00" },
             { start: "08:00", end: "22:00" },
@@ -95,7 +95,7 @@ export const mockBusinesses: Business[] = [
         ],
         category: "work",
         languages: ["ru", "uk"],
-        tags: [], // Commented out - tags functionality unused
+        tags: ["образование", "репетитор", "математика"],
         workingHours: [
             { start: "14:00", end: "20:00" },
             { start: "14:00", end: "20:00" },
@@ -122,7 +122,7 @@ export const mockBusinesses: Business[] = [
         ],
         category: "sports",
         languages: ["ru", "en", "de"],
-        tags: [], // Commented out - tags functionality unused
+        tags: ["фитнес", "спорт", "тренировки"],
         workingHours: [
             { start: "06:00", end: "23:00" },
             { start: "06:00", end: "23:00" },
@@ -158,7 +158,7 @@ export const mockBusinesses: Business[] = [
         ],
         category: "food",
         languages: ["ru", "en", "it"],
-        tags: [], // Commented out - tags functionality unused
+        tags: ["ресторан", "итальянская кухня", "паста", "пицца"],
         workingHours: [
             { start: "12:00", end: "23:00" },
             { start: "12:00", end: "23:00" },
@@ -189,7 +189,7 @@ export const mockBusinesses: Business[] = [
         ],
         category: "beauty",
         languages: ["ru", "en", "uk"],
-        tags: [], // Commented out - tags functionality unused
+        tags: ["салон", "красота", "стрижка", "маникюр"],
         workingHours: [
             { start: "09:00", end: "20:00" },
             { start: "09:00", end: "20:00" },
@@ -217,7 +217,7 @@ export const mockBusinesses: Business[] = [
         ],
         category: "shopping",
         languages: ["ru", "en", "de", "uk"],
-        tags: [], // Commented out - tags functionality unused
+        tags: ["книги", "литература", "образование"],
         workingHours: [
             { start: "10:00", end: "20:00" },
             { start: "10:00", end: "20:00" },
@@ -245,7 +245,7 @@ export const mockBusinesses: Business[] = [
         ],
         category: "pets",
         languages: ["ru", "en"],
-        tags: [], // Commented out - tags functionality unused
+        tags: ["ветеринар", "животные", "здоровье"],
         workingHours: [
             { start: "08:00", end: "20:00" },
             { start: "08:00", end: "20:00" },
@@ -282,7 +282,7 @@ export const mockBusinesses: Business[] = [
         ],
         category: "shopping",
         languages: ["ru", "en", "de"],
-        tags: [], // Commented out - tags functionality unused
+        tags: ["электроника", "техника", "смартфоны"],
         workingHours: [
             { start: "10:00", end: "20:00" },
             { start: "10:00", end: "20:00" },
@@ -313,7 +313,7 @@ export const mockBusinesses: Business[] = [
         ],
         category: "sports",
         languages: ["ru", "en"],
-        tags: [], // Commented out - tags functionality unused
+        tags: ["йога", "медитация", "здоровье"],
         workingHours: [
             { start: "07:00", end: "21:00" },
             { start: "07:00", end: "21:00" },
@@ -346,7 +346,7 @@ export const mockBusinesses: Business[] = [
         ],
         category: "food",
         languages: ["ru", "en", "it"],
-        tags: [], // Commented out - tags functionality unused
+        tags: ["пицца", "итальянская кухня", "доставка"],
         workingHours: [
             { start: "11:00", end: "23:00" },
             { start: "11:00", end: "23:00" },
@@ -377,7 +377,7 @@ export const mockBusinesses: Business[] = [
         ],
         category: "art",
         languages: ["ru", "en"],
-        tags: [], // Commented out - tags functionality unused
+        tags: ["танцы", "латина", "сальса"],
         workingHours: [
             { start: "16:00", end: "22:00" },
             { start: "16:00", end: "22:00" },
@@ -410,7 +410,7 @@ export const mockBusinesses: Business[] = [
         ],
         category: "food",
         languages: ["ru", "en", "de"],
-        tags: [], // Commented out - tags functionality unused
+        tags: ["кофе", "кофейня", "обжарка"],
         workingHours: [
             { start: "07:00", end: "20:00" },
             { start: "07:00", end: "20:00" },
@@ -441,7 +441,7 @@ export const mockBusinesses: Business[] = [
         ],
         category: "art",
         languages: ["ru", "en"],
-        tags: [], // Commented out - tags functionality unused
+        tags: ["фото", "фотосъемка", "портреты"],
         workingHours: [
             { start: "10:00", end: "20:00" },
             { start: "10:00", end: "20:00" },
@@ -475,7 +475,7 @@ export const mockBusinesses: Business[] = [
         ],
         category: "art",
         languages: ["ru", "en"],
-        tags: [], // Commented out - tags functionality unused
+        tags: ["фотограф", "портреты", "свадьбы"],
         workingHours: [
             { start: "10:00", end: "19:00" },
             { start: "10:00", end: "19:00" },
@@ -505,7 +505,7 @@ export const mockBusinesses: Business[] = [
         ],
         category: "work",
         languages: ["ru", "en"],
-        tags: [], // Commented out - tags functionality unused
+        tags: ["английский", "репетитор", "образование"],
         workingHours: [
             { start: "14:00", end: "21:00" },
             { start: "14:00", end: "21:00" },

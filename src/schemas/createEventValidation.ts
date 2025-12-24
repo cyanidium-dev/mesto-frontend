@@ -15,8 +15,7 @@ export const createEventValidationSchema =
                 .min(1, "Выберите хотя бы один язык")
                 .max(3, "Можно выбрать не более 3 языков")
                 .required("Это поле обязательно для заполнения."),
-            // Tags validation commented out - tags functionality unused
-            tags: yup.array().of(yup.string()), // Commented out - tags functionality unused
+            tags: yup.array().of(yup.string()),
             title: yup
                 .string().max(70, "Не более 70 символов")
                 .required("Это поле обязательно для заполнения."),

@@ -19,13 +19,11 @@ export const createBusinessValidationSchema =
                 .min(1, "Выберите хотя бы один язык")
                 .max(3, "Можно выбрать не более 3 языков")
                 .required("Это поле обязательно для заполнения."),
-            // Tags validation commented out - tags functionality unused
-            // tags: yup
-            //     .array()
-            //     .of(yup.string())
-            //     .min(1, "Выберите хотя бы один тег")
-            //     .required("Это поле обязательно для заполнения."),
-            tags: yup.array().of(yup.string()), // Commented out - tags functionality unused
+            tags: yup
+                .array()
+                .of(yup.string())
+                .min(1, "Выберите хотя бы один тег")
+                .required("Это поле обязательно для заполнения."),
             title: yup
                 .string()
                 .required("Это поле обязательно для заполнения."),
