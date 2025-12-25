@@ -5,20 +5,12 @@ export interface FilterOption {
 
 export const LANGUAGES: FilterOption[] = [
     { key: "ru", label: "Русский" },
-    { key: "en", label: "English" },
     { key: "uk", label: "Українська" },
-    { key: "es", label: "Español" },
-    { key: "de", label: "Deutsch" },
-    { key: "fr", label: "Français" },
 ];
 
 export const LANGUAGES_SHORT: FilterOption[] = [
     { key: "ru", label: "Рус" },
-    { key: "en", label: "Англ" },
     { key: "uk", label: "Укр" },
-    { key: "es", label: "Исп" },
-    { key: "de", label: "Нем" },
-    { key: "fr", label: "Фран" },
 ];
 
 import { CATEGORIES as CATEGORIES_WITH_SUB } from "./categories";

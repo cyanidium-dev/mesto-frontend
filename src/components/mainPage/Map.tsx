@@ -166,6 +166,7 @@ export default function Map({ center, onCenterChange, markers, events = [], sele
 
         {/* Використовуємо MarkerClusterGroup для кластеризації */}
         <MarkerClusterGroup
+          key={`markers-${markers.length}-events-${events.length}`}
           iconCreateFunction={(cluster: MarkerCluster) => {
             const count = cluster.getChildCount();
 

@@ -15,6 +15,9 @@ import { Event } from "@/types/event";
 import { getCoordinates } from "@/utils/distance";
 import { isLocationInCities, CITY_COORDINATES } from "@/utils/cityUtils";
 import { isItemOpenNow } from "@/utils/openNow";
+import { CATEGORIES, getSubcategoriesByCategory, getCategoryByKey } from "@/constants/categories";
+import { mockBusinesses } from "@/data/mockBusinesses";
+import { mockEvents } from "@/data/mockEvents";
 
 const Map = dynamic(() => import("./Map"), { ssr: false });
 
@@ -41,8 +44,8 @@ export default function Main() {
     const getBusiness = useBusinessStore(s => s.getBusiness);
 
     const fakeBusinesses = useNearbyBusinesses();
-    const savedBusinesses = useBusinessStore(s => s.getAllBusinesses());
-    const savedEvents = useEventsStore(s => s.getAllEvents());
+    const userCreatedBusinesses = useBusinessStore(s => s.userCreatedBusinesses);
+    const userCreatedEvents = useEventsStore(s => s.userCreatedEvents);
     const initializeBusinessMockData = useBusinessStore(
         s => s.initializeMockData
     );
@@ -58,6 +61,14 @@ export default function Main() {
         initializeEventsMockData,
         initializeUserMockData,
     ]);
+
+    const savedBusinesses = useMemo(() => {
+        return [...mockBusinesses, ...userCreatedBusinesses];
+    }, [userCreatedBusinesses]);
+
+    const savedEvents = useMemo(() => {
+        return [...mockEvents, ...userCreatedEvents];
+    }, [userCreatedEvents]);
 
     const allBusinesses = useMemo(() => {
         const combined = [...fakeBusinesses, ...savedBusinesses];
@@ -202,19 +213,56 @@ function filterItems<T extends Business | Event>(
 ): T[] {
     return items.filter(item => {
         if (filters.search) {
-            const searchLower = filters.search.toLowerCase();
+            const searchLower = filters.search.toLowerCase().trim();
+            if (!searchLower) return true;
+            
             const titleMatch = (item.title || "")
                 .toLowerCase()
                 .includes(searchLower);
-            const descriptionMatch = (item.description || "")
-                .toLowerCase()
-                .includes(searchLower);
-            if (!titleMatch && !descriptionMatch) {
+            
+            const category = getCategoryByKey(item.category);
+            const categoryKeyMatch = item.category.toLowerCase().includes(searchLower);
+            const categoryLabelMatch = category?.label.toLowerCase().includes(searchLower) || false;
+            
+            let subcategoryKeyMatch = false;
+            let subcategoryLabelMatch = false;
+            if (item.subcategory) {
+                subcategoryKeyMatch = item.subcategory.toLowerCase().includes(searchLower);
+                const subcategories = getSubcategoriesByCategory(item.category);
+                const subcategory = subcategories.find(sub => sub.key === item.subcategory);
+                subcategoryLabelMatch = subcategory?.label.toLowerCase().includes(searchLower) || false;
+            }
+            
+            let servicesMatch = false;
+            if ('services' in item && item.services && Array.isArray(item.services)) {
+                servicesMatch = item.services.some(service =>
+                    service.toLowerCase().includes(searchLower)
+                );
+            }
+            
+            let descriptionMatch = false;
+            if (item.description) {
+                descriptionMatch = item.description.toLowerCase().includes(searchLower);
+            }
+            
+            let tagsMatch = false;
+            if (item.tags && Array.isArray(item.tags)) {
+                tagsMatch = item.tags.some(tag =>
+                    tag.toLowerCase().includes(searchLower)
+                );
+            }
+            
+            if (!titleMatch && !categoryKeyMatch && !categoryLabelMatch && 
+                !subcategoryKeyMatch && !subcategoryLabelMatch && !servicesMatch &&
+                !descriptionMatch && !tagsMatch) {
                 return false;
             }
         }
 
         if (filters.languages.length > 0) {
+            if (!item.languages || !Array.isArray(item.languages)) {
+                return false;
+            }
             const hasMatchingLanguage = filters.languages.some(lang =>
                 item.languages.includes(lang)
             );
@@ -236,6 +284,9 @@ function filterItems<T extends Business | Event>(
         }
 
         if (filters.cities.length > 0) {
+            if (!item.location) {
+                return false;
+            }
             if (!isLocationInCities(item.location, filters.cities)) {
                 return false;
             }

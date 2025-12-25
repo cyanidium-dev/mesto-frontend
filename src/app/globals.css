@@ -74,6 +74,20 @@
     .leaflet-control-zoom {
         top: 90px !important;
     }
+
+    /* Hide scrollbar but keep functionality */
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* Smooth horizontal scrolling */
+    .scrollbar-hide {
+        scroll-behavior: smooth;
+    }
 }
 
 .date-time-input {

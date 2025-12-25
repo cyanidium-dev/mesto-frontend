@@ -11,6 +11,7 @@ import ShareIcon from "../shared/icons/ShareIcon";
 import ArrowIcon from "../shared/icons/ArrowIcon";
 import { useShare } from "@/hooks/useShare";
 import Toast from "../shared/toast/Toast";
+import { CATEGORIES } from "@/constants/filters";
 
 interface CardProps {
     business: Business;
@@ -42,6 +43,9 @@ export default function Card({ business }: CardProps) {
     }, [isShownMore]);
 
     const { title, description, category } = business;
+    const categoryLabel = category
+        ? CATEGORIES.find(cat => cat.key === category)?.label || category
+        : null;
     const businessImageUrl =
         business.imageUrls?.find(
             url =>
@@ -104,11 +108,11 @@ export default function Card({ business }: CardProps) {
                         >
                             {title}
                         </button>
-                        {category ? (
+                        {categoryLabel && (
                             <span className="line-clamp-1 text-[12px] text-gray-placeholder">
-                                {category}
+                                {categoryLabel}
                             </span>
-                        ) : null}
+                        )}
                     </h3>
                     <p
                         onClick={toggleShowMore}
