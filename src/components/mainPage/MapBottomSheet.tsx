@@ -131,6 +131,36 @@ export default function MapBottomSheet({
         }, 400);
     }, [item, isEvent, router]);
 
+    const openNavigation = useCallback(() => {
+        if (!item || !item.location) return;
+
+        let lat: number;
+        let lng: number;
+
+        if (Array.isArray(item.location)) {
+            [lat, lng] = item.location;
+        } else {
+            lat = item.location.lat;
+            lng = item.location.lng;
+        }
+
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        
+        if (isMobile) {
+            const geoUrl = `geo:${lat},${lng}?q=${lat},${lng}`;
+            
+            const link = document.createElement('a');
+            link.href = geoUrl;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } else {
+            const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`;
+            window.open(googleMapsUrl, '_blank');
+        }
+    }, [item]);
+
     const handleTouchEnd = () => {
         if (dragY >= DRAG_THRESHOLD && item && !isNavigating) {
             navigateToProfile();
@@ -337,7 +367,7 @@ export default function MapBottomSheet({
                             <MainButton
                                 variant="primary"
                                 className="flex-1 h-10 text-sm"
-                                onClick={() => {}}
+                                onClick={openNavigation}
                             >
                                 <div className="flex items-center justify-center gap-2">
                                     <ArrowDiagonalIcon className="brightness-0 invert w-5 h-5" />
