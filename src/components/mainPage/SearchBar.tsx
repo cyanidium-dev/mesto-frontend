@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Dispatch, SetStateAction, useEffect } from "react";
+import { useState, Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { Selection } from "@react-types/shared";
 import { Input, Select, SelectItem, Switch } from "@heroui/react";
 import TabMenu from "./TabMenu";
@@ -32,10 +32,20 @@ export default function SearchBar({
     const [categoryValue, setCategoryValue] = useState<Selection>(new Set([]));
     const [openNowValue, setOpenNowValue] = useState(false);
 
+    // Drag scroll state
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const isDraggingRef = useRef(false);
+    const startXRef = useRef(0);
+    const scrollLeftRef = useRef(0);
+
     const handleCategoryChange = (keys: Selection) => {
-        const keysSet = keys instanceof Set ? keys : new Set(keys === "all" ? [] : [keys]);
-        const currentSet = categoryValue instanceof Set ? categoryValue : new Set(categoryValue === "all" ? [] : [categoryValue]);
-        
+        const keysSet =
+            keys instanceof Set ? keys : new Set(keys === "all" ? [] : [keys]);
+        const currentSet =
+            categoryValue instanceof Set
+                ? categoryValue
+                : new Set(categoryValue === "all" ? [] : [categoryValue]);
+
         if (currentSet.size > 0 && keysSet.size > 0) {
             const currentKey = Array.from(currentSet)[0];
             const newKey = Array.from(keysSet)[0];
@@ -78,6 +88,50 @@ export default function SearchBar({
         onFiltersChange,
     ]);
 
+    // Mouse drag handlers for filters bar
+    const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+        // Don't start drag if clicking on interactive elements
+        const target = e.target as HTMLElement;
+        if (
+            target.closest("button") ||
+            target.closest("[role='button']") ||
+            target.closest("select") ||
+            target.closest("[data-slot='trigger']") ||
+            target.closest("[data-slot='base']")
+        ) {
+            return;
+        }
+
+        if (!scrollContainerRef.current) return;
+        isDraggingRef.current = true;
+        startXRef.current = e.pageX - scrollContainerRef.current.offsetLeft;
+        scrollLeftRef.current = scrollContainerRef.current.scrollLeft;
+        scrollContainerRef.current.style.cursor = "grabbing";
+        scrollContainerRef.current.style.userSelect = "none";
+    };
+
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+        if (!isDraggingRef.current || !scrollContainerRef.current) return;
+        e.preventDefault();
+        const x = e.pageX - scrollContainerRef.current.offsetLeft;
+        const walk = (x - startXRef.current) * 2; // Scroll speed multiplier
+        scrollContainerRef.current.scrollLeft = scrollLeftRef.current - walk;
+    };
+
+    const handleMouseUp = () => {
+        if (!scrollContainerRef.current) return;
+        isDraggingRef.current = false;
+        scrollContainerRef.current.style.cursor = "grab";
+        scrollContainerRef.current.style.userSelect = "";
+    };
+
+    const handleMouseLeave = () => {
+        if (!scrollContainerRef.current) return;
+        isDraggingRef.current = false;
+        scrollContainerRef.current.style.cursor = "grab";
+        scrollContainerRef.current.style.userSelect = "";
+    };
+
     return (
         <div className="fixed z-50 top-2 left-0 w-full max-w-[440px]">
             <div className="w-full px-4">
@@ -87,9 +141,7 @@ export default function SearchBar({
                         aria-label="search input"
                         radius="full"
                         placeholder="Найти"
-                        startContent={
-                            <DandruffIcon className="mr-1" />
-                        }
+                        startContent={<DandruffIcon className="mr-1" />}
                         value={searchValue}
                         onValueChange={setSearchValue}
                         classNames={{
@@ -104,7 +156,14 @@ export default function SearchBar({
                     />
                     <TabMenu viewMode={viewMode} setViewMode={setViewMode} />
                 </div>
-                <div className="overflow-x-auto scrollbar-hide -mx-4 px-4">
+                <div
+                    ref={scrollContainerRef}
+                    className="overflow-x-auto scrollbar-hide -mx-4 px-4 cursor-grab active:cursor-grabbing"
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseLeave}
+                >
                     <div className="flex items-center gap-2 min-w-max pb-1">
                         <Select
                             radius="full"
@@ -187,13 +246,15 @@ export default function SearchBar({
                                 }`,
                                 innerWrapper: "w-fit pr-2",
                                 value: "text-[12px]",
-                                popoverContent: "min-w-[180px] max-w-[calc(100vw-2rem)]",
+                                popoverContent:
+                                    "min-w-[180px] max-w-[calc(100vw-2rem)]",
                                 selectorIcon: "end-1.5",
                             }}
                             popoverProps={{
                                 placement: "bottom-start",
                                 classNames: {
-                                    content: "min-w-[180px] max-w-[calc(100vw-2rem)]",
+                                    content:
+                                        "min-w-[180px] max-w-[calc(100vw-2rem)]",
                                 },
                             }}
                         >
