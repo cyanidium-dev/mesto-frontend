@@ -31,7 +31,7 @@ export default function SearchBar({
     const [cityValue, setCityValue] = useState<Selection>(new Set([]));
     const [categoryValue, setCategoryValue] = useState<Selection>(new Set([]));
     const [openNowValue, setOpenNowValue] = useState(false);
-    
+
     // Drag scroll state
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const isDraggingRef = useRef(false);
@@ -39,9 +39,13 @@ export default function SearchBar({
     const scrollLeftRef = useRef(0);
 
     const handleCategoryChange = (keys: Selection) => {
-        const keysSet = keys instanceof Set ? keys : new Set(keys === "all" ? [] : [keys]);
-        const currentSet = categoryValue instanceof Set ? categoryValue : new Set(categoryValue === "all" ? [] : [categoryValue]);
-        
+        const keysSet =
+            keys instanceof Set ? keys : new Set(keys === "all" ? [] : [keys]);
+        const currentSet =
+            categoryValue instanceof Set
+                ? categoryValue
+                : new Set(categoryValue === "all" ? [] : [categoryValue]);
+
         if (currentSet.size > 0 && keysSet.size > 0) {
             const currentKey = Array.from(currentSet)[0];
             const newKey = Array.from(keysSet)[0];
@@ -137,9 +141,7 @@ export default function SearchBar({
                         aria-label="search input"
                         radius="full"
                         placeholder="Найти"
-                        startContent={
-                            <DandruffIcon className="mr-1" />
-                        }
+                        startContent={<DandruffIcon className="mr-1" />}
                         value={searchValue}
                         onValueChange={setSearchValue}
                         classNames={{
@@ -244,13 +246,15 @@ export default function SearchBar({
                                 }`,
                                 innerWrapper: "w-fit pr-2",
                                 value: "text-[12px]",
-                                popoverContent: "min-w-[180px] max-w-[calc(100vw-2rem)]",
+                                popoverContent:
+                                    "min-w-[180px] max-w-[calc(100vw-2rem)]",
                                 selectorIcon: "end-1.5",
                             }}
                             popoverProps={{
                                 placement: "bottom-start",
                                 classNames: {
-                                    content: "min-w-[180px] max-w-[calc(100vw-2rem)]",
+                                    content:
+                                        "min-w-[180px] max-w-[calc(100vw-2rem)]",
                                 },
                             }}
                         >

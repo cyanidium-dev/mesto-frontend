@@ -14,6 +14,7 @@ import BookingModal from "../shared/modal/BookingModal";
 import { useShare } from "@/hooks/useShare";
 import { useUserStore } from "@/store/userStore";
 import Toast from "../shared/toast/Toast";
+import { CATEGORIES } from "@/constants/filters";
 
 interface EventCardProps {
     event: Event;
@@ -48,6 +49,9 @@ export default function EventCard({ event }: EventCardProps) {
 
     const { imageUrls, title, description, category, startDate, startTime } =
         event;
+    const categoryLabel = category
+        ? CATEGORIES.find(cat => cat.key === category)?.label || category
+        : null;
     const eventImageUrl = imageUrls?.find(
         url =>
             url &&
@@ -119,9 +123,9 @@ export default function EventCard({ event }: EventCardProps) {
                         >
                             {title}
                         </button>
-                        {category && (
+                        {categoryLabel && (
                             <span className="line-clamp-1 text-[12px] text-gray-placeholder">
-                                {category}
+                                {categoryLabel}
                             </span>
                         )}
                         {eventDate && (
@@ -135,7 +139,7 @@ export default function EventCard({ event }: EventCardProps) {
                             onClick={toggleShowMore}
                             className={`text-[12px] text-gray-text transition-all duration-300 ${
                                 shouldClamp
-                                    ? category
+                                    ? categoryLabel
                                         ? "line-clamp-4"
                                         : "line-clamp-3"
                                     : ""
