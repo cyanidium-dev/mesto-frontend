@@ -15,6 +15,8 @@ import ProfileImageGallery from "@/components/profilePage/user/ProfileImageGalle
 import ProfileSocialLinks from "@/components/profilePage/user/ProfileSocialLinks";
 import ProfileTags from "@/components/profilePage/user/ProfileTags";
 import ProfileDescription from "@/components/profilePage/user/ProfileDescription";
+import { mockBusinesses } from "@/data/mockBusinesses";
+import { mockEvents } from "@/data/mockEvents";
 
 type TabKey = "info" | "events" | "businesses";
 
@@ -22,19 +24,25 @@ function ProfilePageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const currentUser = useUserStore(s => s.currentUser);
-    const allBusinesses = useBusinessStore(s => s.getAllBusinesses());
-    const allEvents = useEventsStore(s => s.getAllEvents());
-    const tabParam = searchParams.get("tab");
-    const [selectedTab, setSelectedTab] = useState<TabKey>(
-        (tabParam && ["info", "events", "businesses"].includes(tabParam)
-            ? tabParam
-            : "info") as TabKey
-    );
+    const userCreatedBusinesses = useBusinessStore(s => s.userCreatedBusinesses);
+    const userCreatedEvents = useEventsStore(s => s.userCreatedEvents);
+    const [selectedTab, setSelectedTab] = useState<TabKey>("info");
+
+    const allBusinesses = useMemo(() => {
+        return [...mockBusinesses, ...userCreatedBusinesses];
+    }, [userCreatedBusinesses]);
+
+    const allEvents = useMemo(() => {
+        return [...mockEvents, ...userCreatedEvents];
+    }, [userCreatedEvents]);
 
     useEffect(() => {
         const tabParam = searchParams.get("tab");
         if (tabParam && ["info", "events", "businesses"].includes(tabParam)) {
-            setSelectedTab(tabParam as TabKey);
+            const newTab = tabParam as TabKey;
+            setSelectedTab(prev => prev !== newTab ? newTab : prev);
+        } else {
+            setSelectedTab(prev => prev !== "info" ? "info" : prev);
         }
     }, [searchParams]);
 
